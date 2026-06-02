@@ -61,7 +61,9 @@
   tbody tr:nth-child(even){background:#fafcfe}
   td input,td select,td textarea{width:100%;border:1px solid transparent;background:transparent;font:inherit;color:inherit;padding:3px 4px;border-radius:4px;resize:vertical}
   td input:focus,td select:focus,td textarea:focus{border-color:var(--c3);background:#fff;outline:none}
-  td textarea{min-height:30px}
+  td textarea{min-height:30px;overflow:hidden;line-height:1.4}
+  td textarea.cellt{min-height:26px;min-width:72px;white-space:pre-wrap;overflow-wrap:break-word}
+  .cellprint{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:2px 1px;line-height:1.45}
   .btn{border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:600}
   .btn.primary{background:var(--c2);color:#fff}.btn.primary:hover{background:var(--c1)}
   .btn.ghost{background:#fff;border:1px solid var(--c2);color:var(--c2)}.btn.ghost:hover{background:#eef5fb}
@@ -131,7 +133,12 @@
     body{background:#fff}
     .scroll{max-height:none !important;overflow:visible !important;border:none !important}
     .card{box-shadow:none;border:1px solid #bbb;break-inside:auto}
-    th{position:static}
+    th{position:static;white-space:normal}
+    main table{font-size:10px}
+    main table th,main table td{word-break:break-word}
+    td .cellprint{white-space:pre-wrap;word-break:break-word;font-size:10px}
+    td textarea{white-space:pre-wrap;overflow:visible !important;border:none !important}
+    td input,td select{border:none !important}
     tr{break-inside:avoid}
     .panel{display:none !important}
     .panel.active{display:block !important}
@@ -153,7 +160,7 @@
   </div>
   <div class="grow"></div>
   <button class="toolbtn" onclick="saveNow()">💾 儲存</button>
-  <button class="toolbtn" onclick="window.print()">🖨 列印 / PDF</button>
+  <button class="toolbtn" onclick="doPrint()">🖨 列印 / PDF</button>
 </header>
 
 <nav id="nav">
@@ -234,7 +241,7 @@
       <div class="scroll">
         <table id="t61">
           <thead><tr>
-            <th style="width:60px">編號</th><th style="width:170px">受查對象／職缺</th><th style="width:110px">部門／職務</th>
+            <th style="width:84px">編號</th><th style="width:170px">受查對象／職缺</th><th style="width:110px">部門／職務</th>
             <th style="width:120px">將存取資訊分級</th><th style="width:90px">覺察風險</th><th style="width:220px">背景查證項目</th>
             <th style="width:170px">適用法律／倫理</th><th style="width:180px">查證結果</th>
             <th style="width:120px">負責單位</th><th style="width:100px">完成日</th><th style="width:100px">覆核日</th><th style="width:90px">狀態</th><th style="width:36px"></th>
@@ -257,7 +264,7 @@
       <div class="scroll">
         <table id="t62">
           <thead><tr>
-            <th style="width:60px">編號</th><th style="width:120px">適用對象</th><th style="width:180px">契約／協議文件</th>
+            <th style="width:84px">編號</th><th style="width:120px">適用對象</th><th style="width:180px">契約／協議文件</th>
             <th style="width:240px">資安責任條款</th><th style="width:180px">引用政策／協議</th><th style="width:170px">違反後果</th>
             <th style="width:100px">簽署狀態</th><th style="width:100px">簽署日</th>
             <th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:90px">狀態</th><th style="width:36px"></th>
@@ -280,7 +287,7 @@
       <div class="scroll">
         <table id="t63">
           <thead><tr>
-            <th style="width:60px">編號</th><th style="width:180px">訓練／活動名稱</th><th style="width:110px">類別</th>
+            <th style="width:84px">編號</th><th style="width:180px">訓練／活動名稱</th><th style="width:110px">類別</th>
             <th style="width:160px">對象</th><th style="width:220px">內容主題</th><th style="width:120px">形式／管道</th>
             <th style="width:100px">週期</th><th style="width:170px">完成情形／出席率</th><th style="width:180px">佐證／紀錄（條文7）</th>
             <th style="width:110px">負責單位</th><th style="width:110px">下次辦理／覆核日</th><th style="width:90px">狀態</th><th style="width:36px"></th>
@@ -303,7 +310,7 @@
       <div class="scroll">
         <table id="t64">
           <thead><tr>
-            <th style="width:60px">編號</th><th style="width:120px">類型</th><th style="width:230px">違規事由／等級</th>
+            <th style="width:84px">編號</th><th style="width:120px">類型</th><th style="width:230px">違規事由／等級</th>
             <th style="width:230px">處理措施／層級</th><th style="width:180px">依據</th><th style="width:200px">處理流程／權責</th>
             <th style="width:170px">傳達／公告方式</th><th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:90px">狀態</th><th style="width:36px"></th>
           </tr></thead>
@@ -325,7 +332,7 @@
       <div class="scroll">
         <table id="t65">
           <thead><tr>
-            <th style="width:60px">編號</th><th style="width:130px">情境</th><th style="width:110px">對象類別</th>
+            <th style="width:84px">編號</th><th style="width:130px">情境</th><th style="width:110px">對象類別</th>
             <th style="width:230px">終止／變更後仍有效之責任義務</th><th style="width:120px">有效期限</th><th style="width:230px">離退／異動檢查項</th>
             <th style="width:160px">整合連結</th><th style="width:160px">傳達／確認方式</th>
             <th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:90px">狀態</th><th style="width:36px"></th>
@@ -348,7 +355,7 @@
       <div class="scroll">
         <table id="t66">
           <thead><tr>
-            <th style="width:60px">編號</th><th style="width:190px">協議名稱／類型</th><th style="width:120px">適用對象</th>
+            <th style="width:84px">編號</th><th style="width:190px">協議名稱／類型</th><th style="width:120px">適用對象</th>
             <th style="width:200px">保護資訊範圍</th><th style="width:240px">主要條款</th><th style="width:150px">有效期間</th>
             <th style="width:150px">簽署狀態</th><th style="width:160px">整合連結</th>
             <th style="width:120px">負責單位</th><th style="width:110px">下次審查日</th><th style="width:90px">狀態</th><th style="width:36px"></th>
@@ -747,7 +754,7 @@ function cellInput(panel,rowIdx,col,val){
   }
   if(col.t==='textarea')return `<textarea ${common}>${esc(val||'')}</textarea>`;
   if(col.t==='date')return `<input type="date" ${common} value="${esc(val||'')}">`;
-  return `<input type="text" ${common} value="${esc(val||'')}">`;
+  return `<textarea rows="1" class="cellt" ${common}>${esc(val||'')}</textarea>`;
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
@@ -1134,6 +1141,21 @@ function renderAll(){
 }
 bindSignoff();
 renderAll();
+</script>
+<script>
+/* ===== 表格欄寬與列印修正：autosize 撐高 + 固定版面 + 列印轉純文字（避免內容截斷） ===== */
+(function(){
+function autosize(el){if(!el||el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
+function autosizeActive(){var a=document.querySelector('.panel.active');if(a)a.querySelectorAll('textarea').forEach(autosize);}
+window.autosize=autosize;window.autosizeActive=autosizeActive;
+window.convertControlsForPrint=function(on){var s=document.querySelector('.panel.active');if(!s)return;if(on){s.querySelectorAll('table tbody td').forEach(function(td){var c=td.querySelector('input,select,textarea');if(!c)return;td.innerHTML='<div class="cellprint">'+esc(c.value||'')+'</div>';});}else{renderAll();}};
+window.doPrint=function(){convertControlsForPrint(true);var r=function(){convertControlsForPrint(false);window.removeEventListener('afterprint',r);};window.addEventListener('afterprint',r);setTimeout(function(){window.print();},80);};
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA')autosize(e.target);},true);
+var nav=document.getElementById('nav');if(nav)nav.addEventListener('click',function(){setTimeout(autosizeActive,0);});
+try{document.querySelectorAll('.panel table').forEach(function(t){if(!t.tHead||!t.querySelector('tbody input,tbody select,tbody textarea'))return;t.style.tableLayout='fixed';var tb=t.tBodies[0];if(tb&&window.MutationObserver){new MutationObserver(function(){autosizeActive();}).observe(tb,{childList:true});}});}catch(e){}
+window.addEventListener('load',function(){setTimeout(autosizeActive,40);});
+setTimeout(autosizeActive,60);
+})();
 </script>
 </body>
 </html>
