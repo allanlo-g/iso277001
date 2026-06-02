@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISO 27001:2022 條文9「績效評估」管理工具</title>
+<style>
+  :root{
+    --c1:#13476b; --c2:#1e6ba8; --c3:#2e8bc0; --bg:#f4f6f9; --line:#d9e0e7;
+    --ok:#2e7d32; --warn:#e67e22; --bad:#c0392b; --mut:#6b7884; --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft JhengHei","Segoe UI",system-ui,sans-serif;background:var(--bg);color:#1c2733;font-size:14px;line-height:1.55}
+  header{background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  header h1{font-size:18px;margin:0;font-weight:700}
+  header .sub{font-size:12px;opacity:.85}
+  header .grow{flex:1}
+  .toolbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px}
+  .toolbtn:hover{background:rgba(255,255,255,.28)}
+  nav{display:flex;gap:2px;background:var(--c1);padding:0 12px;flex-wrap:wrap}
+  nav button{background:transparent;border:none;color:#cfe0ee;padding:11px 14px;cursor:pointer;font-size:13.5px;border-bottom:3px solid transparent}
+  nav button:hover{color:#fff}
+  nav button.active{color:#fff;border-bottom-color:#7fd0ff;font-weight:700;background:rgba(255,255,255,.06)}
+  main{max-width:1320px;margin:18px auto;padding:0 18px 60px}
+  .panel{display:none;animation:fade .2s}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(20,40,60,.05)}
+  h2.sec{font-size:17px;color:var(--c1);margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2.sec .tag{background:var(--c3);color:#fff;font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .clauseref{font-size:12.5px;color:var(--mut);background:#eef3f7;border-left:3px solid var(--c3);padding:8px 12px;border-radius:4px;margin:10px 0 16px}
+  .clauseref b{color:var(--c1)}
+  .linkref{font-size:12.5px;color:#5a4b2a;background:#fdf7ea;border-left:3px solid var(--warn);padding:8px 12px;border-radius:4px;margin:10px 0 16px}
+  .linkref b{color:#7a5b14}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#eaf1f7;color:var(--c1);font-weight:700;position:sticky;top:0;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fafcfe}
+  td input,td select,td textarea{width:100%;border:1px solid transparent;background:transparent;font:inherit;color:inherit;padding:3px 4px;border-radius:4px;resize:vertical}
+  td input:focus,td select:focus,td textarea:focus{border-color:var(--c3);background:#fff;outline:none}
+  td textarea{min-height:30px;overflow:hidden;line-height:1.4}
+  td textarea.cellt{min-height:26px;min-width:72px;white-space:pre-wrap;overflow-wrap:break-word}
+  .cellprint{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:2px 1px;line-height:1.45}
+  .btn{border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn.primary{background:var(--c2);color:#fff}.btn.primary:hover{background:var(--c1)}
+  .btn.ghost{background:#fff;border:1px solid var(--c2);color:var(--c2)}.btn.ghost:hover{background:#eef5fb}
+  .btn.danger{background:#fff;border:1px solid var(--bad);color:var(--bad)}.btn.danger:hover{background:#fdecea}
+  .btn.sm{padding:3px 9px;font-size:12px}
+  .rowtools{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .delx{color:var(--bad);cursor:pointer;font-weight:700;border:none;background:none;font-size:15px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+  .pill.ok{background:#e7f4e8;color:var(--ok)} .pill.warn{background:#fdf0e3;color:var(--warn)} .pill.bad{background:#fbe9e7;color:var(--bad)} .pill.mut{background:#eef1f4;color:var(--mut)}
+  .due{background:#fff6f5 !important}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-weight:600;color:var(--c1);margin-bottom:4px;font-size:13px}
+  .field textarea,.field input,.field select{width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit}
+  .field textarea{min-height:64px;resize:vertical}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi .box{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;border-top:4px solid var(--c3)}
+  .kpi .box .n{font-size:28px;font-weight:800;color:var(--c1)}
+  .kpi .box .l{font-size:12.5px;color:var(--mut)}
+  .progress{height:10px;background:#e6ecf2;border-radius:6px;overflow:hidden;margin-top:6px}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--c3),var(--ok))}
+  .hint{font-size:12.5px;color:var(--mut);margin:4px 0 0}
+  .guide h3{color:var(--c1);font-size:15px;margin:18px 0 6px;border-left:4px solid var(--c3);padding-left:10px}
+  .guide ol,.guide ul{margin:6px 0 6px 4px;padding-left:22px}
+  .guide li{margin-bottom:5px}
+  .guide table{margin:10px 0}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .flow .step{background:#eef5fb;border:1px solid var(--c3);color:var(--c1);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;max-width:175px}
+  .flow .arr{color:var(--c3);font-weight:800}
+  .roles td:first-child{white-space:nowrap;font-weight:600;color:var(--c1)}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--c1);color:#fff;padding:11px 18px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:.25s;z-index:99}
+  .toast.show{opacity:1;transform:none}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:6px}
+  .scroll{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:8px}
+  .subtabs{display:flex;gap:6px;margin:2px 0 14px;flex-wrap:wrap}
+  .subtabs button{background:#eef3f7;border:1px solid var(--line);color:var(--c1);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12.5px;font-weight:600}
+  .subtabs button.active{background:var(--c2);color:#fff;border-color:var(--c2)}
+  .subview{display:none}.subview.active{display:block}
+  .statusbadge{font-weight:800;border-radius:6px;padding:1px 8px;display:inline-block;text-align:center;min-width:34px}
+  footer{text-align:center;color:var(--mut);font-size:12px;padding:20px}
+  .sealbox{position:relative;height:62px;border:1px dashed #b9c4ce;border-radius:6px;background:#fcfdfe;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+  .sealbox img{max-height:56px;max-width:130px}
+  .sealbox .sealhint{font-size:11px;color:#9aa7b2}
+  .sealx{position:absolute;top:2px;right:2px;border:none;background:rgba(0,0,0,.45);color:#fff;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:11px;line-height:16px;padding:0}
+  #reportArea{display:none}
+  #reportArea .rpt-doc{max-width:1000px;margin:0 auto;color:#1c2733}
+  #reportArea h1.rt{font-size:20px;color:var(--c1);text-align:center;margin:0 0 2px}
+  #reportArea .rt-sub{text-align:center;color:var(--mut);font-size:12px;margin-bottom:14px}
+  #reportArea .rt-meta{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+  #reportArea .rt-meta td{border:1px solid #aab4bd;padding:5px 8px}
+  #reportArea .rt-meta td.k{background:#eef3f7;font-weight:700;color:var(--c1);width:130px;white-space:nowrap}
+  #reportArea h2.rt{font-size:14px;color:#fff;background:var(--c2);padding:5px 10px;border-radius:4px;margin:16px 0 6px}
+  #reportArea table.rpt{width:100%;border-collapse:collapse;font-size:10px;margin:4px 0 8px}
+  #reportArea table.rpt th,#reportArea table.rpt td{border:1px solid #999;padding:3px 5px;vertical-align:top}
+  #reportArea table.rpt th{background:#eaf1f7;color:var(--c1)}
+  #reportArea .rt-sign{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  #reportArea .rt-sign th,#reportArea .rt-sign td{border:1px solid #888;padding:6px 8px;text-align:center}
+  #reportArea .rt-sign th{background:#eaf1f7;color:var(--c1)}
+  #reportArea .rt-sealbox{height:60px;display:flex;align-items:center;justify-content:center}
+  #reportArea .rt-sealbox img{max-height:54px;max-width:120px}
+  @media print{
+    @page{margin:12mm}
+    header,nav,.toolbtn,.rowtools,.btn,.delx,footer,.sealx,.sealhint,.subtabs,.soafilter{display:none !important}
+    body{background:#fff}
+    .scroll{max-height:none !important;overflow:visible !important;border:none !important}
+    .card{box-shadow:none;border:1px solid #bbb;break-inside:auto}
+    th{position:static;white-space:normal}
+    main table{font-size:10px}
+    main table th,main table td{word-break:break-word}
+    td .cellprint{white-space:pre-wrap;word-break:break-word;font-size:10px}
+    td textarea{white-space:pre-wrap;overflow:visible !important;border:none !important}
+    td input,td select{border:none !important}
+    tr{break-inside:avoid}
+    .panel{display:none !important}
+    .panel.active{display:block !important}
+    .subview{display:block !important}
+    #reportArea{display:none !important}
+    body.print-signoff .panel{display:none !important}
+    body.print-signoff #year{display:block !important}
+    body.print-signoff #year .arch-card{display:none !important}
+    .sealbox{border:1px solid #888;background:#fff}
+    body.print-report .panel{display:none !important}
+    body.print-report #reportArea{display:block !important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>ISO 27001:2022 條文9「績效評估」管理工具</h1>
+    <div class="sub">Performance evaluation · 監視量測分析評估(9.1) / 內部稽核(9.2) / 管理審查(9.3)</div>
+  </div>
+  <div class="grow"></div>
+  <button class="toolbtn" onclick="saveNow()">💾 儲存</button>
+  <button class="toolbtn" onclick="doPrint()">🖨 列印 / PDF</button>
+</header>
+
+<nav id="nav">
+  <button data-p="dash" class="active">📊 儀表板</button>
+  <button data-p="c91">9.1 監視量測分析評估</button>
+  <button data-p="c92">9.2 內部稽核</button>
+  <button data-p="c93">9.3 管理審查</button>
+  <button data-p="link">🔗 條文連動（6/8）</button>
+  <button data-p="year">🗓 年度簽核</button>
+  <button data-p="guide">📘 作業說明</button>
+  <button data-p="data">⚙ 資料管理</button>
+</nav>
+
+<main>
+  <!-- ================= 儀表板 ================= -->
+  <section class="panel active" id="dash">
+    <div class="card">
+      <h2 class="sec"><span class="tag">總覽</span>資安績效評估執行狀態</h2>
+      <div class="clauseref">本工具對應 ISO/IEC 27001:2022 <b>第9章 績效評估（Performance evaluation）</b>，為 ISMS PDCA 之 <b>Check（檢查）</b>階段：<b>(9.1)</b> 決定<b>監視/量測之項目（含過程與控制）、方法、時機與人員</b>，並<b>分析、評估資安績效與 ISMS 有效性</b>；<b>(9.2)</b> 於規劃間隔執行<b>內部稽核</b>，查核符合性與有效實施，並維持<b>稽核方案</b>（頻率/方法/責任/報告）；<b>(9.3)</b> 由<b>最高管理階層</b>定期辦理<b>管理審查</b>，依規定<b>輸入(a–g)</b>產出<b>決議(持續改善與變更需求)</b>。</div>
+      <div id="annualBox"></div>
+      <div class="kpi" id="kpiBox"></div>
+      <div id="progressBox"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">稽核輪廓</span>內部稽核發現與不符合狀態</h2>
+      <div id="auditDistBox"><p class="hint">尚無資料。</p></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">提醒</span>待辦 / 逾期項目（量測、稽核改善、審查決議）</h2>
+      <div id="dueBox"><p class="hint">尚無資料。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 9.1 監視、量測、分析與評估 ================= -->
+  <section class="panel" id="c91">
+    <div class="card">
+      <h2 class="sec"><span class="tag">9.1</span>監視、量測、分析與評估（Monitoring, measurement, analysis and evaluation）</h2>
+      <div class="clauseref"><b>條文要求：</b>組織應決定：<b>(a)</b> 需要<b>監視與量測</b>之事項，<b>包含資訊安全過程與控制</b>；<b>(b)</b> 監視、量測、分析與評估之<b>方法</b>，方法須能產生<b>可比較且可重現</b>之有效結果；<b>(c)</b> <b>何時</b>執行監視與量測；<b>(d)</b> <b>由誰</b>監視與量測；<b>(e)</b> <b>何時</b>分析與評估監視量測結果；<b>(f)</b> <b>由誰</b>分析與評估。應<b>保存結果之文件化資訊</b>作為證據，並<b>評估資訊安全績效與 ISMS 之有效性</b>。</div>
+      <div class="linkref"><b>輸入來源與去向：</b>監視量測項目可承接 <b>6.2 資安目標</b>、<b>8.1 控制措施有效性(e2)</b>、<b>8.3 風險處理結果</b>與 SoA 控制；分析評估之結果為 <b>9.3 管理審查輸入(d)</b> 及 <b>10 改善</b>之依據。可至「🔗 條文連動」由條文6/8 匯入並產生指標。</div>
+      <div class="subtabs">
+        <button class="active" onclick="subview('c91','gen',this)">① 監視量測方法總則</button>
+        <button onclick="subview('c91','mm',this)">② 監視量測指標清單</button>
+        <button onclick="subview('c91','ev',this)">③ 分析評估與績效紀錄</button>
+      </div>
+
+      <div class="subview active" id="c91_gen">
+        <div class="grid2">
+          <div class="field"><label>監視/量測項目決定原則（含資安過程與控制 · a）</label><textarea id="g91_determine" placeholder="例：依資安目標、重要過程與控制、風險處理結果決定須監視量測之項目；涵蓋過程績效（如修補時效）與控制有效性（如MFA涵蓋率、事故件數）。"></textarea></div>
+          <div class="field"><label>方法（確保結果有效、可比較、可重現 · b）</label><textarea id="g91_method" placeholder="例：每一指標訂定計算公式、資料來源、抽樣方式與統計口徑，固定方法以利逐期比較；資料保存於指定報表並受 7.5 文件管制。"></textarea></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>監視量測時機 / 分析評估時機（c · e）</label><textarea id="g91_timing" placeholder="例：監視量測頻率依指標訂定（即時/每月/每季）；每季彙整分析、每半年評估有效性，並於管理審查(9.3)前完成年度評估。"></textarea></div>
+          <div class="field"><label>資安績效與 ISMS 有效性評估方式</label><textarea id="g91_evaluate" placeholder="例：以指標達成率、趨勢與不符合件數綜合評估資安績效；以目標達成、風險下降、事故減少評估 ISMS 有效性，結論提報管理審查。"></textarea></div>
+        </div>
+        <p class="hint">＊本總則為 9.1 之敘述性文件化資訊；具體指標於「②監視量測指標清單」逐項建立（對應 a~f），實際量測與評估結果於「③分析評估與績效紀錄」登錄保存。</p>
+      </div>
+
+      <div class="subview" id="c91_mm">
+        <div class="scroll">
+          <table id="t_mm">
+            <thead><tr>
+              <th style="width:70px">編號</th><th style="width:200px">監視/量測項目(a)</th>
+              <th style="width:110px">類別</th><th style="width:200px">量測方法(b)</th>
+              <th style="width:130px">基準/目標值</th><th style="width:100px">量測頻率(c)</th>
+              <th style="width:90px">量測者(d)</th><th style="width:110px">分析評估時機(e)</th>
+              <th style="width:90px">分析評估者(f)</th><th style="width:150px">文件化資訊/佐證</th>
+              <th style="width:100px">狀態</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="rowtools">
+          <button class="btn primary" onclick="addRow('mm')">＋ 新增量測指標</button>
+          <button class="btn ghost" onclick="loadSample('mm')">載入範例</button>
+          <button class="btn ghost" onclick="goPanel('link')">🔗 由條文6目標匯入指標</button>
+        </div>
+        <p class="hint">＊每一指標須完整對應條文 <b>(a)項目</b>、<b>(b)方法</b>、<b>(c)量測頻率</b>、<b>(d)量測者</b>、<b>(e)分析評估時機</b>、<b>(f)分析評估者</b>，並指明結果保存位置（文件化資訊）。</p>
+      </div>
+
+      <div class="subview" id="c91_ev">
+        <div class="scroll">
+          <table id="t_ev">
+            <thead><tr>
+              <th style="width:70px">編號</th><th style="width:100px">期間</th><th style="width:150px">對應指標</th>
+              <th style="width:110px">實際值/結果</th><th style="width:110px">目標/基準</th>
+              <th style="width:90px">達成判定</th><th style="width:90px">趨勢</th>
+              <th style="width:200px">分析說明</th><th style="width:200px">績效/有效性評估</th>
+              <th style="width:180px">後續行動/改善建議</th><th style="width:90px">評估者</th><th style="width:100px">評估日</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="rowtools">
+          <button class="btn primary" onclick="addRow('ev')">＋ 新增分析評估紀錄</button>
+          <button class="btn ghost" onclick="loadSample('ev')">載入範例</button>
+        </div>
+        <p class="hint">＊本表為 9.1 應<b>保存之結果文件化資訊</b>。逐期登錄監視量測結果之<b>分析</b>與對<b>資安績效及 ISMS 有效性</b>之評估；「未達成」或「下降」趨勢應提出改善建議，作為 9.3 與 10 之輸入。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 9.2 內部稽核 ================= -->
+  <section class="panel" id="c92">
+    <div class="card">
+      <h2 class="sec"><span class="tag">9.2</span>內部稽核（Internal audit）</h2>
+      <div class="clauseref"><b>條文要求（9.2.1 一般）：</b>組織應於<b>規劃之時間間隔</b>執行內部稽核，以提供 ISMS 是否 <b>(a)</b> 符合①組織自身對 ISMS 之要求、②本標準之要求；<b>(b)</b> 已<b>有效實施並維持</b>之資訊。<b>（9.2.2 稽核方案）：</b>應規劃、建立、實施並維持<b>稽核方案</b>（含<b>頻率、方法、責任、規劃要求與報告</b>），並<b>考量過程之重要性與前次稽核結果</b>；<b>(a)</b> 界定各次稽核之<b>準則與範圍</b>；<b>(b)</b> 選任稽核員並執行稽核以確保<b>客觀性與公正性</b>；<b>(c)</b> 將稽核結果<b>報告相關管理階層</b>。應<b>保存稽核方案實施與結果之文件化資訊</b>。</div>
+      <div class="linkref"><b>連動：</b>稽核發現之<b>不符合</b>應依 <b>10.2 不符合與矯正措施</b>處理（可移轉至條文10工具）；稽核結果為 <b>9.3 管理審查輸入(d3)</b>。</div>
+      <div class="subtabs">
+        <button class="active" onclick="subview('c92','gen',this)">① 稽核方案總則(9.2.2)</button>
+        <button onclick="subview('c92','au',this)">② 稽核計畫與排程</button>
+        <button onclick="subview('c92','af',this)">③ 稽核發現與不符合</button>
+      </div>
+
+      <div class="subview active" id="c92_gen">
+        <div class="grid2">
+          <div class="field"><label>稽核方案（頻率、方法、責任、規劃要求、報告）</label><textarea id="g92_programme" placeholder="例：每年至少辦理一次全範圍內部稽核，必要時辦理專案稽核；採文件查核、現場訪談與紀錄抽樣；由稽核小組執行、ISMS主管統籌、結果報告管理階層。"></textarea></div>
+          <div class="field"><label>稽核準則與範圍界定原則（a · 含過程重要性與前次結果之考量）</label><textarea id="g92_criteria" placeholder="例：準則為 ISO 27001:2022 條文、組織 ISMS 文件與適用法規；範圍涵蓋全條文與 Annex A 控制，並依過程重要性與前次缺失加重抽樣。"></textarea></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>稽核員選任與客觀性/公正性原則（b）</label><textarea id="g92_independence" placeholder="例：稽核員須受過稽核訓練且不稽核自身負責之作業，以確保客觀公正；必要時委由合格外部稽核員協助。"></textarea></div>
+          <div class="field"><label>結果報告與後續處理原則（c）</label><textarea id="g92_reporting" placeholder="例：稽核結束召開末次會議，出具稽核報告報告予受稽單位與最高管理階層；不符合開立矯正措施(10.2)並追蹤結案，結果提報管理審查(9.3)。"></textarea></div>
+        </div>
+        <p class="hint">＊本總則為 9.2.2 稽核方案之文件化資訊；各次稽核之排程與準則於「②稽核計畫與排程」建立，發現於「③稽核發現與不符合」登錄。</p>
+      </div>
+
+      <div class="subview" id="c92_au">
+        <div class="scroll">
+          <table id="t_au">
+            <thead><tr>
+              <th style="width:90px">編號</th><th style="width:110px">梯次/年度</th><th style="width:180px">稽核範圍</th>
+              <th style="width:200px">稽核準則(a)</th><th style="width:100px">預定日期</th><th style="width:100px">實際執行日</th>
+              <th style="width:100px">稽核員(b)</th><th style="width:130px">客觀公正性確認(b)</th>
+              <th style="width:120px">結果報告對象(c)</th><th style="width:200px">稽核結果摘要</th>
+              <th style="width:100px">狀態</th><th style="width:110px">下次稽核</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="rowtools">
+          <button class="btn primary" onclick="addRow('au')">＋ 新增稽核計畫</button>
+          <button class="btn ghost" onclick="loadSample('au')">載入範例</button>
+        </div>
+        <p class="hint">＊每次稽核須載明<b>準則與範圍(a)</b>、<b>稽核員及其客觀公正性(b)</b>、<b>結果報告對象(c)</b>；稽核方案應<b>考量過程重要性與前次稽核結果</b>安排頻率與重點。</p>
+      </div>
+
+      <div class="subview" id="c92_af">
+        <div class="scroll">
+          <table id="t_af">
+            <thead><tr>
+              <th style="width:80px">編號</th><th style="width:100px">對應稽核</th><th style="width:140px">相關條文/控制</th>
+              <th style="width:100px">類型</th><th style="width:220px">發現描述</th>
+              <th style="width:180px">客觀證據</th><th style="width:100px">權責單位</th>
+              <th style="width:200px">矯正措施(連10.2)</th><th style="width:100px">改善期限</th>
+              <th style="width:160px">有效性驗證/結案</th><th style="width:100px">狀態</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="rowtools">
+          <button class="btn primary" onclick="addRow('af')">＋ 新增稽核發現</button>
+          <button class="btn ghost" onclick="loadSample('af')">載入範例</button>
+        </div>
+        <p class="hint">＊發現分為<b>不符合（主要/次要）、觀察事項、改善機會、符合</b>。不符合須開立<b>矯正措施</b>（呼應 10.2：矯正、原因分析、消除原因、驗證有效性）並追蹤結案，作為下次稽核重點與管理審查輸入。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 9.3 管理審查 ================= -->
+  <section class="panel" id="c93">
+    <div class="card">
+      <h2 class="sec"><span class="tag">9.3</span>管理審查（Management review）</h2>
+      <div class="clauseref"><b>條文要求（9.3.1 一般）：</b><b>最高管理階層</b>應於<b>規劃之時間間隔</b>審查組織之 ISMS，以確保其<b>持續適合性、充分性與有效性</b>。<b>（9.3.2 輸入）：</b>審查應考量 <b>(a)</b> 前次審查行動之狀態；<b>(b)</b> 與 ISMS 相關之內外部議題變化；<b>(c)</b> 關注方需求與期望之變化；<b>(d)</b> 資安績效回饋，含趨勢：①不符合與矯正措施 ②監視量測結果 ③稽核結果 ④資安目標達成；<b>(e)</b> 關注方回饋；<b>(f)</b> 風險評鑑結果與風險處理計畫狀態；<b>(g)</b> 持續改善之機會。<b>（9.3.3 結果）：</b>審查結果應包含與<b>持續改善機會</b>及<b>ISMS 變更需求</b>相關之決議。應<b>保存管理審查結果之文件化資訊</b>。</div>
+      <div class="linkref"><b>輸入來源：</b>(d1) 來自 <b>10.2</b>、(d2) 來自 <b>9.1</b>、(d3) 來自 <b>9.2</b>、(d4) 來自 <b>6.2</b>、(f) 來自 <b>6.1/8.2/8.3</b>。可至「🔗 條文連動」由條文6/8 匯入彙整為審查輸入。</div>
+      <div class="subtabs">
+        <button class="active" onclick="subview('c93','gen',this)">① 審查場次資訊(9.3.1)</button>
+        <button onclick="subview('c93','mi',this)">② 審查輸入(9.3.2 a–g)</button>
+        <button onclick="subview('c93','mo',this)">③ 審查決議與輸出(9.3.3)</button>
+      </div>
+
+      <div class="subview active" id="c93_gen">
+        <div class="grid3">
+          <div class="field"><label>審查日期</label><input type="date" id="mrg_date"></div>
+          <div class="field"><label>規劃審查間隔</label><input id="mrg_interval" placeholder="例：每年一次（必要時加開）"></div>
+          <div class="field"><label>主席（最高管理階層）</label><input id="mrg_chair" placeholder="例：總經理 / 資安長"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>出席人員</label><textarea id="mrg_attendees" placeholder="例：總經理、資安長、各部門主管、ISMS推動小組、內部稽核員。"></textarea></div>
+          <div class="field"><label>地點 / 方式</label><input id="mrg_venue" placeholder="例：公司會議室 / 視訊"></div>
+        </div>
+        <div class="field"><label>審查結論：ISMS 之持續適合性、充分性與有效性</label><textarea id="mrg_conclusion" placeholder="例：經審查，本公司 ISMS 持續適合於營運環境、文件與資源充分、整體運作有效；資安目標多數達成，未達成項已提改善；同意持續推動並核定下列決議。"></textarea></div>
+        <p class="hint">＊本表記錄當期管理審查之基本資訊與總結論（9.3.1）；輸入逐項於「②審查輸入」建立，決議於「③審查決議與輸出」登錄。封存年度時將一併存入歷年紀錄。</p>
+      </div>
+
+      <div class="subview" id="c93_mi">
+        <div class="scroll">
+          <table id="t_mi">
+            <thead><tr>
+              <th style="width:80px">編號</th><th style="width:190px">輸入類別(a–g)</th>
+              <th style="width:280px">輸入內容 / 說明</th><th style="width:200px">資料來源 / 佐證</th>
+              <th style="width:100px">提報人</th><th style="width:220px">討論 / 結論</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="rowtools">
+          <button class="btn primary" onclick="addRow('mi')">＋ 新增審查輸入</button>
+          <button class="btn ghost" onclick="loadSample('mi')">載入範例</button>
+          <button class="btn ghost" onclick="goPanel('link')">🔗 由條文6/8 產生輸入</button>
+        </div>
+        <p class="hint">＊應涵蓋條文規定之 <b>(a)~(g)</b> 全部輸入類別；其中 (d) 績效回饋須含①不符合與矯正措施、②監視量測結果、③稽核結果、④資安目標達成四項趨勢。</p>
+      </div>
+
+      <div class="subview" id="c93_mo">
+        <div class="scroll">
+          <table id="t_mo">
+            <thead><tr>
+              <th style="width:80px">編號</th><th style="width:140px">決議類型</th>
+              <th style="width:260px">決議內容</th><th style="width:220px">後續行動</th>
+              <th style="width:100px">權責</th><th style="width:100px">預定完成</th>
+              <th style="width:120px">連動條文</th><th style="width:100px">狀態</th><th style="width:36px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="rowtools">
+          <button class="btn primary" onclick="addRow('mo')">＋ 新增審查決議</button>
+          <button class="btn ghost" onclick="loadSample('mo')">載入範例</button>
+        </div>
+        <p class="hint">＊審查結果(9.3.3)須包含<b>持續改善機會</b>與<b>ISMS 變更需求</b>之決議；各決議應指派權責與期限並追蹤，多數連動至 <b>10 改善</b>或 <b>6 規劃</b>。本表即管理審查應保存之結果文件化資訊。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 條文連動 ================= -->
+  <section class="panel" id="link">
+    <div class="card">
+      <h2 class="sec"><span class="tag">連動</span>與條文6「規劃」、條文8「運作」之資料連動</h2>
+      <div class="clauseref">績效評估彙整 ISMS 各環節之結果。可將「6.規劃」與「8.運作」工具<b>匯出之 JSON 備份</b>於此匯入，系統據以<b>產生</b>本工具 9.1 監視量測指標（來源 6.2 資安目標）及 9.3 管理審查輸入(d4 目標達成 / f 風險處理狀態 / d1 不符合等)之初始項目。</div>
+      <div class="grid2">
+        <div class="field">
+          <label>① 匯入「規劃（條文6）」JSON 備份</label>
+          <input type="file" id="plan6File" accept="application/json" onchange="importRef(event,'c6')">
+          <p class="hint">於 6.規劃 工具「資料管理 → 匯出 JSON 備份」取得；匯入僅讀取，不覆蓋本工具資料。</p>
+        </div>
+        <div class="field">
+          <label>② 匯入「運作（條文8）」JSON 備份</label>
+          <input type="file" id="plan8File" accept="application/json" onchange="importRef(event,'c8')">
+          <p class="hint">於 8.運作 工具「資料管理 → 匯出 JSON 備份」取得；提供風險處理執行與評鑑結果作為審查輸入。</p>
+        </div>
+      </div>
+      <div class="card" style="margin:0 0 12px;background:#f7fafd"><div id="refStatus"><p class="hint">尚未匯入條文6/8 資料。</p></div></div>
+      <div id="refGenBox" style="display:none">
+        <h2 class="sec" style="font-size:15px"><span class="tag">產生</span>由連動資料建立績效評估項目</h2>
+        <div class="rowtools">
+          <button class="btn primary" onclick="genRef('mm')">＋ 由 6.2 目標產生「9.1 監視量測指標」</button>
+          <button class="btn primary" onclick="genRef('mi')">＋ 由條文6/8 產生「9.3 管理審查輸入」</button>
+        </div>
+        <p class="hint">＊產生時會略過已存在之相同項目，可重複執行以增補。</p>
+        <div id="refPreview"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 年度簽核 ================= -->
+  <section class="panel" id="year">
+    <div class="card">
+      <h2 class="sec"><span class="tag">年度</span>年度績效評估覆核與簽核</h2>
+      <div class="clauseref">績效評估作業（9.1～9.3）應<b>定期執行（至少每年一次）</b>。完成本年度監視量測之分析評估、內部稽核及管理審查後，請填寫本簽核表並完成三級簽核，再按「封存本年度」建立年度紀錄，作為持續改善（條文10）與次年度規劃之依據。</div>
+      <div class="grid3">
+        <div class="field"><label>作業年度</label><input id="y_year" placeholder="例：2026"></div>
+        <div class="field"><label>作業期間（起）</label><input type="date" id="y_from"></div>
+        <div class="field"><label>作業期間（迄）</label><input type="date" id="y_to"></div>
+      </div>
+      <div class="field"><label>本年度績效評估摘要（9.1 績效/有效性 · 9.2 稽核結果 · 9.3 管理審查決議）</label><textarea id="y_summary" placeholder="說明本年度績效評估情形：監視量測指標達成與趨勢、ISMS有效性評估結論、內部稽核次數與不符合改善情形、管理審查日期與主要決議等；若整體運作良好亦請敘明。"></textarea></div>
+      <h2 class="sec" style="font-size:15px"><span class="tag">簽核</span>三級簽核</h2>
+      <div class="scroll" style="max-height:none">
+        <table>
+          <thead><tr><th style="width:80px">層級</th><th>角色 / 職稱</th><th style="width:160px">簽核人姓名</th><th style="width:150px">簽核日期</th><th style="width:150px">簽章 / 用印</th></tr></thead>
+          <tbody>
+            <tr><td><b>執行</b></td><td>ISMS 推動小組 / 內部稽核員</td><td><input id="y_exec_n" placeholder="姓名"></td><td><input type="date" id="y_exec_d"></td><td><div class="sealbox" id="seal_exec" onclick="pickSeal('exec')"></div></td></tr>
+            <tr><td><b>審查</b></td><td>資安長 / ISMS 主管</td><td><input id="y_rev_n" placeholder="姓名"></td><td><input type="date" id="y_rev_d"></td><td><div class="sealbox" id="seal_rev" onclick="pickSeal('rev')"></div></td></tr>
+            <tr><td><b>核准</b></td><td>最高管理階層</td><td><input id="y_app_n" placeholder="姓名"></td><td><input type="date" id="y_app_d"></td><td><div class="sealbox" id="seal_app" onclick="pickSeal('app')"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">「簽章 / 用印」格可點擊上傳電子簽章或公司印章圖檔（PNG/JPG）；亦可留白，列印後實體簽名用印。</p>
+      <div class="grid2" style="margin-top:12px">
+        <div class="field"><label>本年度管理審查(9.3)是否完成</label><select id="y_mr"><option value=""></option><option>是</option><option>否（待辦理）</option></select></div>
+        <div class="field"><label>下次應辦理日（核准日填入後自動帶次年，可手動調整）</label><input type="date" id="y_next"></div>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="archiveYear()">📦 封存本年度並建立紀錄</button>
+        <button class="btn ghost" onclick="printSignoff()">🖨 列印簽核表</button>
+        <button class="btn ghost" onclick="printReportCurrent()">📄 列印年度報告（含9.1~9.3）</button>
+      </div>
+      <p class="hint">封存後，目前 9.1～9.3 之資料與本簽核表將一併存入下方「歷年紀錄」；現有資料會保留供新年度延續編修。</p>
+      <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
+    </div>
+    <div class="card arch-card">
+      <h2 class="sec"><span class="tag">紀錄</span>歷年績效評估作業紀錄</h2>
+      <p class="hint">每一年度封存後在此列管，可檢視、匯出或還原為目前編輯版本，呈現年度資料軌跡。</p>
+      <div id="archiveBox"><p class="hint">尚無年度紀錄。完成簽核後請按「封存本年度」。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 作業說明（程序書） ================= -->
+  <section class="panel" id="guide">
+    <div class="card guide">
+      <h2 class="sec"><span class="tag">程序書</span>ISMS-9 績效評估管理程序書</h2>
+      <div class="clauseref">本作業說明為內嵌之精簡程序書，規範 ISO 27001:2022 第9章之作業活動、職責分工、產出與時機，可直接列印作為文件化資訊。</div>
+
+      <h3>1. 目的</h3>
+      <p>建立組織<b>監視、量測、分析與評估</b>資安績效與 ISMS 有效性、執行<b>內部稽核</b>查核符合性與有效實施、由最高管理階層辦理<b>管理審查</b>之作業方法，確保 ISMS 持續適合、充分且有效，並產生持續改善之決議。</p>
+
+      <h3>2. 適用範圍</h3>
+      <p>適用於 ISMS 範圍內之績效評估活動，涵蓋 ISO 27001:2022 條文 9.1、9.2 及 9.3，並與第6章規劃、第8章運作及第10章改善連動。</p>
+
+      <h3>3. 績效評估於 PDCA 之定位</h3>
+      <table>
+        <thead><tr><th>條文</th><th>活動（Check）</th><th>主要輸入</th><th>主要輸出 / 去向</th></tr></thead>
+        <tbody>
+          <tr><td>9.1 監視量測分析評估</td><td>決定項目/方法/時機/人員，量測並分析評估績效與有效性</td><td>6.2目標、8.1控制有效性、8.3處理結果、SoA</td><td>績效結論 → 9.3(d2)、10改善</td></tr>
+          <tr><td>9.2 內部稽核</td><td>依方案於規劃間隔稽核符合性與有效實施</td><td>ISO27001條文、ISMS文件、前次稽核結果</td><td>稽核報告/不符合 → 10.2、9.3(d3)</td></tr>
+          <tr><td>9.3 管理審查</td><td>最高管理階層審查並決議改善與變更</td><td>(a)~(g) 含9.1/9.2/10/6結果</td><td>決議 → 10改善、6規劃、資源/目標調整</td></tr>
+        </tbody>
+      </table>
+
+      <h3>4. 權責分工</h3>
+      <table class="roles">
+        <thead><tr><th>角色</th><th>職責</th></tr></thead>
+        <tbody>
+          <tr><td>最高管理階層</td><td>主持管理審查、審查 ISMS 持續適合/充分/有效、核定改善與變更決議與資源。</td></tr>
+          <tr><td>資安長 / ISMS 主管</td><td>統籌績效評估；核定監視量測指標與方法；督導內部稽核與管理審查之辦理；審查績效結論。</td></tr>
+          <tr><td>內部稽核員</td><td>依方案執行內部稽核並確保客觀公正；開立不符合並出具稽核報告；追蹤矯正措施結案。</td></tr>
+          <tr><td>過程 / 指標負責人</td><td>依方法執行監視與量測、提供資料；分析評估其指標績效並提改善建議。</td></tr>
+          <tr><td>ISMS 推動小組（文管/秘書）</td><td>維護本工具資料、保存量測/稽核/審查之結果文件化資訊、安排年度作業與簽核。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>5. 作業流程</h3>
+      <div class="flow">
+        <div class="step">①決定監視量測項目/方法<br><span style="font-weight:400">9.1 a–f</span></div><span class="arr">→</span>
+        <div class="step">②執行量測並保存結果<br><span style="font-weight:400">9.1</span></div><span class="arr">→</span>
+        <div class="step">③分析評估績效/有效性<br><span style="font-weight:400">9.1</span></div><span class="arr">→</span>
+        <div class="step">④規劃並執行內部稽核<br><span style="font-weight:400">9.2</span></div><span class="arr">→</span>
+        <div class="step">⑤開立不符合/矯正<br><span style="font-weight:400">9.2 / 10.2</span></div><span class="arr">→</span>
+        <div class="step">⑥彙整管理審查輸入<br><span style="font-weight:400">9.3.2 a–g</span></div><span class="arr">→</span>
+        <div class="step">⑦管理審查與決議<br><span style="font-weight:400">9.3.3</span></div><span class="arr">→</span>
+        <div class="step">⑧改善與年度簽核<br><span style="font-weight:400">回饋10/6</span></div>
+      </div>
+
+      <h3>9.1 監視、量測、分析與評估</h3>
+      <ol>
+        <li>決定須<b>監視與量測</b>之事項（含資安<b>過程與控制</b>）(a)，並訂定<b>方法</b>確保結果<b>可比較且可重現</b>(b)。</li>
+        <li>決定監視量測之<b>時機</b>(c)與<b>執行人員</b>(d)，及分析評估之<b>時機</b>(e)與<b>人員</b>(f)。</li>
+        <li><b>保存結果之文件化資訊</b>，並據以<b>評估資安績效與 ISMS 有效性</b>。</li>
+      </ol>
+
+      <h3>9.2 內部稽核</h3>
+      <ol>
+        <li>於<b>規劃間隔</b>執行內部稽核，查核 ISMS 是否<b>符合</b>組織自身要求與本標準要求，且<b>有效實施與維持</b>(9.2.1)。</li>
+        <li>建立並維持<b>稽核方案</b>（頻率/方法/責任/規劃要求/報告），考量過程<b>重要性與前次結果</b>(9.2.2)。</li>
+        <li>界定各次稽核之<b>準則與範圍</b>(a)；確保稽核員<b>客觀公正</b>(b)；結果<b>報告管理階層</b>(c)；保存方案與結果之文件化資訊。</li>
+        <li>不符合依 <b>10.2</b> 開立矯正措施並追蹤結案。</li>
+      </ol>
+
+      <h3>9.3 管理審查</h3>
+      <ol>
+        <li><b>最高管理階層</b>於<b>規劃間隔</b>審查 ISMS 之<b>持續適合性、充分性與有效性</b>(9.3.1)。</li>
+        <li>審查輸入應涵蓋 <b>(a)前次行動 (b)內外部議題變化 (c)關注方需求變化 (d)績效回饋(①不符合/矯正②監視量測③稽核④目標達成) (e)關注方回饋 (f)風險評鑑與處理狀態 (g)持續改善機會</b>(9.3.2)。</li>
+        <li>審查結果應含<b>持續改善機會</b>與<b>ISMS 變更需求</b>之決議，並<b>保存文件化資訊</b>(9.3.3)。</li>
+      </ol>
+
+      <h3>時機與年度簽核</h3>
+      <ul>
+        <li><b>定期：</b>監視量測依指標頻率持續執行；分析評估至少每季/半年彙整；內部稽核與管理審查<b>至少每年一次</b>。</li>
+        <li><b>觸發：</b>重大資安事故、重大變更、法規或合約要求變更時，加開稽核或管理審查。</li>
+        <li>完成年度作業後於「🗓 年度簽核」分頁完成<b>執行 → 審查 → 核准</b>三級簽核，按「封存本年度」建立年度快照，系統自動推算<b>下次應辦日</b>並於儀表板提醒。</li>
+      </ul>
+
+      <h3>文件化資訊與保存</h3>
+      <table>
+        <thead><tr><th>產出</th><th>對應條文</th><th>強制文件化</th></tr></thead>
+        <tbody>
+          <tr><td>監視量測方法總則 / 指標清單</td><td>9.1</td><td>建議保存（方法說明）</td></tr>
+          <tr><td>監視量測<b>結果</b>與分析評估紀錄</td><td>9.1</td><td><b>是</b></td></tr>
+          <tr><td>稽核方案、稽核計畫與排程</td><td>9.2.2</td><td><b>是</b>（方案實施證據）</td></tr>
+          <tr><td>稽核報告、發現與不符合/矯正紀錄</td><td>9.2 / 10.2</td><td><b>是</b>（稽核結果）</td></tr>
+          <tr><td>管理審查輸入、會議紀錄與決議</td><td>9.3</td><td><b>是</b>（審查結果）</td></tr>
+          <tr><td>年度績效評估作業簽核紀錄</td><td>9.1~9.3（年度覆核）</td><td>否（建議保存為符合性證據）</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">＊保存方式：可於本工具維護後，使用「資料管理」分頁匯出 JSON 備份，或列印為 PDF 併入 ISMS 文件體系；另可使用隨附之 Excel 管理台帳作為離線受控副本。</p>
+      <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
+    </div>
+  </section>
+
+  <!-- ================= 資料管理 ================= -->
+  <section class="panel" id="data">
+    <div class="card" id="dataPanel">
+      <h2 class="sec"><span class="tag">資料</span>儲存 / 備份 / 還原</h2>
+      <p class="hint">所有資料儲存於本機瀏覽器（localStorage），不會上傳。建議定期匯出 JSON 備份。</p>
+      <div class="rowtools">
+        <button class="btn primary" onclick="exportJSON()">⬇ 匯出 JSON 備份</button>
+        <button class="btn ghost" onclick="document.getElementById('imp').click()">⬆ 匯入 JSON</button>
+        <input type="file" id="imp" accept="application/json" style="display:none" onchange="importJSON(event)">
+        <button class="btn ghost" onclick="exportCSV()">⬇ 匯出 CSV（各表）</button>
+        <button class="btn danger" onclick="clearAll()">🗑 清空所有資料</button>
+      </div>
+      <div class="meta" id="dataMeta"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">說明</span>與其他條文工具及 Excel 台帳之搭配</h2>
+      <p>本工具承接 ISMS 之 <b>Plan（6規劃）→ Do（8運作）→ Check（9績效評估）→ Act（10改善）</b> 鏈結：於 6/8 工具匯出 JSON 後至「🔗 條文連動」匯入，可產生監視量測指標與管理審查輸入；管理審查決議與稽核不符合則連動至 10改善 工具辦理矯正與持續改善。日常以本 HTML 工具維護與覆核，需提交稽核或離線簽核時，匯出資料填入隨附 <b>Excel 管理台帳</b> 作為受控文件副本；兩者欄位一致，可雙向對照。</p>
+    </div>
+  </section>
+</main>
+
+<!-- 年度報告（僅列印時顯示） -->
+<div id="reportArea"></div>
+
+<div class="toast" id="toast"></div>
+<footer>
+  ISO/IEC 27001:2022 Clause 9 — Performance evaluation｜本機儲存．離線可用<br>
+  設計：Allan Lo 顧問（<a href="mailto:allanlo.plus@gmail.com">allanlo.plus@gmail.com</a>）｜
+  <a href="http://www.123hi.org" target="_blank" rel="noopener">http://www.123hi.org</a>｜2026年6月｜版本 v1.0
+</footer>
+
+<script>
+const KEY='iso27001_clause9_v1';
+
+// ---------- 欄位定義 ----------
+const COLS={
+  mm:[
+    {k:'id',t:'text'},
+    {k:'item',t:'textarea'},
+    {k:'category',t:'select',opt:['資安過程','控制措施','資安目標','事件指標','其他']},
+    {k:'method',t:'textarea'},
+    {k:'target',t:'text'},
+    {k:'mfreq',t:'select',opt:['即時/持續','每日','每週','每月','每季','半年','每年','不定期']},
+    {k:'mwho',t:'text'},
+    {k:'afreq',t:'select',opt:['每月','每季','半年','每年','不定期']},
+    {k:'awho',t:'text'},
+    {k:'evidence',t:'textarea'},
+    {k:'status',t:'select',opt:['規劃中','監視中','穩定','需改善']},
+  ],
+  ev:[
+    {k:'id',t:'text'},
+    {k:'period',t:'text'},
+    {k:'item_ref',t:'textarea'},
+    {k:'actual',t:'text'},
+    {k:'target',t:'text'},
+    {k:'judge',t:'select',opt:['達成','部分達成','未達成']},
+    {k:'trend',t:'select',opt:['上升','持平','下降']},
+    {k:'analysis',t:'textarea'},
+    {k:'effectiveness',t:'textarea'},
+    {k:'action',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'date',t:'date'},
+  ],
+  au:[
+    {k:'id',t:'text'},
+    {k:'round',t:'text'},
+    {k:'scope',t:'textarea'},
+    {k:'criteria',t:'textarea'},
+    {k:'date_plan',t:'date'},
+    {k:'date_actual',t:'date'},
+    {k:'auditor',t:'text'},
+    {k:'independence',t:'textarea'},
+    {k:'report_to',t:'text'},
+    {k:'result',t:'textarea'},
+    {k:'status',t:'select',opt:['規劃中','執行中','已完成','已報告']},
+    {k:'next',t:'date'},
+  ],
+  af:[
+    {k:'id',t:'text'},
+    {k:'audit_ref',t:'text'},
+    {k:'clause',t:'text'},
+    {k:'type',t:'select',opt:['不符合(主要)','不符合(次要)','觀察事項','改善機會','符合']},
+    {k:'finding',t:'textarea'},
+    {k:'evidence',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'corrective',t:'textarea'},
+    {k:'due',t:'date'},
+    {k:'verify',t:'textarea'},
+    {k:'status',t:'select',opt:['開立','改善中','待驗證','已結案']},
+  ],
+  mi:[
+    {k:'id',t:'text'},
+    {k:'category',t:'select',opt:['a)前次審查行動狀態','b)內外部議題變化','c)關注方需求期望變化','d1)不符合與矯正趨勢','d2)監視量測結果','d3)稽核結果','d4)資安目標達成','e)關注方回饋','f)風險評鑑與處理狀態','g)持續改善機會']},
+    {k:'content',t:'textarea'},
+    {k:'source',t:'textarea'},
+    {k:'present',t:'text'},
+    {k:'note',t:'textarea'},
+  ],
+  mo:[
+    {k:'id',t:'text'},
+    {k:'type',t:'select',opt:['持續改善機會','ISMS變更需求','資源需求','目標調整','政策/程序調整','其他決議']},
+    {k:'decision',t:'textarea'},
+    {k:'action',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'due',t:'date'},
+    {k:'link',t:'select',opt:['10 改善','6 規劃','7 支援(資源)','8 運作','5 領導','其他']},
+    {k:'status',t:'select',opt:['待執行','執行中','已完成','已驗證']},
+  ],
+};
+const TABLES=['mm','ev','au','af','mi','mo'];
+
+// ---------- 範例資料 ----------
+const SAMPLES={
+  mm:[
+    {id:'M-01',item:'高風險弱點修補時效達成率',category:'資安過程',method:'(於SLA內完成修補之高風險弱點數 ÷ 高風險弱點總數)×100%，資料取自弱點管理平台。',target:'≥95%',mfreq:'每月',mwho:'IT主管',afreq:'每季',awho:'資安組',evidence:'每月弱點與修補報表、季度分析表',status:'監視中'},
+    {id:'M-02',item:'多因子驗證(MFA)涵蓋率',category:'控制措施',method:'(已啟用MFA之帳號數 ÷ 應啟用帳號數)×100%，取自IAM報表。',target:'100%',mfreq:'每月',mwho:'資安組',afreq:'每季',awho:'資安組',evidence:'IAM MFA合規報表',status:'穩定'},
+    {id:'M-03',item:'資安事故件數與平均回應時間(MTTR)',category:'事件指標',method:'統計當期事故件數；MTTR=各事故(關閉時間-發生時間)平均，取自事故管理紀錄。',target:'P1事故MTTR≤4小時；重大事故0件',mfreq:'每月',mwho:'資安組',afreq:'每季',awho:'資安長',evidence:'事故通報與處理紀錄、季度統計',status:'監視中'},
+    {id:'M-04',item:'資安教育訓練完訓率與社交工程演練點擊率',category:'控制措施',method:'完訓率=完訓人數÷應訓人數；演練點擊率=點擊人數÷發送人數。',target:'完訓率≥95%；點擊率≤5%',mfreq:'半年',mwho:'人資/資安組',afreq:'半年',awho:'資安組',evidence:'訓練紀錄、演練結果報告',status:'監視中'},
+    {id:'M-05',item:'資安目標達成率（彙整6.2各目標）',category:'資安目標',method:'(達成之資安目標數 ÷ 目標總數)×100%。',target:'≥90%',mfreq:'每季',mwho:'ISMS推動小組',afreq:'每年',awho:'資安長',evidence:'6.2目標追蹤表、年度評估報告',status:'監視中'},
+    {id:'M-06',item:'備份還原演練成功率',category:'資安過程',method:'(成功之還原演練次數 ÷ 演練總次數)×100%。',target:'100%',mfreq:'半年',mwho:'IT維運',afreq:'半年',awho:'IT主管',evidence:'還原演練報告',status:'穩定'},
+  ],
+  ev:[
+    {id:'EV-2026Q1-01',period:'2026 Q1',item_ref:'M-01 高風險弱點修補時效',actual:'92%',target:'≥95%',judge:'未達成',trend:'上升',analysis:'Q1因新增分公司資產致弱點量增加，部分修補逾期；較去年同期(85%)已上升。',effectiveness:'控制機制有效但量能不足，整體有效性中等。',action:'增補修補人力與自動化派工；列入下次稽核重點。',owner:'資安組',date:'2026-04-10'},
+    {id:'EV-2026Q1-02',period:'2026 Q1',item_ref:'M-02 MFA涵蓋率',actual:'100%',target:'100%',judge:'達成',trend:'持平',analysis:'全帳號維持MFA啟用，新進帳號開通即強制設定。',effectiveness:'存取控制有效，達成目標。',action:'維持現況，定期抽查。',owner:'資安組',date:'2026-04-10'},
+    {id:'EV-2026Q1-03',period:'2026 Q1',item_ref:'M-03 事故件數與MTTR',actual:'事故3件、P1 MTTR 3.2hr、重大0件',target:'MTTR≤4hr；重大0件',judge:'達成',trend:'下降',analysis:'事故件數較前季(5件)下降；MTTR符合目標；無重大事故。',effectiveness:'監控與應變有效，ISMS於事件回應面具成效。',action:'持續精進SOAR自動化處置。',owner:'資安長',date:'2026-04-10'},
+  ],
+  au:[
+    {id:'IA-2026-01',round:'2026 年度全範圍',scope:'ISMS全條文(4–10)及Annex A適用控制；含總部與新分公司',criteria:'ISO/IEC 27001:2022 條文、本公司ISMS手冊與程序書、適用法規；參酌前次稽核3項缺失加重抽樣。',date_plan:'2026-05-20',date_actual:'2026-05-22',auditor:'內部稽核小組(林稽核、王稽核)',independence:'稽核員均受過稽核訓練，且不稽核自身負責之作業，確保客觀公正；雲端組由外部顧問協稽。',report_to:'最高管理階層、各受稽單位主管',result:'共開立不符合4項(次要3、觀察1)、改善機會5項；整體ISMS有效實施，文件符合。',status:'已報告',next:'2027-05-31'},
+    {id:'IA-2026-02',round:'2026 ERP上線專案稽核',scope:'新版ERP系統存取控制、變更管理與日誌',criteria:'ISO 27001 A.8系列控制、變更管理程序。',date_plan:'2026-10-25',date_actual:'2026-10-28',auditor:'內部稽核員(王稽核)',independence:'稽核員非ERP專案成員，確保客觀。',report_to:'資安長、IT主管',result:'開立不符合1項(權限過寬)、觀察1項；已要求限期改善。',status:'已報告',next:''},
+  ],
+  af:[
+    {id:'NC-2026-01',audit_ref:'IA-2026-01',clause:'A.8.8 / 9.1',type:'不符合(次要)',finding:'部分高風險弱點未於SLA(30日)內完成修補，且無例外簽核紀錄。',evidence:'弱點清單抽樣3筆逾期、無例外申請單',owner:'IT部',corrective:'補辦例外簽核機制；增補修補人力；建立逾期告警。原因：分公司資產納管後量能不足。',due:'2026-07-31',verify:'8月複查修補達成率回升至96%，例外機制已上線，驗證有效，結案。',status:'已結案'},
+    {id:'NC-2026-02',audit_ref:'IA-2026-01',clause:'A.5.20 / 8.1',type:'不符合(次要)',finding:'1家供應商合約未納入資安與個資保護條款。',evidence:'供應商合約抽樣',owner:'採購部',corrective:'換約補列資安條款；建立供應商合約資安檢核表。',due:'2026-08-31',verify:'待換約完成後驗證。',status:'改善中'},
+    {id:'NC-2026-03',audit_ref:'IA-2026-01',clause:'A.5.37',type:'觀察事項',finding:'部分操作程序文件版本未即時更新。',evidence:'文件抽樣2份版本過舊',owner:'各單位',corrective:'盤點並更新作業程序文件；納入文件定期覆核。',due:'2026-09-30',verify:'',status:'改善中'},
+    {id:'NC-2026-04',audit_ref:'IA-2026-02',clause:'A.8.2 / A.8.3',type:'不符合(主要)',finding:'ERP上線後部分角色權限過寬，違反最小權限原則。',evidence:'權限矩陣比對發現5個角色權限過大',owner:'IT部',corrective:'立即收斂權限並重新覆核；納入季度權限稽核；上線檢核表加列權限審查。',due:'2026-11-30',verify:'11月複查權限已收斂並通過覆核，驗證有效，結案。',status:'已結案'},
+  ],
+  mi:[
+    {id:'MI-01',category:'a)前次審查行動狀態',content:'前次(2025)管理審查7項決議，已完成6項、執行中1項(SOC建置)，整體達成率86%。',source:'2025管理審查決議追蹤表',present:'ISMS推動小組',note:'執行中項目展延至2026Q3，續追蹤。'},
+    {id:'MI-02',category:'b)內外部議題變化',content:'新增分公司據點、雲端服務擴大採用；外部勒索軟體威脅升高、個資法規趨嚴。',source:'4.組織全景 議題分析、威脅情資',present:'資安長',note:'須擴大ISMS範圍涵蓋分公司。'},
+    {id:'MI-03',category:'c)關注方需求期望變化',content:'客戶要求提供資安證明文件；主管機關要求強化供應鏈管理。',source:'4.組織全景 關注方需求表、客戶來函',present:'業務/法務',note:'規劃導入第三方驗證。'},
+    {id:'MI-04',category:'d1)不符合與矯正趨勢',content:'本年度不符合共5項(主要1、次要3、觀察1)，已結案3項、改善中2項；較去年(7項)下降。',source:'9.2稽核發現、10.2矯正紀錄',present:'內部稽核員',note:'供應商與文件管理為重複缺失，列為重點。'},
+    {id:'MI-05',category:'d2)監視量測結果',content:'指標多數達標：MFA 100%、事故MTTR 3.2hr達標、事故件數下降；弱點修補率Q1未達標(92%)已改善至96%。',source:'9.1分析評估紀錄',present:'資安組',note:'弱點量能持續強化。'},
+    {id:'MI-06',category:'d3)稽核結果',content:'完成年度全範圍稽核1次與ERP專案稽核1次，ISMS有效實施，無系統性重大缺失。',source:'IA-2026-01/02 稽核報告',present:'內部稽核員',note:''},
+    {id:'MI-07',category:'d4)資安目標達成',content:'6.2 資安目標8項，達成7項、部分達成1項(弱點修補)，達成率約94%。',source:'6.規劃 目標追蹤表',present:'ISMS推動小組',note:'未達成項已提改善並調整目標值。'},
+    {id:'MI-08',category:'e)關注方回饋',content:'客戶資安問卷滿意；員工反映教育訓練實用；無重大客訴或申訴。',source:'問卷、訓練回饋',present:'人資/業務',note:''},
+    {id:'MI-09',category:'f)風險評鑑與處理狀態',content:'年度風險評鑑識別42項，處理計畫完成28項、實施中3項；新分公司高風險2項已納入處理。',source:'8.運作 風險評鑑與處理執行',present:'資安組',note:'殘餘風險均經風險擁有者接受。'},
+    {id:'MI-10',category:'g)持續改善機會',content:'建議導入SOAR自動化、強化供應鏈資安、擴大第三方驗證範圍。',source:'各單位提案、稽核改善機會',present:'資安長',note:'納入決議。'},
+  ],
+  mo:[
+    {id:'MD-01',type:'資源需求',decision:'核定增補資安人力1名並導入弱點自動化派工工具，提升修補量能。',action:'人資啟動招募；IT評估採購自動化工具。',owner:'資安長/人資/IT',due:'2026-09-30',link:'7 支援(資源)',status:'執行中'},
+    {id:'MD-02',type:'持續改善機會',decision:'導入SOAR自動化處置以縮短事故MTTR，列為年度改善專案。',action:'資安組規劃SOAR劇本並分階段上線。',owner:'資安組',due:'2026-12-31',link:'10 改善',status:'執行中'},
+    {id:'MD-03',type:'ISMS變更需求',decision:'擴大ISMS範圍納入新分公司，更新範圍說明與資產清冊。',action:'更新4.組織全景範圍文件並重新評鑑分公司風險。',owner:'ISMS推動小組',due:'2026-08-31',link:'6 規劃',status:'已完成'},
+    {id:'MD-04',type:'政策/程序調整',decision:'強化供應商資安管理，修訂供應商管理程序並建立合約資安檢核表。',action:'法務/採購修訂程序與合約範本。',owner:'採購/法務',due:'2026-10-31',link:'8 運作',status:'執行中'},
+    {id:'MD-05',type:'目標調整',decision:'調整高風險弱點修補目標值並增訂分公司分項目標。',action:'更新6.2資安目標與量測指標。',owner:'資安組',due:'2026-07-31',link:'6 規劃',status:'已完成'},
+  ],
+};
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function migrate(d){
+  TABLES.forEach(t=>{d[t]=d[t]||[];});
+  d.g91=d.g91||{};d.g92=d.g92||{};d.mrg=d.mrg||{};
+  d.signoff=d.signoff||{};d.archives=d.archives||[];d.ref=d.ref||null;
+  return d;
+}
+function blank(){
+  const o={g91:{},g92:{},mrg:{},signoff:{},archives:[],ref:null,updated:null};
+  TABLES.forEach(t=>o[t]=[]);
+  return o;
+}
+function seeded(){
+  const o={};
+  TABLES.forEach(t=>o[t]=clone(SAMPLES[t]));
+  o.g91={
+    determine:'依資安目標、重要過程與控制、風險處理結果決定須監視量測之項目；涵蓋過程績效（如弱點修補時效）與控制有效性（如MFA涵蓋率、事故件數），確保涵蓋資安過程與控制(a)。',
+    method:'每一指標訂定計算公式、資料來源、抽樣方式與統計口徑，固定方法以利逐期比較與重現；資料保存於指定報表並受 7.5 文件管制(b)。',
+    timing:'監視量測頻率依指標訂定（即時/每月/每季）(c/d)；每季彙整分析、每半年評估有效性，並於管理審查(9.3)前完成年度評估(e/f)。',
+    evaluate:'以指標達成率、趨勢與不符合件數綜合評估資安績效；以資安目標達成、風險下降與事故減少評估 ISMS 有效性，結論提報管理審查。'
+  };
+  o.g92={
+    programme:'每年至少辦理一次全範圍內部稽核，必要時辦理專案稽核；採文件查核、現場訪談與紀錄抽樣；由內部稽核小組執行、ISMS主管統籌、結果報告最高管理階層（頻率/方法/責任/規劃要求/報告）。',
+    criteria:'準則為 ISO 27001:2022 條文、本公司 ISMS 文件與適用法規；範圍涵蓋全條文與 Annex A 適用控制，並依過程重要性與前次稽核缺失加重抽樣(a)。',
+    independence:'稽核員須受過稽核訓練且不稽核自身負責之作業，以確保客觀與公正；必要時委由合格外部稽核員協助(b)。',
+    reporting:'稽核結束召開末次會議並出具稽核報告，報告予受稽單位與最高管理階層；不符合開立矯正措施(10.2)並追蹤結案，結果提報管理審查(9.3)(c)。'
+  };
+  o.mrg={
+    date:'2026-06-15',interval:'每年一次（必要時加開）',chair:'總經理',
+    attendees:'總經理、資安長、各部門主管、ISMS推動小組、內部稽核員。',venue:'公司會議室',
+    conclusion:'經審查，本公司 ISMS 持續適合於營運環境、文件與資源充分、整體運作有效；資安目標多數達成，未達成項已提改善，同意持續推動並核定各項決議。'
+  };
+  o.signoff={year:String(new Date().getFullYear())};
+  o.archives=[];o.ref=null;o.updated=null;o.seeded=true;
+  return o;
+}
+let DATA=load();
+
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return migrate(d);}catch(e){}
+  return seeded();
+}
+function saveNow(){DATA.updated=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(DATA));toast('已儲存');renderDash();renderDataMeta();}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+// ---------- 表格渲染 ----------
+function cellInput(panel,rowIdx,col,val){
+  const common=`data-p="${panel}" data-i="${rowIdx}" data-k="${col.k}" oninput="onEdit(this)" onchange="onEdit(this)"`;
+  if(col.t==='select'){
+    let o='<option value=""></option>'+col.opt.map(x=>`<option ${x===val?'selected':''}>${esc(x)}</option>`).join('');
+    return `<select ${common}>${o}</select>`;
+  }
+  if(col.t==='textarea')return `<textarea ${common}>${esc(val||'')}</textarea>`;
+  if(col.t==='date')return `<input type="date" ${common} value="${esc(val||'')}">`;
+  return `<textarea rows="1" class="cellt" ${common}>${esc(val||'')}</textarea>`;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function tbodySel(panel){const t=document.getElementById('t_'+panel);return t?t.querySelector('tbody'):null;}
+
+// ---------- 表格內 textarea 自動撐高（避免文字被截） ----------
+function autoGrow(el){
+  if(!el||el.offsetParent===null)return; // 隱藏中不量測（scrollHeight=0）
+  el.style.height='auto';
+  el.style.height=Math.max(26,el.scrollHeight)+'px';
+}
+function growPanel(panel){const tb=tbodySel(panel);if(!tb)return;tb.querySelectorAll('textarea').forEach(autoGrow);}
+function growVisible(){
+  // 將目前可見之所有表格 textarea 同步撐高（切換分頁/子頁後 display 已套用，可直接量測）
+  document.querySelectorAll('main td textarea').forEach(autoGrow);
+}
+
+function renderTable(panel){
+  const tb=tbodySel(panel);
+  if(!tb)return;
+  let rows=DATA[panel]||[];
+  tb.innerHTML=rows.map((r,i)=>{
+    const dueField=(panel==='au')?'next':(panel==='af'||panel==='mo')?'due':(panel==='ev')?'date':'';
+    const done=(panel==='af'&&r.status==='已結案')||(panel==='mo'&&(r.status==='已完成'||r.status==='已驗證'))||(panel==='au'&&(r.status==='已完成'||r.status==='已報告'));
+    const due=(dueField&&!done&&isDue(r[dueField]))?'due':'';
+    const cells=COLS[panel].map(c=>`<td>${cellInput(panel,i,c,r[c.k])}</td>`).join('');
+    const delcell=`<td style="text-align:center"><button class="delx" title="刪除" onclick="delRow('${panel}',${i})">✕</button></td>`;
+    return `<tr class="${due}">${cells}${delcell}</tr>`;
+  }).join('');
+  growPanel(panel);
+}
+function onEdit(el){
+  const p=el.dataset.p,i=+el.dataset.i,k=el.dataset.k;
+  DATA[p][i][k]=el.value;
+  if(el.tagName==='TEXTAREA')autoGrow(el);
+  scheduleSave();
+}
+let saveTimer;
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{DATA.updated=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(DATA));renderDash();renderDataMeta();},500);}
+
+function addRow(panel){
+  const obj={};COLS[panel].forEach(c=>obj[c.k]='');
+  const yr=new Date().getFullYear();
+  const prefix={mm:'M',ev:'EV-'+yr+'-',au:'IA-'+yr+'-',af:'NC-'+yr+'-',mi:'MI',mo:'MD'}[panel];
+  if(prefix){
+    const seq=String((DATA[panel].length+1)).padStart(2,'0');
+    obj.id=(panel==='ev'||panel==='au'||panel==='af')?prefix+seq:prefix+'-'+seq;
+  }
+  DATA[panel].push(obj);saveNow();renderTable(panel);
+}
+function delRow(panel,i){
+  if(!confirm('確定刪除此列？'))return;
+  DATA[panel].splice(i,1);saveNow();renderTable(panel);
+}
+function loadSample(panel){
+  if(!SAMPLES[panel]){toast('本表無範例');return;}
+  if(DATA[panel].length && !confirm('將附加範例資料於現有清單之後，是否繼續？'))return;
+  DATA[panel]=DATA[panel].concat(clone(SAMPLES[panel]));
+  saveNow();renderTable(panel);toast('已載入範例');
+}
+
+// ---------- 子頁切換 ----------
+function subview(panel,view,btn){
+  document.querySelectorAll('#'+panel+' .subtabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#'+panel+' .subview').forEach(s=>s.classList.remove('active'));
+  document.getElementById(panel+'_'+view).classList.add('active');
+  growVisible();
+}
+
+// ---------- 總則 / 審查場次表單 ----------
+const FORMS={
+  g91:['determine','method','timing','evaluate'],
+  g92:['programme','criteria','independence','reporting'],
+  mrg:['date','interval','chair','attendees','venue','conclusion'],
+};
+function renderForms(){
+  Object.keys(FORMS).forEach(grp=>{
+    FORMS[grp].forEach(f=>{const el=document.getElementById(grp+'_'+f);if(el)el.value=(DATA[grp]&&DATA[grp][f])||'';});
+  });
+}
+function bindForms(){
+  Object.keys(FORMS).forEach(grp=>{
+    FORMS[grp].forEach(f=>{
+      const el=document.getElementById(grp+'_'+f);
+      if(el)el.addEventListener('input',()=>{DATA[grp]=DATA[grp]||{};DATA[grp][f]=el.value;scheduleSave();renderDash();});
+    });
+  });
+}
+
+// ---------- 覆核到期 ----------
+function isDue(d){if(!d)return false;const t=new Date();t.setHours(0,0,0,0);return new Date(d)<=t;}
+
+// ---------- 條文連動 ----------
+function importRef(e,which){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      const src=d.snapshot?d.snapshot:d;
+      DATA.ref=DATA.ref||{};
+      if(which==='c6'){
+        DATA.ref.c6={c62:src.c62||[],c611:src.c611||[],c612:src.c612||[],treat:src.treat||[],soa:src.soa||[],importedAt:new Date().toISOString()};
+      }else{
+        DATA.ref.c8={act:src.act||[],ra:src.ra||[],rt:src.rt||[],chg:src.chg||[],importedAt:new Date().toISOString()};
+      }
+      saveNow();renderRefStatus();toast('已匯入'+(which==='c6'?'條文6':'條文8')+'資料');
+    }catch(err){alert('檔案格式錯誤，請確認為對應條文工具匯出之 JSON。');}
+  };
+  r.readAsText(f);e.target.value='';
+}
+function renderRefStatus(){
+  const box=document.getElementById('refStatus');const gen=document.getElementById('refGenBox');
+  const ref=DATA.ref;
+  if(!ref||(!ref.c6&&!ref.c8)){box.innerHTML='<p class="hint">尚未匯入條文6/8 資料。</p>';if(gen)gen.style.display='none';return;}
+  let h='<div style="font-size:13px">';
+  if(ref.c6){const p=ref.c6;h+=`<div>✅ 條文6（規劃）已匯入（${esc((p.importedAt||'').slice(0,10))}）
+    <span class="meta" style="display:inline-flex"><span>6.2目標：<b>${(p.c62||[]).length}</b></span><span>6.1.2風險：<b>${(p.c612||[]).length}</b></span><span>處理計畫：<b>${(p.treat||[]).length}</b></span></span></div>`;}
+  if(ref.c8){const p=ref.c8;h+=`<div style="margin-top:4px">✅ 條文8（運作）已匯入（${esc((p.importedAt||'').slice(0,10))}）
+    <span class="meta" style="display:inline-flex"><span>作為實施：<b>${(p.act||[]).length}</b></span><span>風險評鑑：<b>${(p.ra||[]).length}</b></span><span>處理執行：<b>${(p.rt||[]).length}</b></span></span></div>`;}
+  h+='</div>';
+  box.innerHTML=h;
+  if(gen)gen.style.display='block';
+  renderRefPreview();
+}
+function renderRefPreview(){
+  const box=document.getElementById('refPreview');if(!box||!DATA.ref)return;
+  const c6=DATA.ref.c6||{};
+  const existMm=new Set(DATA.mm.map(m=>m.item).filter(Boolean));
+  const newMm=(c6.c62||[]).filter(o=>{const nm=(o.objective||o.name||o.target||'');return nm&&![...existMm].some(x=>x.includes(nm)||nm.includes(x));}).length;
+  box.innerHTML=`<p class="hint">可新增：9.1 監視量測指標 <b>${newMm}</b> 項（來源 6.2 目標）；9.3 審查輸入將依條文6/8 彙整產生。</p>`;
+}
+function genRef(target){
+  if(!DATA.ref){toast('請先匯入條文6/8資料');return;}
+  let added=0;
+  if(target==='mm'){
+    const c6=DATA.ref.c6||{};
+    const exist=new Set(DATA.mm.map(m=>m.item).filter(Boolean));
+    (c6.c62||[]).forEach(o=>{
+      const nm=o.objective||o.name||o.target||'';
+      if(!nm||[...exist].some(x=>x.includes(nm)||nm.includes(x)))return;
+      DATA.mm.push({id:'M-'+String(DATA.mm.length+1).padStart(2,'0'),item:nm,category:'資安目標',
+        method:o.measure||o.method||'依6.2目標衡量方式量測',target:o.target||o.value||'',mfreq:'每季',mwho:o.owner||'',
+        afreq:'每年',awho:o.owner||'資安組',evidence:'6.2目標追蹤表',status:'規劃中'});
+      added++;
+    });
+  }else if(target==='mi'){
+    const c6=DATA.ref.c6||{},c8=DATA.ref.c8||{};
+    const exist=new Set(DATA.mi.map(m=>m.content).filter(Boolean));
+    const cand=[];
+    if((c6.c62||[]).length){const done=(c6.c62||[]).filter(o=>(o.status||'')==='已達成'||(o.status||'')==='達成').length;
+      cand.push({category:'d4)資安目標達成',content:`6.2 資安目標共 ${(c6.c62||[]).length} 項，達成 ${done} 項。`,source:'6.規劃 目標追蹤表'});}
+    if((c8.rt||[]).length){const fin=(c8.rt||[]).filter(o=>(o.status||'')==='已完成'||(o.status||'')==='已驗證').length;
+      cand.push({category:'f)風險評鑑與處理狀態',content:`風險處理執行共 ${(c8.rt||[]).length} 項，已完成/驗證 ${fin} 項；風險評鑑場次 ${(c8.ra||[]).length} 次。`,source:'8.運作 風險處理執行/評鑑'});}
+    if((c8.act||[]).length){const ok=(c8.act||[]).filter(o=>(o.status||'')==='已完成'||(o.status||'')==='已驗證').length;
+      cand.push({category:'d2)監視量測結果',content:`條文6作為實施 ${(c8.act||[]).length} 項，完成/驗證 ${ok} 項，含有效性確認。`,source:'8.運作 作為實施追蹤'});}
+    cand.forEach(c=>{
+      if(exist.has(c.content))return;
+      DATA.mi.push({id:'MI-'+String(DATA.mi.length+1).padStart(2,'0'),category:c.category,content:c.content,source:c.source,present:'ISMS推動小組',note:''});
+      added++;
+    });
+  }
+  if(added){saveNow();renderTable(target);renderRefPreview();toast('已產生 '+added+' 項');}
+  else toast('無新增項目（可能已存在）');
+}
+
+// ---------- 儀表板 ----------
+function renderDash(){
+  renderAnnual();
+  const mm=DATA.mm||[],ev=DATA.ev||[],au=DATA.au||[],af=DATA.af||[],mi=DATA.mi||[],mo=DATA.mo||[];
+  const yr=String(new Date().getFullYear());
+  const mmRun=mm.filter(m=>m.status==='監視中'||m.status==='穩定').length;
+  const evAchieve=ev.filter(e=>e.judge==='達成').length;
+  const auDone=au.filter(a=>a.status==='已完成'||a.status==='已報告').length;
+  const ncOpen=af.filter(a=>(a.type||'').startsWith('不符合')&&a.status!=='已結案').length;
+  const ncTotal=af.filter(a=>(a.type||'').startsWith('不符合')).length;
+  const moDone=mo.filter(m=>m.status==='已完成'||m.status==='已驗證').length;
+
+  document.getElementById('kpiBox').innerHTML=[
+    {n:mmRun+'/'+mm.length,l:'9.1 監視量測指標（運作中/總數）'},
+    {n:ev.length?evAchieve+'/'+ev.length:'0',l:'9.1 評估紀錄（達成/總筆數）'},
+    {n:au.length?auDone+'/'+au.length:'0',l:'9.2 內部稽核（完成/總場次）'},
+    {n:mo.length?moDone+'/'+mo.length:'0',l:'9.3 審查決議（完成/總，未結不符合 '+ncOpen+'）'},
+  ].map(b=>`<div class="box"><div class="n">${b.n}</div><div class="l">${b.l}</div></div>`).join('');
+
+  // 進度：9.1總則 / 指標 / 評估 / 9.2總則或稽核 / 9.3場次或輸入 / 9.3決議
+  const g91OK=FORMS.g91.every(f=>(DATA.g91||{})[f]);
+  const g92OK=FORMS.g92.every(f=>(DATA.g92||{})[f]);
+  const mrgOK=!!((DATA.mrg||{}).date&&(DATA.mrg||{}).conclusion);
+  const s_91g=g91OK;
+  const s_mm=mm.length>0&&ev.length>0;
+  const s_92=g92OK&&au.length>0;
+  const s_af=af.length>0;
+  const s_93=mrgOK&&mi.length>0;
+  const s_mo=mo.length>0;
+  const flags=[s_91g,s_mm,s_92,s_af,s_93,s_mo];
+  const done=flags.filter(Boolean).length;
+  const pct=Math.round(done/6*100);
+  document.getElementById('progressBox').innerHTML=
+    `<div style="margin-top:4px;font-size:13px;color:var(--mut)">績效評估建置完成度：<b style="color:var(--c1)">${done}/6（${pct}%）</b>
+     ${g91OK?'':'　<span class="pill warn">9.1方法總則未完整</span>'}
+     ${g92OK?'':'　<span class="pill warn">9.2稽核方案未完整</span>'}
+     ${ncOpen?'　<span class="pill bad">未結不符合 '+ncOpen+' 件</span>':''}</div>
+     <div class="progress"><i style="width:${pct}%"></i></div>`;
+
+  renderAuditDist();
+  renderDue();
+}
+function renderAuditDist(){
+  const box=document.getElementById('auditDistBox');if(!box)return;
+  const af=DATA.af||[];
+  if(!af.length){box.innerHTML='<p class="hint">尚無稽核發現資料。請至 9.2 分頁建立。</p>';return;}
+  const cnt={'不符合(主要)':0,'不符合(次要)':0,'觀察事項':0,'改善機會':0,'符合':0};
+  af.forEach(a=>{cnt[a.type||'觀察事項']=(cnt[a.type||'觀察事項']||0)+1;});
+  const closed=af.filter(a=>a.status==='已結案').length;
+  const seg=(lab,n,c)=>`<div title="${lab} ${n}件" style="flex:${n||0.01};background:${c};color:#fff;text-align:center;font-size:12px;font-weight:700;padding:6px 0">${n?lab+' '+n:''}</div>`;
+  box.innerHTML=`<div style="font-size:12.5px;color:var(--mut);margin-bottom:4px">稽核發現分布</div>
+    <div style="display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--line)">
+      ${seg('主要NC',cnt['不符合(主要)'],'#c0392b')}${seg('次要NC',cnt['不符合(次要)'],'#e67e22')}${seg('觀察',cnt['觀察事項'],'#d8a200')}${seg('改善機會',cnt['改善機會'],'#2e8bc0')}${seg('符合',cnt['符合'],'#2e7d32')}
+    </div>
+    <div class="meta" style="margin-top:8px">
+      <span>發現合計：<b>${af.length}</b></span>
+      <span>不符合：<b style="color:#c0392b">${cnt['不符合(主要)']+cnt['不符合(次要)']}</b></span>
+      <span>已結案：<b style="color:#2e7d32">${closed}</b></span>
+      <span>稽核場次：<b>${(DATA.au||[]).length}</b></span>
+      <span>審查決議：<b>${(DATA.mo||[]).length}</b></span>
+    </div>`;
+}
+function renderDue(){
+  const due=[];
+  (DATA.ev||[]).forEach(r=>{if(isDue(r.date)&&r.judge==='未達成')due.push({lab:'9.1未達標',id:r.id,name:r.item_ref,d:r.date});});
+  (DATA.au||[]).forEach(r=>{if(isDue(r.next)&&r.status!=='規劃中')due.push({lab:'9.2下次稽核',id:r.id,name:r.scope,d:r.next});});
+  (DATA.af||[]).forEach(r=>{if(isDue(r.due)&&r.status!=='已結案')due.push({lab:'9.2改善',id:r.id,name:r.finding,d:r.due});});
+  (DATA.mo||[]).forEach(r=>{if(isDue(r.due)&&r.status!=='已完成'&&r.status!=='已驗證')due.push({lab:'9.3決議',id:r.id,name:r.decision,d:r.due});});
+  const box=document.getElementById('dueBox');
+  if(due.length===0){box.innerHTML='<p class="hint">目前沒有到期或逾期的待辦項目。✅</p>';return;}
+  box.innerHTML='<table><thead><tr><th>類別</th><th>編號</th><th>項目</th><th>日期</th><th>狀態</th></tr></thead><tbody>'+
+    due.map(d=>`<tr class="due"><td>${esc(d.lab)}</td><td>${esc(d.id||'')}</td><td>${esc((d.name||'').slice(0,40))}</td><td>${esc(d.d)}</td><td><span class="pill bad">需處理</span></td></tr>`).join('')+
+    '</tbody></table>';
+}
+function renderDataMeta(){
+  const m=document.getElementById('dataMeta');
+  const total=TABLES.reduce((s,t)=>s+(DATA[t]||[]).length,0);
+  const refTxt=DATA.ref?((DATA.ref.c6?'6':'')+(DATA.ref.c8?(DATA.ref.c6?'/8':'8'):'')||'—'):'未匯入';
+  m.innerHTML=`<span>資料筆數合計：<b>${total}</b></span><span>條文連動：<b>${refTxt}</b></span><span>最後更新：<b>${DATA.updated?new Date(DATA.updated).toLocaleString('zh-TW'):'—'}</b></span>`;
+}
+
+// ---------- 匯出入 ----------
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  dl(blob,'ISO27001_績效評估_'+ymd()+'.json');toast('已匯出 JSON');
+}
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);DATA=migrate(d);saveNow();renderAll();toast('已匯入');}catch(err){alert('檔案格式錯誤');}};
+  r.readAsText(f);e.target.value='';
+}
+function exportCSV(){
+  const labels={mm:'9.1監視量測指標',ev:'9.1分析評估紀錄',au:'9.2稽核計畫',af:'9.2稽核發現',mi:'9.3管理審查輸入',mo:'9.3管理審查決議'};
+  let parts=[];
+  const g91=DATA.g91||{},g92=DATA.g92||{},mrg=DATA.mrg||{};
+  parts.push('9.1監視量測方法總則\n項目,內容\n'+
+    [['監視量測決定原則',g91.determine],['方法',g91.method],['時機',g91.timing],['績效有效性評估',g91.evaluate]]
+    .map(r=>'"'+(r[0]||'')+'","'+String(r[1]||'').replace(/"/g,'""')+'"').join('\n'));
+  parts.push('9.2稽核方案總則\n項目,內容\n'+
+    [['稽核方案',g92.programme],['準則與範圍',g92.criteria],['稽核員客觀性',g92.independence],['報告與後續',g92.reporting]]
+    .map(r=>'"'+(r[0]||'')+'","'+String(r[1]||'').replace(/"/g,'""')+'"').join('\n'));
+  parts.push('9.3管理審查場次\n項目,內容\n'+
+    [['審查日期',mrg.date],['審查間隔',mrg.interval],['主席',mrg.chair],['出席人員',mrg.attendees],['地點/方式',mrg.venue],['審查結論',mrg.conclusion]]
+    .map(r=>'"'+(r[0]||'')+'","'+String(r[1]||'').replace(/"/g,'""')+'"').join('\n'));
+  TABLES.forEach(p=>{
+    const cols=COLS[p].map(c=>c.k);
+    let csv=labels[p]+'\n'+cols.join(',')+'\n';
+    (DATA[p]||[]).forEach(r=>{csv+=cols.map(k=>'"'+String(r[k]||'').replace(/"/g,'""')+'"').join(',')+'\n';});
+    parts.push(csv);
+  });
+  const blob=new Blob(['﻿'+parts.join('\n\n')],{type:'text/csv;charset=utf-8'});
+  dl(blob,'ISO27001_績效評估_'+ymd()+'.csv');toast('已匯出 CSV');
+}
+function clearAll(){
+  if(!confirm('確定清空所有資料？此動作無法復原（建議先匯出備份）。'))return;
+  DATA=blank();saveNow();renderAll();
+}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+function ymd(){const d=new Date();return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+
+// ---------- 導覽 ----------
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(b.dataset.p).classList.add('active');
+  growVisible();
+});
+
+// ---------- 年度簽核 ----------
+const SIGN_FIELDS=['year','from','to','summary','exec_n','exec_d','rev_n','rev_d','app_n','app_d','mr','next'];
+function renderSignoff(){
+  DATA.signoff=DATA.signoff||{};
+  if(!DATA.signoff.year)DATA.signoff.year=String(new Date().getFullYear());
+  SIGN_FIELDS.forEach(f=>{const el=document.getElementById('y_'+f);if(el)el.value=DATA.signoff[f]||'';});
+  renderSeals();
+}
+function renderSeals(){
+  ['exec','rev','app'].forEach(k=>{
+    const box=document.getElementById('seal_'+k);if(!box)return;
+    const d=DATA.signoff[k+'_seal'];
+    box.innerHTML=d?('<img src="'+d+'"><button class="sealx" title="清除" onclick="clearSeal(\''+k+'\');event.stopPropagation()">✕</button>')
+                   :'<span class="sealhint">點此用印 / 上傳</span>';
+  });
+}
+function pickSeal(k){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/*';
+  inp.onchange=()=>{const f=inp.files[0];if(!f)return;
+    if(f.size>800*1024){alert('圖檔請小於 800KB。');return;}
+    const r=new FileReader();r.onload=()=>{DATA.signoff=DATA.signoff||{};DATA.signoff[k+'_seal']=r.result;scheduleSave();renderSeals();toast('已套用簽章');};r.readAsDataURL(f);};
+  inp.click();
+}
+function clearSeal(k){DATA.signoff[k+'_seal']='';scheduleSave();renderSeals();}
+function bindSignoff(){
+  SIGN_FIELDS.forEach(f=>{
+    const el=document.getElementById('y_'+f);
+    if(!el)return;
+    el.addEventListener('input',()=>{
+      DATA.signoff=DATA.signoff||{};DATA.signoff[f]=el.value;
+      if(f==='app_d' && el.value && !DATA.signoff.next){
+        const d=new Date(el.value);d.setFullYear(d.getFullYear()+1);
+        const nx=d.toISOString().slice(0,10);
+        DATA.signoff.next=nx;const ne=document.getElementById('y_next');if(ne)ne.value=nx;
+      }
+      scheduleSave();renderAnnual();
+    });
+  });
+}
+function addYears(dstr,n){const d=new Date(dstr);d.setFullYear(d.getFullYear()+n);return d;}
+function archiveYear(){
+  const s=DATA.signoff||{};
+  if(!s.year){alert('請先填寫「作業年度」。');return;}
+  if(!s.app_n||!s.app_d){if(!confirm('尚未完成「核准」簽核，仍要封存嗎？建議完成核准後再封存。'))return;}
+  const rec={
+    year:s.year, archivedDate:new Date().toISOString().slice(0,10),
+    counts:{mm:DATA.mm.length,ev:DATA.ev.length,au:DATA.au.length,af:DATA.af.length,
+            nc:DATA.af.filter(x=>(x.type||'').startsWith('不符合')).length,
+            ncClosed:DATA.af.filter(x=>(x.type||'').startsWith('不符合')&&x.status==='已結案').length,
+            mi:DATA.mi.length,mo:DATA.mo.length},
+    approver:s.app_n||'', approveDate:s.app_d||'',
+    mr:s.mr||'', next:s.next||(s.app_d?addYears(s.app_d,1).toISOString().slice(0,10):''),
+    signoff:clone(s),
+    snapshot:{mm:clone(DATA.mm),ev:clone(DATA.ev),au:clone(DATA.au),af:clone(DATA.af),
+              mi:clone(DATA.mi),mo:clone(DATA.mo),g91:clone(DATA.g91),g92:clone(DATA.g92),mrg:clone(DATA.mrg)}
+  };
+  DATA.archives=DATA.archives||[];
+  const i=DATA.archives.findIndex(a=>a.year===rec.year);
+  if(i>=0){if(!confirm('已存在 '+rec.year+' 年度紀錄，將覆蓋更新，是否繼續？'))return;DATA.archives[i]=rec;}
+  else DATA.archives.push(rec);
+  DATA.archives.sort((a,b)=>String(b.year).localeCompare(String(a.year)));
+  saveNow();renderArchives();renderAnnual();toast('已封存 '+rec.year+' 年度紀錄');
+}
+function renderArchives(){
+  const box=document.getElementById('archiveBox');if(!box)return;
+  const a=DATA.archives||[];
+  if(a.length===0){box.innerHTML='<p class="hint">尚無年度紀錄。完成簽核後請按「封存本年度」。</p>';return;}
+  box.innerHTML='<div class="scroll" style="max-height:46vh"><table><thead><tr>'+
+    '<th>年度</th><th>封存日</th><th>指標</th><th>稽核</th><th>不符合(結案)</th><th>決議</th><th>核准人</th><th>核准日</th><th>審查9.3</th><th>下次應辦</th><th>簽核</th><th>操作</th>'+
+    '</tr></thead><tbody>'+
+    a.map((r,i)=>{
+      const signed=r.approver&&r.approveDate;
+      const pill=signed?'<span class="pill ok">已簽核</span>':'<span class="pill warn">未完成</span>';
+      const c=r.counts||{};
+      return `<tr><td><b>${esc(r.year)}</b></td><td>${esc(r.archivedDate)}</td>
+        <td>${c.mm||0}</td><td>${c.au||0}</td><td>${c.nc||0}(${c.ncClosed||0})</td><td>${c.mo||0}</td>
+        <td>${esc(r.approver||'—')}</td><td>${esc(r.approveDate||'—')}</td><td>${esc(r.mr||'—')}</td><td>${esc(r.next||'—')}</td>
+        <td>${pill}</td>
+        <td style="white-space:nowrap">
+          <button class="btn ghost sm" onclick="printReportArchive(${i})">📄報告</button>
+          <button class="btn ghost sm" onclick="exportYear(${i})">匯出</button>
+          <button class="btn ghost sm" onclick="restoreYear(${i})">還原</button>
+          <button class="btn danger sm" onclick="delYear(${i})">刪</button>
+        </td></tr>`;
+    }).join('')+'</tbody></table></div>';
+}
+function exportYear(i){
+  const r=DATA.archives[i];
+  const blob=new Blob([JSON.stringify(r,null,2)],{type:'application/json'});
+  dl(blob,'績效評估_'+r.year+'年度_'+ymd()+'.json');toast('已匯出 '+r.year+' 年度');
+}
+function restoreYear(i){
+  const r=DATA.archives[i];
+  if(!confirm('將以「'+r.year+' 年度」之封存內容覆蓋目前編輯中的 9.1～9.3 與簽核資料，是否繼續？（目前資料若未封存將遺失）'))return;
+  const sn=r.snapshot;
+  TABLES.forEach(t=>{DATA[t]=clone(sn[t]||[]);});
+  DATA.g91=clone(sn.g91||{});DATA.g92=clone(sn.g92||{});DATA.mrg=clone(sn.mrg||{});DATA.signoff=clone(r.signoff);
+  saveNow();renderAll();toast('已還原 '+r.year+' 年度');
+}
+function delYear(i){
+  if(!confirm('確定刪除此年度紀錄？'))return;
+  DATA.archives.splice(i,1);saveNow();renderArchives();renderAnnual();
+}
+function renderAnnual(){
+  const box=document.getElementById('annualBox');if(!box)return;
+  const s=DATA.signoff||{};
+  const today=new Date();today.setHours(0,0,0,0);
+  let html='',cls='',icon='',msg='';
+  const lastApp=s.app_d?new Date(s.app_d):null;
+  const next=s.next?new Date(s.next):(lastApp?addYears(s.app_d,1):null);
+  if(!lastApp){
+    cls='warn';icon='⚠';msg='本年度（'+(s.year||'—')+'）績效評估作業<b>尚未完成核准簽核</b>。請至「🗓 年度簽核」分頁完成覆核與三級簽核。';
+  }else{
+    const overdue=next&&next<today;
+    const soon=next&&!overdue&&((next-today)/86400000<=60);
+    if(overdue){cls='bad';icon='⛔';msg='上次核准日 <b>'+s.app_d+'</b>（'+(s.year||'')+' 年度），下次應辦日 <b>'+(s.next||'')+'</b> <b>已逾期</b>，請儘速辦理年度績效評估。';}
+    else if(soon){cls='warn';icon='⏰';msg='上次核准日 <b>'+s.app_d+'</b>，下次應辦日 <b>'+(s.next||'')+'</b> <b>即將到期（60天內）</b>，請預為安排。';}
+    else{cls='ok';icon='✅';msg='本年度（'+(s.year||'')+'）已於 <b>'+s.app_d+'</b> 完成核准簽核'+(s.mr?'，管理審查(9.3)：<b>'+s.mr+'</b>':'')+'。下次應辦日：<b>'+(s.next||'—')+'</b>。';}
+  }
+  const colors={ok:['#e7f4e8','#2e7d32'],warn:['#fdf0e3','#e67e22'],bad:['#fbe9e7','#c0392b']};
+  const c=colors[cls];
+  html='<div style="display:flex;gap:12px;align-items:center;background:'+c[0]+';border-left:5px solid '+c[1]+
+    ';border-radius:8px;padding:12px 16px;margin-bottom:16px">'+
+    '<div style="font-size:24px">'+icon+'</div>'+
+    '<div style="flex:1;font-size:13.5px;color:#2b3a47"><b style="color:'+c[1]+'">年度績效評估作業狀態</b><br>'+msg+'</div>'+
+    '<button class="btn ghost sm" onclick="goPanel(\'year\')">前往年度簽核</button></div>';
+  box.innerHTML=html;
+}
+function goPanel(p){
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.p===p));
+  document.querySelectorAll('.panel').forEach(s=>s.classList.toggle('active',s.id===p));
+  growVisible();
+}
+
+// ---------- 列印：簽核表 ----------
+function printWith(cls){
+  document.body.classList.add(cls);
+  const done=()=>{document.body.classList.remove(cls);window.removeEventListener('afterprint',done);};
+  window.addEventListener('afterprint',done);
+  setTimeout(()=>{window.print();},60);
+}
+function printSignoff(){goPanel('year');renderSeals();printWith('print-signoff');}
+
+// ---------- 列印：年度報告 ----------
+const RHEAD={
+  mm:['編號','監視/量測項目','類別','量測方法','基準/目標','量測頻率','量測者','評估時機','評估者','文件化資訊','狀態'],
+  ev:['編號','期間','對應指標','實際值','目標/基準','達成判定','趨勢','分析說明','績效/有效性評估','後續行動','評估者','評估日'],
+  au:['編號','梯次/年度','稽核範圍','稽核準則','預定日','實際日','稽核員','客觀公正性','報告對象','結果摘要','狀態','下次稽核'],
+  af:['編號','對應稽核','相關條文/控制','類型','發現描述','客觀證據','權責','矯正措施','改善期限','驗證/結案','狀態'],
+  mi:['編號','輸入類別(a–g)','輸入內容','資料來源/佐證','提報人','討論/結論'],
+  mo:['編號','決議類型','決議內容','後續行動','權責','預定完成','連動條文','狀態']
+};
+function rptTable(panel,arr){
+  const ks=COLS[panel].map(c=>c.k);
+  let h='<table class="rpt"><thead><tr>'+RHEAD[panel].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
+  if(!arr||!arr.length){h+='<tr><td colspan="'+ks.length+'" style="text-align:center;color:#888">（無資料）</td></tr>';}
+  else{h+=arr.map(r=>'<tr>'+ks.map(k=>'<td>'+esc(r[k]||'')+'</td>').join('')+'</tr>').join('');}
+  return h+'</tbody></table>';
+}
+function currentSrc(){
+  return {year:(DATA.signoff||{}).year||'',signoff:DATA.signoff||{},g91:DATA.g91||{},g92:DATA.g92||{},mrg:DATA.mrg||{},
+          mm:DATA.mm,ev:DATA.ev,au:DATA.au,af:DATA.af,mi:DATA.mi,mo:DATA.mo};
+}
+function buildReport(s){
+  const so=s.signoff||{},g91=s.g91||{},g92=s.g92||{},mrg=s.mrg||{};
+  const seal=k=>{const d=so[k+'_seal'];return d?'<img src="'+d+'">':'';};
+  const row=(lvl,role,nk,dk)=>`<tr><td><b>${lvl}</b></td><td>${role}</td><td>${esc(so[nk]||'')}</td><td>${esc(so[dk]||'')}</td><td><div class="rt-sealbox">${seal(nk.split('_')[0])}</div></td></tr>`;
+  const period=(so.from||'')+(so.to?(' ~ '+so.to):'');
+  const nc=(s.af||[]).filter(r=>(r.type||'').startsWith('不符合')).length;
+  const ncC=(s.af||[]).filter(r=>(r.type||'').startsWith('不符合')&&r.status==='已結案').length;
+  const html=`<div class="rpt-doc">
+    <h1 class="rt">資訊安全管理系統　績效評估年度報告</h1>
+    <div class="rt-sub">ISO/IEC 27001:2022　Clause 9 — Performance evaluation</div>
+    <table class="rt-meta">
+      <tr><td class="k">作業年度</td><td>${esc(s.year||'')}</td><td class="k">作業期間</td><td>${esc(period)}</td></tr>
+      <tr><td class="k">監視量測指標</td><td>${(s.mm||[]).length}</td><td class="k">分析評估紀錄</td><td>${(s.ev||[]).length}</td></tr>
+      <tr><td class="k">內部稽核場次</td><td>${(s.au||[]).length}</td><td class="k">不符合(已結案)</td><td>${nc}（${ncC}）</td></tr>
+      <tr><td class="k">管理審查決議</td><td>${(s.mo||[]).length}</td><td class="k">下次應辦理日</td><td>${esc(so.next||'')}</td></tr>
+    </table>
+    <h2 class="rt">一、年度績效評估摘要</h2>
+    <div style="font-size:12px;white-space:pre-wrap;border:1px solid #aab4bd;padding:8px;border-radius:4px;min-height:36px">${esc(so.summary||'（未填寫）')}</div>
+    <h2 class="rt">二、9.1 監視量測方法總則</h2>
+    <table class="rt-meta">
+      <tr><td class="k">決定原則(a)</td><td>${esc(g91.determine||'')}</td></tr>
+      <tr><td class="k">方法(b)</td><td>${esc(g91.method||'')}</td></tr>
+      <tr><td class="k">時機(c/e)</td><td>${esc(g91.timing||'')}</td></tr>
+      <tr><td class="k">績效/有效性評估</td><td>${esc(g91.evaluate||'')}</td></tr>
+    </table>
+    <div style="font-size:12px;font-weight:700;color:#13476b;margin:6px 0 2px">監視量測指標清單</div>${rptTable('mm',s.mm)}
+    <h2 class="rt">三、9.1 分析評估與績效紀錄</h2>${rptTable('ev',s.ev)}
+    <h2 class="rt">四、9.2 稽核方案總則</h2>
+    <table class="rt-meta">
+      <tr><td class="k">稽核方案</td><td>${esc(g92.programme||'')}</td></tr>
+      <tr><td class="k">準則與範圍(a)</td><td>${esc(g92.criteria||'')}</td></tr>
+      <tr><td class="k">客觀公正性(b)</td><td>${esc(g92.independence||'')}</td></tr>
+      <tr><td class="k">報告與後續(c)</td><td>${esc(g92.reporting||'')}</td></tr>
+    </table>
+    <div style="font-size:12px;font-weight:700;color:#13476b;margin:6px 0 2px">內部稽核計畫與排程</div>${rptTable('au',s.au)}
+    <h2 class="rt">五、9.2 稽核發現與不符合</h2>${rptTable('af',s.af)}
+    <h2 class="rt">六、9.3 管理審查場次(9.3.1)</h2>
+    <table class="rt-meta">
+      <tr><td class="k">審查日期</td><td>${esc(mrg.date||'')}</td><td class="k">主席</td><td>${esc(mrg.chair||'')}</td></tr>
+      <tr><td class="k">審查間隔</td><td>${esc(mrg.interval||'')}</td><td class="k">地點/方式</td><td>${esc(mrg.venue||'')}</td></tr>
+      <tr><td class="k">出席人員</td><td colspan="3">${esc(mrg.attendees||'')}</td></tr>
+      <tr><td class="k">審查結論</td><td colspan="3">${esc(mrg.conclusion||'')}</td></tr>
+    </table>
+    <h2 class="rt">七、9.3 管理審查輸入(9.3.2 a–g)</h2>${rptTable('mi',s.mi)}
+    <h2 class="rt">八、9.3 管理審查決議與輸出(9.3.3)</h2>${rptTable('mo',s.mo)}
+    <h2 class="rt">九、簽核</h2>
+    <table class="rt-sign">
+      <thead><tr><th style="width:70px">層級</th><th>角色 / 職稱</th><th style="width:120px">簽核人</th><th style="width:110px">日期</th><th style="width:140px">簽章 / 用印</th></tr></thead>
+      <tbody>
+        ${row('執行','ISMS推動小組 / 內部稽核員','exec_n','exec_d')}
+        ${row('審查','資安長 / ISMS主管','rev_n','rev_d')}
+        ${row('核准','最高管理階層','app_n','app_d')}
+      </tbody>
+    </table>
+    <div style="margin-top:14px;border-top:1px solid #ccc;padding-top:6px;font-size:10px;color:#6b7884;text-align:center">
+      設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0
+    </div>
+  </div>`;
+  document.getElementById('reportArea').innerHTML=html;
+}
+function printReportCurrent(){buildReport(currentSrc());printWith('print-report');}
+function printReportArchive(i){
+  const a=DATA.archives[i];if(!a)return;
+  const sn=a.snapshot||{};
+  buildReport({year:a.year,signoff:a.signoff||{},g91:sn.g91||{},g92:sn.g92||{},mrg:sn.mrg||{},
+    mm:sn.mm||[],ev:sn.ev||[],au:sn.au||[],af:sn.af||[],mi:sn.mi||[],mo:sn.mo||[]});
+  printWith('print-report');
+}
+
+function renderAll(){
+  TABLES.forEach(renderTable);
+  renderForms();renderSignoff();renderArchives();renderRefStatus();renderDash();renderAnnual();renderDataMeta();
+}
+bindForms();
+bindSignoff();
+renderAll();
+</script>
+<script>
+/* ===== 表格欄寬與列印修正：autosize 撐高 + 固定版面 + 列印轉純文字（避免內容截斷） ===== */
+(function(){
+function autosize(el){if(!el||el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
+function autosizeActive(){var a=document.querySelector('.panel.active');if(a)a.querySelectorAll('textarea').forEach(autosize);}
+window.autosize=autosize;window.autosizeActive=autosizeActive;
+window.convertControlsForPrint=function(on){var s=document.querySelector('.panel.active');if(!s)return;if(on){s.querySelectorAll('table tbody td').forEach(function(td){var c=td.querySelector('input,select,textarea');if(!c)return;td.innerHTML='<div class="cellprint">'+esc(c.value||'')+'</div>';});}else{renderAll();}};
+window.doPrint=function(){convertControlsForPrint(true);var r=function(){convertControlsForPrint(false);window.removeEventListener('afterprint',r);};window.addEventListener('afterprint',r);setTimeout(function(){window.print();},80);};
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA')autosize(e.target);},true);
+var nav=document.getElementById('nav');if(nav)nav.addEventListener('click',function(){setTimeout(autosizeActive,0);});
+try{document.querySelectorAll('.panel table').forEach(function(t){if(!t.tHead||!t.querySelector('tbody input,tbody select,tbody textarea'))return;t.style.tableLayout='fixed';var tb=t.tBodies[0];if(tb&&window.MutationObserver){new MutationObserver(function(){autosizeActive();}).observe(tb,{childList:true});}});}catch(e){}
+window.addEventListener('load',function(){setTimeout(autosizeActive,40);});
+setTimeout(autosizeActive,60);
+})();
+</script>
+</body>
+</html>
