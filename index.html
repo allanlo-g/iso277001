@@ -216,6 +216,7 @@ footer{border-top:1px solid var(--line);background:#fff;margin-top:8px}
   <button class="btn" id="btnEdit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>編輯連結</button>
   <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 21h16"/></svg>匯出</button>
   <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M8 13l4-4 4 4"/><path d="M4 3h16"/></svg>匯入</button>
+  <button class="btn" id="btnReset" title="清除本機編輯，恢復檔案內建之預設連結"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>重設為預設</button>
   <input type="file" id="fileImport" accept="application/json" style="display:none">
 </div>
 
@@ -314,37 +315,37 @@ const ICONS = {
    ========================================================================= */
 const DEFAULT_CARDS = {
   main:[
-    {code:'4', icon:'org',     name:'組織全景',     dir:'4.組織全景',   file:'ISO27001_組織全景管理工具.html', desc:'組織與其全景之理解、利害關係者需求與期望、ISMS 範圍與適用界定。'},
-    {code:'5', icon:'lead',    name:'領導作為',     dir:'5.領導作為',   file:'ISO27001_領導作為管理工具.html', desc:'領導與承諾、資訊安全政策、組織角色、責任與權限指派。'},
-    {code:'6', icon:'plan',    name:'規劃',         dir:'6.規劃',       file:'ISO27001_規劃管理工具.html',     desc:'風險與機會之因應、風險評鑑與處理、適用性聲明 SoA、資安目標。'},
-    {code:'7', icon:'support', name:'支援',         dir:'7.支援',       file:'ISO27001_支援管理工具.html',     desc:'資源、能力、認知、溝通、文件化資訊之建立與控制。'},
-    {code:'8', icon:'ops',     name:'運作',         dir:'8.運作',       file:'ISO27001_運作管理工具.html',     desc:'運作之規劃與控制、風險評鑑與風險處理之實際執行。'},
-    {code:'9', icon:'perf',    name:'績效評估',     dir:'9.績效評估',   file:'ISO27001_績效評估管理工具.html', desc:'監視、量測、分析與評估、內部稽核、管理階層審查。'},
-    {code:'10',icon:'improve', name:'改善',         dir:'10.改善',      file:'ISO27001_改善管理工具.html',     desc:'不符合事項與矯正措施、ISMS 之持續改善。'}
+    {code:'4', icon:'org',     name:'組織全景',     dir:'', file:'ISO27001_組織全景管理工具.html', desc:'組織與其全景之理解、利害關係者需求與期望、ISMS 範圍與適用界定。'},
+    {code:'5', icon:'lead',    name:'領導作為',     dir:'', file:'ISO27001_領導作為管理工具.html', desc:'領導與承諾、資訊安全政策、組織角色、責任與權限指派。'},
+    {code:'6', icon:'plan',    name:'規劃',         dir:'', file:'ISO27001_規劃管理工具.html',     desc:'風險與機會之因應、風險評鑑與處理、適用性聲明 SoA、資安目標。'},
+    {code:'7', icon:'support', name:'支援',         dir:'', file:'ISO27001_支援管理工具.html',     desc:'資源、能力、認知、溝通、文件化資訊之建立與控制。'},
+    {code:'8', icon:'ops',     name:'運作',         dir:'', file:'ISO27001_運作管理工具.html',     desc:'運作之規劃與控制、風險評鑑與風險處理之實際執行。'},
+    {code:'9', icon:'perf',    name:'績效評估',     dir:'', file:'ISO27001_績效評估管理工具.html', desc:'監視、量測、分析與評估、內部稽核、管理階層審查。'},
+    {code:'10',icon:'improve', name:'改善',         dir:'', file:'ISO27001_改善管理工具.html',     desc:'不符合事項與矯正措施、ISMS 之持續改善。'}
   ],
   app:[
-    {code:'A01',icon:'gov',       name:'治理',           dir:'A01_Governance治理',                                file:'ISO27001_A01治理管理工具.html',     desc:'政策架構、角色職責、職務區隔、管理階層責任（A.5.1–5.8）。'},
-    {code:'A02',icon:'hr',        name:'人資安全',       dir:'A02_Human Resource security人資安全',               file:'ISO27001_A02人資安全管理工具.html', desc:'聘用前／任職期間／終止異動、保密協議、安全認知（A.6.1–6.6）。'},
-    {code:'A03',icon:'data',      name:'資訊保護',       dir:'A03_Information protection資訊保護',                 file:'ISO27001_A03資訊保護管理工具.html', desc:'資訊分類分級、標示、可接受使用、遮蔽、DLP、PII。'},
-    {code:'A04',icon:'asset',     name:'資產管理',       dir:'A04_Asset management資產管理',                      file:'ISO27001_A04資產管理管理工具.html', desc:'資產清冊、擁有權、可接受使用、歸還與汰除（A.5.9–5.11）。'},
-    {code:'A05',icon:'access',    name:'存取管理',       dir:'A05_Identity and access management存取管理',         file:'ISO27001_A05存取管理管理工具.html', desc:'身分管理、鑑別資訊、存取權限、特殊權限存取。'},
-    {code:'A06',icon:'config',    name:'保全組態',       dir:'A06_Secure configuration保全組態',                  file:'ISO27001_A06保全組態管理工具.html', desc:'組態管理基準、強化標準、密碼技術、特殊權限公用程式。'},
-    {code:'A07',icon:'phys',      name:'實體安全',       dir:'A07_Physical security實體安全',                     file:'ISO27001_A07實體安全管理工具.html', desc:'安全區域、實體進入控制、設備安置、佈纜、汰除（A.7.1–7.14）。'},
-    {code:'A08',icon:'threat',    name:'威脅與弱點管理', dir:'A08_Threat and vulnerability management威脅與弱點管理', file:'ISO27001_A08威脅與弱點管理工具.html', desc:'威脅情資蒐集分析、技術脆弱性管理、暴露評估與修補。'},
-    {code:'A09',icon:'appsec',    name:'應用程式安全',   dir:'A09_Application security應用程式安全',               file:'ISO27001_A09應用程式安全工具.html', desc:'安全開發生命週期、安全測試、委外開發、變更管理。'},
-    {code:'A10',icon:'network',   name:'系統與網路安全', dir:'A10_System and network security系統與網路安全',      file:'ISO27001_A10系統與網路安全工具.html', desc:'網路安全、網路服務之安全、網路區隔、網頁過濾。'},
-    {code:'A11',icon:'supplier',  name:'供應者關係安全', dir:'A11_Supplier relationships security供應者關係安全',   file:'ISO27001_A11供應者關係安全工具.html', desc:'供應者協議、ICT 供應鏈、雲端服務、監視審查。'},
-    {code:'A12',icon:'event',     name:'資安事件管理',   dir:'A12_Information security event management資安事件管理', file:'ISO27001_A12資安事件管理工具.html', desc:'偵測存錄監視、評鑑決策回應、證據蒐集與學習。'},
-    {code:'A13',icon:'continuity',name:'營運持續',       dir:'A13_Continuity持續性',                              file:'ISO27001_A13營運持續管理工具.html', desc:'中斷期間資安、ICT 備妥性、資訊備份、多備、容量管理。'},
-    {code:'A14',icon:'assurance', name:'資訊安全保證',   dir:'A14_Information security assurance資訊安全保證',      file:'ISO27001_A14資訊保證管理工具.html', desc:'獨立審查、對內部政策之遵循性審查、安全測試保證。'},
-    {code:'A15',icon:'legal',     name:'遵循性',         dir:'A15_Legal and compliance遵循性',                    file:'ISO27001_A15遵循性管理工具.html',   desc:'法律法規與契約要求、智慧財產權、紀錄保護、隱私 PII。'}
+    {code:'A01',icon:'gov',       name:'治理',           dir:'', file:'ISO27001_A01治理管理工具.html',     desc:'政策架構、角色職責、職務區隔、管理階層責任（A.5.1–5.8）。'},
+    {code:'A02',icon:'hr',        name:'人資安全',       dir:'', file:'ISO27001_A02人資安全管理工具.html', desc:'聘用前／任職期間／終止異動、保密協議、安全認知（A.6.1–6.6）。'},
+    {code:'A03',icon:'data',      name:'資訊保護',       dir:'', file:'ISO27001_A03資訊保護管理工具.html', desc:'資訊分類分級、標示、可接受使用、遮蔽、DLP、PII。'},
+    {code:'A04',icon:'asset',     name:'資產管理',       dir:'', file:'ISO27001_A04資產管理管理工具.html', desc:'資產清冊、擁有權、可接受使用、歸還與汰除（A.5.9–5.11）。'},
+    {code:'A05',icon:'access',    name:'存取管理',       dir:'', file:'ISO27001_A05存取管理管理工具.html', desc:'身分管理、鑑別資訊、存取權限、特殊權限存取。'},
+    {code:'A06',icon:'config',    name:'保全組態',       dir:'', file:'ISO27001_A06保全組態管理工具.html', desc:'組態管理基準、強化標準、密碼技術、特殊權限公用程式。'},
+    {code:'A07',icon:'phys',      name:'實體安全',       dir:'', file:'ISO27001_A07實體安全管理工具.html', desc:'安全區域、實體進入控制、設備安置、佈纜、汰除（A.7.1–7.14）。'},
+    {code:'A08',icon:'threat',    name:'威脅與弱點管理', dir:'', file:'ISO27001_A08威脅與弱點管理工具.html', desc:'威脅情資蒐集分析、技術脆弱性管理、暴露評估與修補。'},
+    {code:'A09',icon:'appsec',    name:'應用程式安全',   dir:'', file:'ISO27001_A09應用程式安全工具.html', desc:'安全開發生命週期、安全測試、委外開發、變更管理。'},
+    {code:'A10',icon:'network',   name:'系統與網路安全', dir:'', file:'ISO27001_A10系統與網路安全工具.html', desc:'網路安全、網路服務之安全、網路區隔、網頁過濾。'},
+    {code:'A11',icon:'supplier',  name:'供應者關係安全', dir:'', file:'ISO27001_A11供應者關係安全工具.html', desc:'供應者協議、ICT 供應鏈、雲端服務、監視審查。'},
+    {code:'A12',icon:'event',     name:'資安事件管理',   dir:'', file:'ISO27001_A12資安事件管理工具.html', desc:'偵測存錄監視、評鑑決策回應、證據蒐集與學習。'},
+    {code:'A13',icon:'continuity',name:'營運持續',       dir:'', file:'ISO27001_A13營運持續管理工具.html', desc:'中斷期間資安、ICT 備妥性、資訊備份、多備、容量管理。'},
+    {code:'A14',icon:'assurance', name:'資訊安全保證',   dir:'', file:'ISO27001_A14資訊保證管理工具.html', desc:'獨立審查、對內部政策之遵循性審查、安全測試保證。'},
+    {code:'A15',icon:'legal',     name:'遵循性',         dir:'', file:'ISO27001_A15遵循性管理工具.html',   desc:'法律法規與契約要求、智慧財產權、紀錄保護、隱私 PII。'}
   ]
 };
 
 /* =========================================================================
    狀態管理：localStorage 覆寫（線上編輯）＋ 預設值
    ========================================================================= */
-const LS_KEY='isms_portal_cards_v1';
+const LS_KEY='isms_portal_cards_v2';
 let CARDS;
 function loadCards(){
   try{const s=localStorage.getItem(LS_KEY);if(s){const o=JSON.parse(s);if(o&&o.main&&o.app)return o;}}catch(e){}
@@ -372,7 +373,7 @@ function cardHTML(c,group,idx){
     </div>
     <h3>${c.name}</h3>
     <p>${c.desc||''}</p>
-    <div class="path">📁 ${(c.dir||'')}/${(c.file||'')}</div>
+    <div class="path">📁 ${((c.dir||'').replace(/\/+$/,'')?(c.dir.replace(/\/+$/,'')+'/'):'')+(c.file||'')}</div>
     <div class="card-foot">開啟管理工具 ${arrow}</div>
   </a>`;
 }
@@ -440,6 +441,12 @@ document.getElementById('btnExport').onclick=()=>{
   const blob=new Blob([JSON.stringify(CARDS,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='ISMS_Portal_links.json';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('btnReset').onclick=()=>{
+  if(confirm('將清除本機（此瀏覽器）的編輯內容，恢復為檔案內建的預設連結。確定？')){
+    try{localStorage.removeItem(LS_KEY);}catch(e){}
+    CARDS=JSON.parse(JSON.stringify(DEFAULT_CARDS));render();checkFiles();
+  }
 };
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileImport').click();
 document.getElementById('fileImport').onchange=e=>{
