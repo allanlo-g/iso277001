@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>普拉斯股份有限公司 ISMS Portal｜ISO/IEC 27001:2022</title>
+<!--
+  ============================================================================
+  普拉斯股份有限公司 ISMS Portal
+  ISO/IEC 27001:2022 資訊安全管理系統入口
+  - 單一自含 HTML，無外部 CDN／字型，可於「無網際網路」環境正常顯示與使用
+  - 圖示全部以內嵌 SVG 呈現（離線可用）
+  - 卡片連結可維護：可直接修改下方 DEFAULT_CARDS 設定，或於頁面點「編輯連結」線上維護
+    （線上編輯結果存於瀏覽器 localStorage，並可匯出／匯入 JSON 備份）
+  ============================================================================
+-->
+<style>
+:root{
+  --c1:#13476b;            /* 主色 深藍 */
+  --c1d:#0e3450;
+  --c2:#2e7bb0;
+  --accentA:#0f766e;       /* 附錄A 強調色 青 */
+  --bg:#eef2f6;
+  --card:#ffffff;
+  --ink:#1c2733;
+  --muted:#5b6b7a;
+  --line:#dbe3ec;
+  --shadow:0 1px 3px rgba(19,71,107,.10),0 6px 18px rgba(19,71,107,.08);
+  --shadow-h:0 6px 14px rgba(19,71,107,.18),0 16px 40px rgba(19,71,107,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Microsoft JhengHei","微軟正黑體",Segoe UI,Roboto,Arial,"PingFang TC","Heiti TC",sans-serif;
+  color:var(--ink); background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- Header ---------- */
+header{
+  background:linear-gradient(135deg,var(--c1) 0%,var(--c1d) 55%,#0a2538 100%);
+  color:#fff; position:relative; overflow:hidden;
+}
+header::after{
+  content:""; position:absolute; right:-80px; top:-80px; width:360px; height:360px;
+  background:radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,0) 70%);
+}
+.hwrap{max-width:1180px;margin:0 auto;padding:26px 28px 22px;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:16px}
+.logo{
+  width:58px;height:58px;border-radius:14px;flex:0 0 auto;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+}
+.logo svg{width:34px;height:34px;stroke:#fff}
+.brand h1{font-size:22px;margin:0;font-weight:700;letter-spacing:.5px}
+.brand .sub{font-size:13px;opacity:.86;margin-top:3px}
+.badge27{
+  display:inline-block;margin-top:6px;font-size:12px;font-weight:600;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+  padding:3px 10px;border-radius:20px;letter-spacing:.4px;
+}
+.hmeta{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:18px;font-size:12.5px;opacity:.92}
+.hmeta div{display:flex;align-items:center;gap:7px}
+.hmeta svg{width:15px;height:15px;stroke:#cfe4f3;flex:0 0 auto}
+
+/* ---------- Toolbar ---------- */
+.toolbar{
+  max-width:1180px;margin:18px auto 0;padding:0 28px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+}
+.search{
+  flex:1 1 280px;display:flex;align-items:center;gap:8px;background:#fff;
+  border:1px solid var(--line);border-radius:10px;padding:9px 12px;box-shadow:var(--shadow);
+}
+.search svg{width:17px;height:17px;stroke:var(--muted);flex:0 0 auto}
+.search input{border:0;outline:0;width:100%;font-size:14px;font-family:inherit;color:var(--ink);background:transparent}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;
+  font-size:13.5px;font-weight:600;color:var(--c1);background:#fff;
+  border:1px solid var(--line);border-radius:10px;padding:9px 14px;box-shadow:var(--shadow);
+  transition:.15s;
+}
+.btn:hover{border-color:var(--c2);color:var(--c2)}
+.btn svg{width:16px;height:16px;stroke:currentColor}
+.btn.primary{background:var(--c1);color:#fff;border-color:var(--c1)}
+.btn.primary:hover{background:var(--c2);border-color:var(--c2);color:#fff}
+
+/* ---------- Sections ---------- */
+main{max-width:1180px;margin:0 auto;padding:8px 28px 40px}
+.section{margin-top:30px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.sec-head .bar{width:5px;height:24px;border-radius:3px;background:var(--c1)}
+.section.appendix .sec-head .bar{background:var(--accentA)}
+.sec-head h2{font-size:18px;margin:0;color:var(--c1)}
+.section.appendix .sec-head h2{color:var(--accentA)}
+.sec-head .count{font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);padding:2px 9px;border-radius:20px}
+.sec-desc{font-size:13px;color:var(--muted);margin:0 0 16px 17px}
+
+/* ---------- Grid & Cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px}
+.card{
+  position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px 18px 16px;box-shadow:var(--shadow);text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;transition:.16s;overflow:hidden;
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c1);opacity:.85}
+.section.appendix .card::before{background:var(--accentA)}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-h);border-color:var(--c2)}
+.section.appendix .card:hover{border-color:var(--accentA)}
+.card-top{display:flex;align-items:center;gap:12px}
+.ico{
+  width:46px;height:46px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  background:#eaf2f9;border:1px solid #d6e6f2;
+}
+.ico svg{width:25px;height:25px;stroke:var(--c1);fill:none}
+.section.appendix .ico{background:#e7f3f1;border-color:#cfe7e3}
+.section.appendix .ico svg{stroke:var(--accentA)}
+.code{
+  font-size:12px;font-weight:700;color:#fff;background:var(--c1);
+  padding:3px 9px;border-radius:7px;letter-spacing:.3px;
+}
+.section.appendix .code{background:var(--accentA)}
+.card h3{font-size:15.5px;margin:13px 0 6px;line-height:1.35}
+.card p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6;flex:1}
+.card-foot{display:flex;align-items:center;gap:6px;margin-top:13px;font-size:12px;color:var(--c2);font-weight:600}
+.section.appendix .card-foot{color:var(--accentA)}
+.card-foot svg{width:14px;height:14px;stroke:currentColor;transition:.16s}
+.card:hover .card-foot svg{transform:translateX(3px)}
+.card .path{
+  font-size:10.5px;color:#9aa8b5;margin-top:7px;word-break:break-all;line-height:1.4;
+  font-family:Consolas,"Courier New",monospace;
+}
+.missing{position:absolute;top:12px;right:12px;font-size:10px;background:#fdecec;color:#b42318;border:1px solid #f6c9c4;padding:2px 7px;border-radius:20px;display:none}
+
+/* edit mode controls on card */
+.card .cardedit{position:absolute;top:10px;right:10px;display:none;gap:6px}
+body.editing .card .cardedit{display:flex}
+body.editing .card{cursor:default}
+.card .cardedit button{
+  width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0;color:var(--muted);
+}
+.card .cardedit button:hover{color:var(--c1);border-color:var(--c2)}
+.card .cardedit svg{width:14px;height:14px;stroke:currentColor}
+
+.editbanner{display:none;margin-top:16px;background:#fff7e6;border:1px solid #ffe1a8;color:#8a5a00;
+  border-radius:10px;padding:10px 14px;font-size:13px;align-items:center;gap:10px}
+body.editing .editbanner{display:flex}
+
+/* ---------- Footer ---------- */
+footer{border-top:1px solid var(--line);background:#fff;margin-top:8px}
+.fwrap{max-width:1180px;margin:0 auto;padding:20px 28px;font-size:12px;color:var(--muted);
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px}
+.fwrap .col strong{color:var(--ink)}
+.fwrap a{color:var(--c2);text-decoration:none}
+.fwrap a:hover{text-decoration:underline}
+
+/* ---------- Modal ---------- */
+.mask{display:none;position:fixed;inset:0;background:rgba(12,30,46,.55);z-index:50;align-items:center;justify-content:center;padding:20px}
+.mask.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:480px;max-width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h3{margin:0;padding:18px 20px;font-size:16px;color:var(--c1);border-bottom:1px solid var(--line)}
+.modal .body{padding:18px 20px}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:600}
+.fld input,.fld select,.fld textarea{
+  width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit;color:var(--ink);outline:0;
+}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--c2)}
+.fld textarea{resize:vertical;min-height:54px}
+.modal .foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.modal .foot .right{display:flex;gap:10px;margin-left:auto}
+.danger{color:#b42318;border-color:#f6c9c4}
+.danger:hover{color:#fff;background:#b42318;border-color:#b42318}
+
+@media (max-width:600px){
+  .brand h1{font-size:18px}
+  .grid{grid-template-columns:1fr}
+}
+@media print{
+  .toolbar,.editbanner,.card .cardedit,.mask{display:none!important}
+  body{background:#fff}
+  .card{break-inside:avoid;box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="brand">
+      <div class="logo">
+        <!-- shield-lock -->
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9.5a1.5 1.5 0 0 1 3 0V11"/></svg>
+      </div>
+      <div>
+        <h1>普拉斯股份有限公司　ISMS Portal</h1>
+        <div class="sub">Information Security Management System 資訊安全管理系統入口</div>
+        <span class="badge27">ISO/IEC 27001:2022</span>
+      </div>
+    </div>
+    <div class="hmeta">
+      <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg><span>系統名稱：ISMS 管理入口（Portal）</span></div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><span id="hdate">最後更新：—</span></div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M2 16h20"/><path d="M5 19h14"/></svg><span>離線可用｜本機運作</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+    <input id="q" type="text" placeholder="搜尋條文 / 作業流程 名稱…（如：風險、存取、A12、事件）">
+  </div>
+  <button class="btn" id="btnEdit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>編輯連結</button>
+  <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 21h16"/></svg>匯出</button>
+  <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M8 13l4-4 4 4"/><path d="M4 3h16"/></svg>匯入</button>
+  <input type="file" id="fileImport" accept="application/json" style="display:none">
+</div>
+
+<div style="max-width:1180px;margin:0 auto;padding:0 28px">
+  <div class="editbanner">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#8a5a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+    <span>編輯模式：可調整每張卡片的「名稱／路徑／檔案／說明」。完成後請按右上「完成編輯」，變更會自動儲存於本機瀏覽器。</span>
+  </div>
+</div>
+
+<main>
+  <section class="section main-clauses" id="secMain">
+    <div class="sec-head">
+      <span class="bar"></span><h2>本文 4–10　管理系統條文</h2>
+      <span class="count" id="cntMain"></span>
+    </div>
+    <p class="sec-desc">ISO/IEC 27001:2022 條款 4 至 10，為資訊安全管理系統（ISMS）之管理要求主體。</p>
+    <div class="grid" id="gridMain"></div>
+  </section>
+
+  <section class="section appendix" id="secApp">
+    <div class="sec-head">
+      <span class="bar"></span><h2>附錄 A　15 項作業流程（控制措施）</h2>
+      <span class="count" id="cntApp"></span>
+    </div>
+    <p class="sec-desc">依各作業流程涵蓋 ISO/IEC 27001:2022 附錄 A 控制措施（A.5–A.8）之管理工具。</p>
+    <div class="grid" id="gridApp"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="fwrap">
+    <div class="col">
+      <strong>普拉斯股份有限公司</strong>　ISMS Portal<br>
+      資訊安全管理系統入口　依 ISO/IEC 27001:2022 建置
+    </div>
+    <div class="col" style="text-align:right">
+      系統版本 <strong>v1.0</strong>　|　建立顧問：Allan Lo 顧問（<a href="mailto:allanlo.plus@gmail.com">allanlo.plus@gmail.com</a>）<br>
+      © 2026 普拉斯股份有限公司　版權所有．保留一切權利（All Rights Reserved）
+    </div>
+  </div>
+</footer>
+
+<!-- ===== Modal: 編輯卡片 ===== -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <h3 id="mTitle">編輯卡片</h3>
+    <div class="body">
+      <div class="fld"><label>代碼（顯示於右上角徽章，如 6 或 A12）</label><input id="fCode"></div>
+      <div class="fld"><label>作業／流程名稱</label><input id="fName"></div>
+      <div class="fld"><label>資料夾路徑（相對於本檔，結尾不含斜線）</label><input id="fDir" placeholder="例：6.規劃"></div>
+      <div class="fld"><label>連結檔案（HTML 檔名）</label><input id="fFile" placeholder="例：ISO27001_規劃管理工具.html"></div>
+      <div class="fld"><label>說明</label><textarea id="fDesc"></textarea></div>
+    </div>
+    <div class="foot">
+      <button class="btn danger" id="mDelete"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>刪除此卡</button>
+      <div class="right">
+        <button class="btn" id="mCancel">取消</button>
+        <button class="btn primary" id="mSave"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>儲存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   圖示庫（內嵌 SVG，離線可用）。key 對應卡片 icon 欄位。
+   ========================================================================= */
+const ICONS = {
+  org:'<path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><path d="M9 11h.01M15 11h.01"/>',
+  lead:'<circle cx="12" cy="8" r="3"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/><path d="M12 2v1M19 6l-.7.7M5 6l.7.7"/>',
+  plan:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>',
+  support:'<path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>',
+  ops:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 13.6H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 4.6V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.6 1.6 0 0 0 21 10.4h.1a2 2 0 1 1 0 4H21z"/>',
+  perf:'<path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-6"/>',
+  improve:'<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/>',
+  gov:'<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/>',
+  hr:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="18" cy="9" r="2.2"/><path d="M16 20a4 4 0 0 1 6-2.5"/>',
+  data:'<rect x="4" y="3" width="14" height="18" rx="2"/><path d="M8 7h6M8 11h6M8 15h4"/><circle cx="18" cy="17" r="3.4"/><path d="M18 15.5v1.7l1.2.8"/>',
+  asset:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/>',
+  access:'<circle cx="8" cy="12" r="3"/><path d="M11 12h10M17 12v4M21 12v3"/>',
+  config:'<path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h7M15 18h5"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="13" cy="18" r="2"/>',
+  phys:'<path d="M3 21h18M5 21V8l7-4 7 4v13"/><rect x="9" y="13" width="6" height="8"/><path d="M9 9h.01M15 9h.01"/>',
+  threat:'<path d="M12 3l9 16H3l9-16z"/><path d="M12 10v4M12 17h.01"/>',
+  appsec:'<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 5l-2 14"/>',
+  network:'<circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><circle cx="12" cy="5" r="2.4"/><path d="M12 7.4V12M12 12l-5.5 4M12 12l5.5 4"/>',
+  supplier:'<path d="M3 7h11v8H3z"/><path d="M14 10h4l3 3v2h-7z"/><circle cx="7" cy="17" r="1.8"/><circle cx="17" cy="17" r="1.8"/>',
+  event:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/>',
+  continuity:'<rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/><path d="M16 7l2 0M16 17l2 0"/>',
+  assurance:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8.5 11l2 2 3.5-3.5"/>',
+  legal:'<path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7l-2 5a3 3 0 0 0 6 0L7 7M19 7l-2 5a3 3 0 0 0 6 0l-2-5"/>'
+};
+
+/* =========================================================================
+   預設卡片設定（可直接修改維護：name 名稱 / dir 路徑 / file 檔案 / desc 說明）
+   ========================================================================= */
+const DEFAULT_CARDS = {
+  main:[
+    {code:'4', icon:'org',     name:'組織全景',     dir:'4.組織全景',   file:'ISO27001_組織全景管理工具.html', desc:'組織與其全景之理解、利害關係者需求與期望、ISMS 範圍與適用界定。'},
+    {code:'5', icon:'lead',    name:'領導作為',     dir:'5.領導作為',   file:'ISO27001_領導作為管理工具.html', desc:'領導與承諾、資訊安全政策、組織角色、責任與權限指派。'},
+    {code:'6', icon:'plan',    name:'規劃',         dir:'6.規劃',       file:'ISO27001_規劃管理工具.html',     desc:'風險與機會之因應、風險評鑑與處理、適用性聲明 SoA、資安目標。'},
+    {code:'7', icon:'support', name:'支援',         dir:'7.支援',       file:'ISO27001_支援管理工具.html',     desc:'資源、能力、認知、溝通、文件化資訊之建立與控制。'},
+    {code:'8', icon:'ops',     name:'運作',         dir:'8.運作',       file:'ISO27001_運作管理工具.html',     desc:'運作之規劃與控制、風險評鑑與風險處理之實際執行。'},
+    {code:'9', icon:'perf',    name:'績效評估',     dir:'9.績效評估',   file:'ISO27001_績效評估管理工具.html', desc:'監視、量測、分析與評估、內部稽核、管理階層審查。'},
+    {code:'10',icon:'improve', name:'改善',         dir:'10.改善',      file:'ISO27001_改善管理工具.html',     desc:'不符合事項與矯正措施、ISMS 之持續改善。'}
+  ],
+  app:[
+    {code:'A01',icon:'gov',       name:'治理',           dir:'A01_Governance治理',                                file:'ISO27001_A01治理管理工具.html',     desc:'政策架構、角色職責、職務區隔、管理階層責任（A.5.1–5.8）。'},
+    {code:'A02',icon:'hr',        name:'人資安全',       dir:'A02_Human Resource security人資安全',               file:'ISO27001_A02人資安全管理工具.html', desc:'聘用前／任職期間／終止異動、保密協議、安全認知（A.6.1–6.6）。'},
+    {code:'A03',icon:'data',      name:'資訊保護',       dir:'A03_Information protection資訊保護',                 file:'ISO27001_A03資訊保護管理工具.html', desc:'資訊分類分級、標示、可接受使用、遮蔽、DLP、PII。'},
+    {code:'A04',icon:'asset',     name:'資產管理',       dir:'A04_Asset management資產管理',                      file:'ISO27001_A04資產管理管理工具.html', desc:'資產清冊、擁有權、可接受使用、歸還與汰除（A.5.9–5.11）。'},
+    {code:'A05',icon:'access',    name:'存取管理',       dir:'A05_Identity and access management存取管理',         file:'ISO27001_A05存取管理管理工具.html', desc:'身分管理、鑑別資訊、存取權限、特殊權限存取。'},
+    {code:'A06',icon:'config',    name:'保全組態',       dir:'A06_Secure configuration保全組態',                  file:'ISO27001_A06保全組態管理工具.html', desc:'組態管理基準、強化標準、密碼技術、特殊權限公用程式。'},
+    {code:'A07',icon:'phys',      name:'實體安全',       dir:'A07_Physical security實體安全',                     file:'ISO27001_A07實體安全管理工具.html', desc:'安全區域、實體進入控制、設備安置、佈纜、汰除（A.7.1–7.14）。'},
+    {code:'A08',icon:'threat',    name:'威脅與弱點管理', dir:'A08_Threat and vulnerability management威脅與弱點管理', file:'ISO27001_A08威脅與弱點管理工具.html', desc:'威脅情資蒐集分析、技術脆弱性管理、暴露評估與修補。'},
+    {code:'A09',icon:'appsec',    name:'應用程式安全',   dir:'A09_Application security應用程式安全',               file:'ISO27001_A09應用程式安全工具.html', desc:'安全開發生命週期、安全測試、委外開發、變更管理。'},
+    {code:'A10',icon:'network',   name:'系統與網路安全', dir:'A10_System and network security系統與網路安全',      file:'ISO27001_A10系統與網路安全工具.html', desc:'網路安全、網路服務之安全、網路區隔、網頁過濾。'},
+    {code:'A11',icon:'supplier',  name:'供應者關係安全', dir:'A11_Supplier relationships security供應者關係安全',   file:'ISO27001_A11供應者關係安全工具.html', desc:'供應者協議、ICT 供應鏈、雲端服務、監視審查。'},
+    {code:'A12',icon:'event',     name:'資安事件管理',   dir:'A12_Information security event management資安事件管理', file:'ISO27001_A12資安事件管理工具.html', desc:'偵測存錄監視、評鑑決策回應、證據蒐集與學習。'},
+    {code:'A13',icon:'continuity',name:'營運持續',       dir:'A13_Continuity持續性',                              file:'ISO27001_A13營運持續管理工具.html', desc:'中斷期間資安、ICT 備妥性、資訊備份、多備、容量管理。'},
+    {code:'A14',icon:'assurance', name:'資訊安全保證',   dir:'A14_Information security assurance資訊安全保證',      file:'ISO27001_A14資訊保證管理工具.html', desc:'獨立審查、對內部政策之遵循性審查、安全測試保證。'},
+    {code:'A15',icon:'legal',     name:'遵循性',         dir:'A15_Legal and compliance遵循性',                    file:'ISO27001_A15遵循性管理工具.html',   desc:'法律法規與契約要求、智慧財產權、紀錄保護、隱私 PII。'}
+  ]
+};
+
+/* =========================================================================
+   狀態管理：localStorage 覆寫（線上編輯）＋ 預設值
+   ========================================================================= */
+const LS_KEY='isms_portal_cards_v1';
+let CARDS;
+function loadCards(){
+  try{const s=localStorage.getItem(LS_KEY);if(s){const o=JSON.parse(s);if(o&&o.main&&o.app)return o;}}catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_CARDS));
+}
+function saveCards(){try{localStorage.setItem(LS_KEY,JSON.stringify(CARDS));}catch(e){alert('儲存失敗：'+e.message);}}
+CARDS=loadCards();
+
+function svg(icon){return '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[icon]||ICONS.org)+'</svg>';}
+function hrefOf(c){
+  const dir=(c.dir||'').replace(/\/+$/,'');
+  return encodeURI((dir?dir+'/':'')+(c.file||''));
+}
+
+const arrow='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const editIco='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
+
+function cardHTML(c,group,idx){
+  return `<a class="card" href="${hrefOf(c)}" data-group="${group}" data-idx="${idx}" data-search="${(c.code+' '+c.name+' '+c.desc).toLowerCase()}">
+    <span class="missing">檔案未找到</span>
+    <span class="cardedit"><button title="編輯" data-act="edit">${editIco}</button></span>
+    <div class="card-top">
+      <div class="ico">${svg(c.icon)}</div>
+      <span class="code">${c.code}</span>
+    </div>
+    <h3>${c.name}</h3>
+    <p>${c.desc||''}</p>
+    <div class="path">📁 ${(c.dir||'')}/${(c.file||'')}</div>
+    <div class="card-foot">開啟管理工具 ${arrow}</div>
+  </a>`;
+}
+
+function render(){
+  document.getElementById('gridMain').innerHTML=CARDS.main.map((c,i)=>cardHTML(c,'main',i)).join('');
+  document.getElementById('gridApp').innerHTML=CARDS.app.map((c,i)=>cardHTML(c,'app',i)).join('');
+  document.getElementById('cntMain').textContent=CARDS.main.length+' 項條文';
+  document.getElementById('cntApp').textContent=CARDS.app.length+' 項流程';
+  bindCards();
+  applyFilter();
+}
+
+function bindCards(){
+  document.querySelectorAll('.card').forEach(card=>{
+    const btn=card.querySelector('[data-act="edit"]');
+    if(btn){btn.onclick=e=>{e.preventDefault();e.stopPropagation();openEdit(card.dataset.group,+card.dataset.idx);};}
+    card.addEventListener('click',e=>{if(document.body.classList.contains('editing')){e.preventDefault();}});
+  });
+}
+
+/* ---------- 搜尋 ---------- */
+function applyFilter(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(c=>{
+    c.style.display=(!q||c.dataset.search.includes(q))?'':'none';
+  });
+}
+document.getElementById('q').addEventListener('input',applyFilter);
+
+/* ---------- 編輯模式 ---------- */
+const btnEdit=document.getElementById('btnEdit');
+btnEdit.onclick=()=>{
+  const on=document.body.classList.toggle('editing');
+  btnEdit.innerHTML=on
+    ?'<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>完成編輯'
+    :editIco+'編輯連結';
+  btnEdit.classList.toggle('primary',on);
+};
+
+/* ---------- Modal 編輯 ---------- */
+let editing={group:null,idx:null};
+const mask=document.getElementById('mask');
+function openEdit(group,idx){
+  editing={group,idx};
+  const c=CARDS[group][idx];
+  fCode.value=c.code;fName.value=c.name;fDir.value=c.dir;fFile.value=c.file;fDesc.value=c.desc||'';
+  document.getElementById('mTitle').textContent='編輯卡片　'+c.code+'　'+c.name;
+  mask.classList.add('show');
+}
+document.getElementById('mCancel').onclick=()=>mask.classList.remove('show');
+mask.addEventListener('click',e=>{if(e.target===mask)mask.classList.remove('show');});
+document.getElementById('mSave').onclick=()=>{
+  const c=CARDS[editing.group][editing.idx];
+  c.code=fCode.value.trim();c.name=fName.value.trim();
+  c.dir=fDir.value.trim();c.file=fFile.value.trim();c.desc=fDesc.value.trim();
+  saveCards();mask.classList.remove('show');render();checkFiles();
+};
+document.getElementById('mDelete').onclick=()=>{
+  if(confirm('確定刪除此卡片？')){CARDS[editing.group].splice(editing.idx,1);saveCards();mask.classList.remove('show');render();}
+};
+
+/* ---------- 匯出 / 匯入 ---------- */
+document.getElementById('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify(CARDS,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='ISMS_Portal_links.json';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('btnImport').onclick=()=>document.getElementById('fileImport').click();
+document.getElementById('fileImport').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.main||!o.app)throw new Error('格式不符（需含 main 與 app）');CARDS=o;saveCards();render();checkFiles();alert('匯入完成。');}catch(err){alert('匯入失敗：'+err.message);}};
+  r.readAsText(f);e.target.value='';
+};
+
+/* ---------- 檢查連結檔案是否存在（離線本機亦可用 file:// HEAD/GET） ---------- */
+function checkFiles(){
+  document.querySelectorAll('.card').forEach(card=>{
+    const href=card.getAttribute('href');const tag=card.querySelector('.missing');
+    if(!href){return;}
+    fetch(href,{method:'GET'}).then(r=>{tag.style.display=r.ok?'none':'block';})
+      .catch(()=>{/* file:// 下 fetch 可能被瀏覽器封鎖，靜默略過，不誤報 */});
+  });
+}
+
+/* ---------- 最後更新日期 ---------- */
+(function(){
+  const d=new Date(document.lastModified);
+  if(!isNaN(d)){document.getElementById('hdate').textContent='最後更新：'+d.toLocaleString('zh-Hant',{year:'numeric',month:'2-digit',day:'2-digit'});}
+})();
+
+render();
+checkFiles();
+</script>
+</body>
+</html>
