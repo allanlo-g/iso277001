@@ -616,10 +616,15 @@ function renderTable(panel){
     const delcell=`<td style="text-align:center"><button class="delx" title="刪除" onclick="delRow('${panel}',${i})">✕</button></td>`;
     return `<tr class="${due}">${cells}${delcell}</tr>`;
   }).join('');
+  autoSizeVisible();
 }
+// 依內容自動撐高 textarea，避免儲存格文字被裁切
+function autoSize(ta){if(!ta||ta.offsetParent===null)return;ta.style.height='auto';ta.style.height=(ta.scrollHeight+2)+'px';}
+function autoSizeVisible(){requestAnimationFrame(()=>{document.querySelectorAll('td textarea').forEach(autoSize);});}
 function onEdit(el){
   const p=el.dataset.p,i=+el.dataset.i,k=el.dataset.k;
   DATA[p][i][k]=el.value;
+  if(el.tagName==='TEXTAREA')autoSize(el);
   scheduleSave();
 }
 let saveTimer;
@@ -652,6 +657,7 @@ function subview(panel,view,btn){
   btn.classList.add('active');
   document.querySelectorAll('#'+panel+' .subview').forEach(s=>s.classList.remove('active'));
   document.getElementById(panel+'_'+view).classList.add('active');
+  autoSizeVisible();
 }
 
 // ---------- 總則表單 ----------
@@ -894,6 +900,7 @@ document.getElementById('nav').addEventListener('click',e=>{
   b.classList.add('active');
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(b.dataset.p).classList.add('active');
+  autoSizeVisible();
 });
 
 // ---------- 年度簽核 ----------
@@ -1026,6 +1033,7 @@ function renderAnnual(){
 function goPanel(p){
   document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.p===p));
   document.querySelectorAll('.panel').forEach(s=>s.classList.toggle('active',s.id===p));
+  autoSizeVisible();
 }
 
 // ---------- 列印：簽核表 ----------
