@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISO 27001:2022 A15「Legal and compliance 遵循性」管理工具</title>
+<style>
+  :root{
+    --c1:#13476b; --c2:#1e6ba8; --c3:#2e8bc0; --bg:#f4f6f9; --line:#d9e0e7;
+    --ok:#2e7d32; --warn:#e67e22; --bad:#c0392b; --mut:#6b7884; --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft JhengHei","Segoe UI",system-ui,sans-serif;background:var(--bg);color:#1c2733;font-size:14px;line-height:1.55}
+  header{background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  header h1{font-size:18px;margin:0;font-weight:700}
+  header .sub{font-size:12px;opacity:.88}
+  header .grow{flex:1}
+  .toolbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px}
+  .toolbtn:hover{background:rgba(255,255,255,.28)}
+  nav{display:flex;gap:2px;background:var(--c1);padding:0 12px;flex-wrap:wrap}
+  nav button{background:transparent;border:none;color:#cfe0ee;padding:11px 14px;cursor:pointer;font-size:13.5px;border-bottom:3px solid transparent}
+  nav button:hover{color:#fff}
+  nav button.active{color:#fff;border-bottom-color:#7fd0ff;font-weight:700;background:rgba(255,255,255,.06)}
+  nav .navsep{color:#5e87a8;align-self:center;padding:0 2px;font-size:12px;user-select:none}
+  main{max-width:1320px;margin:18px auto;padding:0 18px 60px}
+  .panel{display:none;animation:fade .2s}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(20,40,60,.05)}
+  h2.sec{font-size:17px;color:var(--c1);margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2.sec .tag{background:var(--c3);color:#fff;font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .clauseref{font-size:12.5px;color:var(--mut);background:#eef3f7;border-left:3px solid var(--c3);padding:8px 12px;border-radius:4px;margin:10px 0 16px}
+  .clauseref b{color:var(--c1)}
+  .xref{display:block;margin-top:7px;padding-top:7px;border-top:1px dashed #c2cfdb;color:#42586b;font-size:12px}
+  .xref b{color:#8a5a00}
+  .xref code{background:#fff;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--c2);font-family:inherit;font-weight:600}
+  #flowImg{max-height:520px;transition:max-height .2s}
+  #flowImg.zoomed{max-height:none;cursor:zoom-out}
+  /* 文字流程方塊圖 */
+  .fchart{display:flex;gap:22px;flex-wrap:wrap;align-items:stretch;margin:10px 0}
+  .fcol{flex:1;min-width:230px;display:flex;flex-direction:column;gap:9px}
+  .fcolhead{font-weight:700;color:var(--c1);font-size:13.5px;border-left:4px solid var(--c3);padding-left:8px}
+  .fcolhead.inn{border-color:#2e8b57;color:#1f6b41}
+  .fcolhead.mid{border-color:#b78a00;color:#8a5a00}
+  .fcolhead.out{border-color:#b25b4c;color:#8a3f33}
+  .fbox{background:#fff;border:1px solid var(--c3);border-radius:8px;padding:9px 12px;text-align:center;font-size:13px}
+  .fbox.role{background:#eef3f7;border-style:dashed;border-color:#c2cfdb;color:var(--mut);font-size:12px}
+  .farrow{text-align:center;color:var(--c3);font-size:15px;font-weight:800;line-height:1}
+  .frow{display:flex;gap:9px;flex-wrap:wrap}
+  .frow>*{flex:1;min-width:180px}
+  .fctrl{position:relative;background:#fff;border:1px solid var(--c2);border-radius:8px;padding:10px 12px;cursor:pointer;text-align:left;font-size:12.5px;transition:.15s}
+  .fctrl:hover{background:#eef5fb;box-shadow:0 2px 8px rgba(20,40,60,.12)}
+  .fctrl .fnum{display:inline-block;background:var(--c2);color:#fff;border-radius:5px;font-size:11px;font-weight:700;padding:1px 6px;margin-right:6px}
+  .fctrl b{color:var(--c1)}
+  .fctrl.core{border-width:2px;border-color:#1f6b41;background:#f1f9f4}
+  .fctrl.core .fnum{background:#2e8b57}
+  .fctrl.xrefbox{border-style:dashed;border-color:#e0930a;background:#fff8ec}
+  .fctrl.xrefbox .fnum{background:#e0930a}
+  .fgroup{border:2px solid #2e8b57;border-radius:10px;padding:12px;background:#f4fbf6;display:flex;flex-direction:column;gap:9px}
+  .fgroup.net{border-color:#1e6ba8;background:#eef5fb}
+  .fgroup.vuln{border-color:#b78a00;background:#fffaf0}
+  .fgroup.gov{border-color:#e0930a;background:#fff8ec;border-style:dashed}
+  .fgrouphead{font-weight:800;color:#1f6b41;font-size:13.5px;display:flex;align-items:center;gap:6px}
+  .fgroup.net .fgrouphead{color:#1e6ba8}
+  .fgroup.vuln .fgrouphead{color:#8a5a00}
+  .fgroup.gov .fgrouphead{color:#8a5a00}
+  .fnote{font-size:11.5px;color:var(--mut);text-align:center;font-style:italic}
+  .flifeline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:14px 0 4px;justify-content:center}
+  .flifeline .stg{background:var(--c1);color:#fff;border-radius:22px;padding:7px 16px;font-weight:800;font-size:13.5px}
+  .flifeline .stg.alt{background:#fff;color:var(--c1);border:2px solid var(--c1)}
+  .flifeline .lkarr{color:#e0930a;font-size:18px;font-weight:900}
+  @media print{.fctrl{cursor:default}.fchart{break-inside:avoid}.fcol{break-inside:avoid}}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#eaf1f7;color:var(--c1);font-weight:700;position:sticky;top:0;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fafcfe}
+  td input,td select,td textarea{width:100%;border:1px solid transparent;background:transparent;font:inherit;color:inherit;padding:3px 4px;border-radius:4px;resize:vertical}
+  td input:focus,td select:focus,td textarea:focus{border-color:var(--c3);background:#fff;outline:none}
+  td textarea{min-height:30px;overflow:hidden;line-height:1.4}
+  td textarea.cellt{min-height:26px;min-width:72px;white-space:pre-wrap;overflow-wrap:break-word}
+  .cellprint{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:2px 1px;line-height:1.45}
+  .btn{border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn.primary{background:var(--c2);color:#fff}.btn.primary:hover{background:var(--c1)}
+  .btn.ghost{background:#fff;border:1px solid var(--c2);color:var(--c2)}.btn.ghost:hover{background:#eef5fb}
+  .btn.danger{background:#fff;border:1px solid var(--bad);color:var(--bad)}.btn.danger:hover{background:#fdecea}
+  .btn.sm{padding:3px 9px;font-size:12px}
+  .rowtools{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .delx{color:var(--bad);cursor:pointer;font-weight:700;border:none;background:none;font-size:15px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+  .pill.ok{background:#e7f4e8;color:var(--ok)} .pill.warn{background:#fdf0e3;color:var(--warn)} .pill.bad{background:#fbe9e7;color:var(--bad)} .pill.mut{background:#eef1f4;color:var(--mut)}
+  .due{background:#fff6f5 !important}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-weight:600;color:var(--c1);margin-bottom:4px;font-size:13px}
+  .field textarea,.field input,.field select{width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit}
+  .field textarea{min-height:64px;resize:vertical}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi .box{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;border-top:4px solid var(--c3)}
+  .kpi .box .n{font-size:30px;font-weight:800;color:var(--c1)}
+  .kpi .box .l{font-size:12.5px;color:var(--mut)}
+  .progress{height:10px;background:#e6ecf2;border-radius:6px;overflow:hidden;margin-top:6px}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--c3),var(--ok))}
+  .hint{font-size:12.5px;color:var(--mut);margin:4px 0 0}
+  .guide h3{color:var(--c1);font-size:15px;margin:18px 0 6px;border-left:4px solid var(--c3);padding-left:10px}
+  .guide h4{color:var(--c2);font-size:13.5px;margin:12px 0 4px}
+  .guide ol,.guide ul{margin:6px 0 6px 4px;padding-left:22px}
+  .guide li{margin-bottom:5px}
+  .guide table{margin:10px 0}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .flow .step{background:#eef5fb;border:1px solid var(--c3);color:var(--c1);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;max-width:210px}
+  .flow .arr{color:var(--c3);font-weight:800}
+  .roles td:first-child{white-space:nowrap;font-weight:600;color:var(--c1)}
+  .ctrlmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin:6px 0}
+  .ctrlmap .cc{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;border-left:4px solid var(--c3)}
+  .ctrlmap .cc b{color:var(--c1)}
+  .ctrlmap .cc span{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
+  .ctrlmap .cc.stage{border-left-color:#e0930a}
+  .ctrlmap .cc.core{border-left-color:#2e8b57;background:#f4fbf6}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--c1);color:#fff;padding:11px 18px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:.25s;z-index:99}
+  .toast.show{opacity:1;transform:none}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:6px}
+  .scroll{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:8px}
+  footer{text-align:center;color:var(--mut);font-size:12px;padding:20px}
+  /* 用印 / 電子簽章格 */
+  .sealbox{position:relative;height:62px;border:1px dashed #b9c4ce;border-radius:6px;background:#fcfdfe;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+  .sealbox img{max-height:56px;max-width:130px}
+  .sealbox .sealhint{font-size:11px;color:#9aa7b2}
+  .sealx{position:absolute;top:2px;right:2px;border:none;background:rgba(0,0,0,.45);color:#fff;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:11px;line-height:16px;padding:0}
+  /* 年度報告（列印用版面） */
+  #reportArea{display:none}
+  #reportArea .rpt-doc{max-width:1000px;margin:0 auto;color:#1c2733}
+  #reportArea h1.rt{font-size:20px;color:var(--c1);text-align:center;margin:0 0 2px}
+  #reportArea .rt-sub{text-align:center;color:var(--mut);font-size:12px;margin-bottom:14px}
+  #reportArea .rt-meta{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+  #reportArea .rt-meta td{border:1px solid #aab4bd;padding:5px 8px}
+  #reportArea .rt-meta td.k{background:#eef3f7;font-weight:700;color:var(--c1);width:120px;white-space:nowrap}
+  #reportArea h2.rt{font-size:14px;color:#fff;background:var(--c2);padding:5px 10px;border-radius:4px;margin:16px 0 6px}
+  #reportArea table.rpt{width:100%;border-collapse:collapse;font-size:10.5px;margin:4px 0 8px}
+  #reportArea table.rpt th,#reportArea table.rpt td{border:1px solid #999;padding:3px 5px;vertical-align:top}
+  #reportArea table.rpt th{background:#eaf1f7;color:var(--c1)}
+  #reportArea .rt-sign{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  #reportArea .rt-sign th,#reportArea .rt-sign td{border:1px solid #888;padding:6px 8px;text-align:center}
+  #reportArea .rt-sign th{background:#eaf1f7;color:var(--c1)}
+  #reportArea .rt-sealbox{height:60px;display:flex;align-items:center;justify-content:center}
+  #reportArea .rt-sealbox img{max-height:54px;max-width:120px}
+  @media print{
+    @page{margin:14mm}
+    header,nav,.toolbtn,.rowtools,.btn,.delx,footer,.sealx,.sealhint{display:none !important}
+    body{background:#fff}
+    .scroll{max-height:none !important;overflow:visible !important;border:none !important}
+    .card{box-shadow:none;border:1px solid #bbb;break-inside:auto}
+    th{position:static;white-space:normal}
+    main table{font-size:10px}
+    main table th,main table td{word-break:break-word}
+    td .cellprint{white-space:pre-wrap;word-break:break-word;font-size:10px}
+    td textarea{white-space:pre-wrap;overflow:visible !important;border:none !important}
+    td input,td select{border:none !important}
+    tr{break-inside:avoid}
+    .panel{display:none !important}
+    .panel.active{display:block !important}
+    #reportArea{display:none !important}
+    body.print-signoff .panel{display:none !important}
+    body.print-signoff #year{display:block !important}
+    body.print-signoff #year .arch-card{display:none !important}
+    .sealbox{border:1px solid #888;background:#fff}
+    body.print-report .panel{display:none !important}
+    body.print-report #reportArea{display:block !important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>ISO 27001:2022 A15「Legal and compliance 遵循性」管理工具</h1>
+    <div class="sub">遵循性＝識別法律法令法規及契約要求（A.5.31★）→ 落實智慧財產權（A.5.32★）、紀錄之保護（A.5.33★）、隱私及PII保護（A.5.34★）之遵循作法 → 遵循性審查（A.5.36）→ 矯正改善；A15 為全 ISMS 法律、法令、法規及契約要求之單一真實來源（SSOT）｜涵蓋附錄A：5.31／5.32／5.33／5.34＋5.36 遵循性審查（協同 A14）</div>
+  </div>
+  <div class="grow"></div>
+  <button class="toolbtn" onclick="saveNow()">💾 儲存</button>
+  <button class="toolbtn" onclick="doPrint()">🖨 列印 / PDF</button>
+</header>
+
+<nav id="nav">
+  <button data-p="dash" class="active">📊 儀表板</button>
+  <button data-p="flow">🗺 流程圖</button>
+  <span class="navsep">｜① 法規要求★</span>
+  <button data-p="c531">5.31 法規/契約要求★</button>
+  <span class="navsep">｜② 遵循作法★</span>
+  <button data-p="c532">5.32 智慧財產權★</button>
+  <button data-p="c533">5.33 紀錄之保護★</button>
+  <button data-p="c534">5.34 隱私及PII★</button>
+  <span class="navsep">｜③ 審查</span>
+  <button data-p="c536">5.36 遵循性審查</button>
+  <span class="navsep">｜</span>
+  <button data-p="year">🗓 年度簽核</button>
+  <button data-p="guide">📘 作業說明</button>
+  <button data-p="data">⚙ 資料管理</button>
+</nav>
+
+<main>
+  <!-- ================= 儀表板 ================= -->
+  <section class="panel active" id="dash">
+    <div class="card">
+      <h2 class="sec"><span class="tag">總覽</span>遵循性（Legal and compliance）建置進度</h2>
+      <div class="clauseref">本工具對應 ISO/IEC 27001:2022 <b>附錄A</b>中屬於「<b>A15 遵循性</b>」運作流程之控制，依<b>識別法規/契約要求 → 落實遵循作法 → 遵循性審查 → 矯正改善（持續循環）</b>展開：以<b>法律、法令、法規及契約要求事項（A.5.31★）</b>識別、書面紀錄並保持更新組織須符合之要求事項及其符合作法（目標）；於<b>智慧財產權（A.5.32★）、紀錄之保護（A.5.33★）、隱私及PII保護（A.5.34★）</b>等領域落實遵循作法；以<b>資訊安全政策、規則及標準之遵循性（A.5.36）</b>定期審查遵循情形。<b>核心（A15 為單一真實來源 SSOT）：A.5.31／A.5.32／A.5.33（法規保存面）／A.5.34（法規義務面）</b>，為全 ISMS 法律、法令、法規及契約要求之真實來源。</div>
+      <div id="annualBox"></div>
+      <div class="kpi" id="kpiBox"></div>
+      <div id="progressBox"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">對應</span>A15 流程圖涵蓋之附錄A控制項（識別 → 落實 → 審查）</h2>
+      <div class="ctrlmap" id="ctrlMap"></div>
+      <p class="hint">＊<b style="color:#1f6b41">綠色＝A15 為單一真實來源（SSOT）</b>：A.5.31 法律、法令、法規及契約要求事項、A.5.32 智慧財產權、A.5.33 紀錄之保護（法規保存面）、A.5.34 隱私及PII保護（法規義務面）。<b style="color:#8a5a00">橘色＝協同／跨流程整合</b>：A.5.36 資訊安全政策、規則及標準之遵循性（<b>對「內部」政策/規則/標準之獨立審查 SSOT→<code>A14</code>／A.5.35~5.36</b>；本工具聚焦對「外部」法律/法規/契約之遵循查核）。紀錄之技術保護→<code>A03/5.33</code>、PII資料處理→<code>A03/5.34</code>。</p>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">整合</span>與其他條文工具之整合及權責分界（避免重複作業與矛盾）</h2>
+      <div class="clauseref">A15 遵循性為 ISMS 之<b>法律、法令、法規及契約要求之真實來源</b>：以<b>法律、法令、法規及契約要求事項（A.5.31）、智慧財產權（A.5.32）、紀錄之保護（A.5.33）、隱私及PII保護（A.5.34）</b>管理法規/契約要求之識別、書面紀錄、保持更新與遵循作法；以<b>遵循性（A.5.36）</b>審查遵循情形。惟其<b>實作面（紀錄之技術保護、PII資料處理、資產/媒體、備份、人員認知、供應者契約、事件通報、內部政策獨立審查）</b>之 SSOT 位於對應流程工具。為<b>避免重複維護或前後矛盾</b>，下表界定各控制項之 SSOT 與本工具之分工；填表時請依「整合說明」交叉參照，勿在多處重複登錄同一筆資料。</div>
+      <div class="scroll" style="max-height:none">
+        <table>
+          <thead><tr><th style="width:210px">A15 控制項／項目</th><th style="width:210px">相關條文／流程工具</th><th>整合說明與權責分界</th></tr></thead>
+          <tbody>
+            <tr><td><b>A.5.31</b> 法律、法令、法規及契約要求事項 ★</td><td>本工具為 <b>SSOT（核心）</b><br>各流程工具引用</td><td><b>應識別、書面紀錄及保持更新資訊安全相關法律、法令、法規及契約之要求事項，以及組織為符合此等要求事項的作法＝本工具為全 ISMS 單一真實來源</b>（法規/契約要求登記簿）。各流程工具（A02 人員法規、A03 PII/保存、A12 鑑識通報、A13 備份保存等）之<b>法律/法規/契約要求皆引用本工具 <code>A.5.31</code></b>，不另行盤點。</td></tr>
+            <tr><td><b>A.5.32</b> 智慧財產權 ★</td><td>本工具為 <b>SSOT（核心）</b><br>A04（5.9 資產）／A06（8.19 軟體安裝）</td><td><b>組織應實作適切程序，以保護智慧財產權＝本工具為單一真實來源</b>（軟體授權、著作權、商標、專利、營業秘密、開源OSS）。軟體/IPR <b>資產清冊引用 <code>A04／A.5.9</code></b>、<b>軟體安裝管控 <code>A06／A.8.19</code></b>、OSS 元件清單(SBOM)→ <code>A08／A09</code>。</td></tr>
+            <tr><td><b>A.5.33</b> 紀錄之保護 ★（法規保存面）</td><td>本工具（法規/保存要求）<br>A03（5.33 技術保護）／A13（8.13 備份）</td><td><b>應保護紀錄，免於遺失、毀損、偽造、未經授權存取及未經授權發布</b>。本工具為<b>紀錄保存之法規/契約要求與保存期限（SSOT）</b>；<b>紀錄之技術保護（完整性、存取控制、加密）依 <code>A03／A.5.33</code>、A06/8.24</b>、<b>備份副本依 <code>A13／A.8.13</code></b>、媒體/資產面 <code>A04</code>、日誌存錄 <code>A12／A.8.15</code>。</td></tr>
+            <tr><td><b>A.5.34</b> 隱私及PII保護 ★（法規義務面）</td><td>本工具（法規義務/DPIA）<br>A03（5.34 資料處理）</td><td><b>組織應依適用之法律、法規及契約要求事項，識別並符合有關PII隱私及保護的要求</b>。本工具為<b>PII法規義務、當事人權利、跨境傳輸適法性與隱私衝擊評估（DPIA）之 SSOT</b>；<b>PII之資料處理（遮蔽、DLP、可接受使用、分級）依 <code>A03／A.5.34、A.8.11、A.8.12、A.5.10、A.5.12</code></b>。</td></tr>
+            <tr><td><b>A.5.36</b> 資訊安全政策、規則及標準之遵循性</td><td>A14（5.35 獨立審查／5.36 內部遵循）<br>本工具（法規遵循查核）</td><td><b>應定期審查組織資訊安全政策、主題特定政策、規則及標準之遵循性</b>。<b>對「內部」政策/規則/標準之遵循性與獨立審查（5.35）之 SSOT＝<code>A14</code></b>；本工具於遵循性審查中聚焦<b>對「外部」法律、法令、法規、契約之遵循查核</b>，並引用 A14 之內部遵循審查結果，二者協同形成完整遵循性審查。</td></tr>
+            <tr><td><b>人員法規認知與訓練</b></td><td>A02 人資安全（6.3）／條文7（7.2/7.3）</td><td>使員工知悉並遵循法律/法規/契約要求之<b>認知與訓練依 <code>A02／A.6.3</code> 與條文7</b>，本工具提供法規要求清單作為訓練依據。</td></tr>
+            <tr><td><b>供應者契約之法遵義務</b></td><td>A11 供應者關係安全（5.20）</td><td>供應者協議中闡明之法律/法規/契約義務（含保密、稽核權、資料返還）<b>於 <code>A11／A.5.20</code> 議定</b>，本工具維護法規/契約要求本體。</td></tr>
+            <tr><td><b>個資外洩等法定通報</b></td><td>A12 資安事件管理（5.26）／主管機關</td><td>事故之<b>法定通報義務與時限</b>由本工具（A.5.31）界定要求，<b>通報執行與鑑識證據循 <code>A12</code></b>（A.5.26 回應、A.5.28 證據）。</td></tr>
+            <tr><td><b>年度簽核</b></td><td>條文9（9.3 管理審查）<br>條文10（10.2 矯正）</td><td>年度遵循性覆核結論（法規異動、遵循缺口、IPR/授權合規、紀錄保存、隱私/DPIA、遵循性審查發現等）為<b>管理審查輸入</b>；審查決議再驅動條文10 改善，形成 PDCA 閉環。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">提醒</span>待覆核／待處置項目（覆核日或期限已到期或逾期）</h2>
+      <div id="dueBox"><p class="hint">尚無資料。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 流程圖 ================= -->
+  <section class="panel" id="flow">
+    <div class="card">
+      <h2 class="sec"><span class="tag">流程圖</span>A15 Legal and compliance 遵循性作業流程圖</h2>
+      <div class="clauseref">以下為 A15 遵循性運作流程之<b>文字流程方塊圖</b>，依遵循性管理週期展開：<b>① 識別與書面紀錄</b>以<b>法律、法令、法規及契約要求事項（A.5.31★）</b>識別、書面紀錄並保持更新組織須符合之要求及其符合作法；<b>② 遵循作法之落實</b>於<b>智慧財產權（A.5.32★）、紀錄之保護（A.5.33★）、隱私及PII保護（A.5.34★）</b>等領域實作遵循程序；<b>③ 遵循性審查</b>以<b>資訊安全政策、規則及標準之遵循性（A.5.36）</b>定期審查遵循情形；<b>④ 矯正與持續改善</b>回饋識別與作法形成循環。<b>點擊任一控制方塊</b>可直接跳至該控制項分頁進行維護。★＝A15 為單一真實來源（SSOT）。</div>
+      <div id="flowDiagram"></div>
+      <p class="hint">對應控制項：① 識別—A.5.31★（法律、法令、法規及契約要求事項）；② 落實—A.5.32★（智慧財產權）、A.5.33★（紀錄之保護）、A.5.34★（隱私及PII保護）；③ 審查—A.5.36（資訊安全政策、規則及標準之遵循性，協同 A14）；④ 矯正—循環回饋（10.2／9.3）。</p>
+      <details style="margin-top:14px">
+        <summary style="cursor:pointer;color:var(--c2);font-weight:600">▸ 原始流程圖（A15.png，點擊展開）</summary>
+        <div style="margin-top:10px"><img id="flowImg" src="A15.png" alt="A15 遵循性流程圖" style="width:100%;border:1px solid var(--line);border-radius:8px"
+             onclick="this.classList.toggle('zoomed')"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= 5.31 法律、法令、法規及契約要求事項 ================= -->
+  <section class="panel" id="c531">
+    <div class="card">
+      <h2 class="sec"><span class="tag">A.5.31 ★</span>法律、法令、法規及契約要求事項（Legal, statutory, regulatory and contractual requirements）｜① 識別</h2>
+      <div class="clauseref"><b>控制要求：</b>應<b>識別、書面紀錄及保持更新資訊安全相關之法律、法令、法規及契約之要求事項，以及組織為符合此等要求事項的作法</b>。本表為<b>法規/契約要求登記簿</b>，逐項登錄<b>要求類別、法規/契約名稱、來源/主管機關、對組織之適用性與要求、符合作法/控制措施及遵循證據</b>，並定期保持更新。<span class="xref">🔗 <b>權責分界（SSOT 核心）：</b>法律/法令/法規/契約要求之識別、書面紀錄及保持更新<b>＝本工具為全 ISMS 單一真實來源</b>。各流程工具（A02 人員法規、A03 PII/保存、A12 通報、A13 備份保存等）之法規/契約要求<b>皆引用本登記簿</b>，不另行盤點；人員法規認知訓練 <code>A02／A.6.3</code>。</span></div>
+      <div class="scroll">
+        <table id="t531">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:130px">要求類別</th><th style="width:190px">法規／契約名稱</th><th style="width:170px">來源／主管機關／條款</th><th style="width:210px">適用性與要求事項</th>
+            <th style="width:210px">符合作法／控制措施</th><th style="width:160px">遵循證據</th><th style="width:150px">關聯</th><th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:110px">狀態</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c531')">＋ 新增法規／契約要求</button>
+        <button class="btn ghost" onclick="loadSample('c531')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5.32 智慧財產權 ================= -->
+  <section class="panel" id="c532">
+    <div class="card">
+      <h2 class="sec"><span class="tag">A.5.32 ★</span>智慧財產權（Intellectual property rights）｜② 落實</h2>
+      <div class="clauseref"><b>控制要求：</b><b>組織應實作適切程序，以保護智慧財產權</b>。本表登錄各<b>智慧財產權標的</b>（商用軟體授權、作業系統授權、著作權、商標、專利、營業秘密、開源軟體 OSS 授權）之<b>授權/權利狀態、保護程序/管控措施（盤點、授權對帳、禁止非法軟體）及法規依據</b>。<span class="xref">🔗 <b>權責分界（SSOT 核心）：</b>保護智慧財產權之程序<b>＝本工具為單一真實來源</b>。軟體/IPR <b>資產清冊引用 <code>A04／A.5.9</code></b>、<b>軟體安裝與管控 <code>A06／A.8.19</code></b>、OSS 元件清單(SBOM)→ <code>A08／A09</code>、著作權/智財相關法規本體於 <code>A.5.31</code>。</span></div>
+      <div class="scroll">
+        <table id="t532">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:150px">IPR 類別</th><th style="width:200px">IPR 標的／資產</th><th style="width:200px">授權／權利狀態</th>
+            <th style="width:210px">保護程序／管控措施</th><th style="width:170px">法規依據／契約</th><th style="width:150px">關聯</th><th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:110px">狀態</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c532')">＋ 新增 IPR 標的</button>
+        <button class="btn ghost" onclick="loadSample('c532')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5.33 紀錄之保護 ================= -->
+  <section class="panel" id="c533">
+    <div class="card">
+      <h2 class="sec"><span class="tag">A.5.33 ★</span>紀錄之保護（Protection of records）｜② 落實</h2>
+      <div class="clauseref"><b>控制要求：</b>應<b>保護紀錄，免於遺失、毀損、偽造、未經授權存取及未經授權發布</b>。本表為<b>紀錄保存清冊（法規/契約面）</b>，登錄各<b>紀錄類別</b>之<b>法規/契約保存要求、保存期限、保護要求及屆期處置/銷毀方式</b>。<span class="xref">🔗 <b>權責分界：</b>本工具為<b>紀錄保存之法規/契約要求與保存期限之 SSOT</b>；<b>紀錄之技術保護（完整性、存取控制、加密）依 <code>A03／A.5.33</code>、<code>A06／A.8.24</code></b>、<b>備份副本依 <code>A13／A.8.13</code></b>、媒體/資產面 <code>A04</code>、日誌存錄與防竄改 <code>A12／A.8.15</code>。</span></div>
+      <div class="scroll">
+        <table id="t533">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:180px">紀錄類別</th><th style="width:210px">法規／契約保存要求</th><th style="width:120px">保存期限</th>
+            <th style="width:210px">保護要求</th><th style="width:180px">屆期處置／銷毀</th><th style="width:150px">關聯</th><th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:100px">狀態</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c533')">＋ 新增紀錄類別</button>
+        <button class="btn ghost" onclick="loadSample('c533')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5.34 隱私及PII保護 ================= -->
+  <section class="panel" id="c534">
+    <div class="card">
+      <h2 class="sec"><span class="tag">A.5.34 ★</span>隱私及PII保護（Privacy and protection of PII）｜② 落實</h2>
+      <div class="clauseref"><b>控制要求：</b>組織應<b>依適用之法律、法規及契約要求事項，識別並符合有關PII隱私及保護的要求</b>。本表登錄各<b>PII類別/資料項目</b>之<b>當事人類型、適用法規/契約、法規義務/當事人權利（告知、同意、查閱、更正、刪除、跨境傳輸）及隱私保護措施/隱私衝擊評估（DPIA）</b>。<span class="xref">🔗 <b>權責分界：</b>本工具為<b>PII法規義務、當事人權利、跨境傳輸適法性與 DPIA 之 SSOT</b>；<b>PII之資料處理（遮蔽、DLP、可接受使用、分級）依 <code>A03／A.5.34、A.8.11、A.8.12、A.5.10、A.5.12</code></b>、與當事人/第三方傳送 <code>A03／A.5.14</code>、雲端處理 <code>A11／A.5.23</code>。</span></div>
+      <div class="scroll">
+        <table id="t534">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:190px">PII類別／資料項目</th><th style="width:140px">當事人類型</th><th style="width:180px">適用法規／契約</th>
+            <th style="width:220px">法規義務／當事人權利</th><th style="width:200px">隱私保護措施／DPIA</th><th style="width:150px">關聯</th><th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:110px">狀態</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c534')">＋ 新增 PII 項目</button>
+        <button class="btn ghost" onclick="loadSample('c534')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5.36 資訊安全政策、規則及標準之遵循性 ================= -->
+  <section class="panel" id="c536">
+    <div class="card">
+      <h2 class="sec"><span class="tag">A.5.36</span>資訊安全政策、規則及標準之遵循性（Compliance with policies, rules and standards）｜③ 審查</h2>
+      <div class="clauseref"><b>控制要求：</b>應<b>定期審查組織資訊安全政策、主題特定政策、規則及標準之遵循性</b>。本表為<b>遵循性審查/查核紀錄</b>，登錄各次審查之<b>審查對象、審查類型、方法/頻率、審查結果/不符合事項及矯正措施/追蹤</b>。<span class="xref">🔗 <b>權責分界（協同 A14）：</b><b>對「內部」政策/規則/標準之遵循性與獨立審查（5.35）之 SSOT＝<code>A14</code>／A.5.35~5.36</b>；本工具於遵循性審查中聚焦<b>對「外部」法律、法令、法規、契約之遵循查核</b>，並引用 A14 之內部遵循審查結果。內部稽核制度→<code>9.2</code>、管理審查→<code>9.3</code>、矯正措施→<code>10.2</code>。</span></div>
+      <div class="scroll">
+        <table id="t536">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:210px">審查對象</th><th style="width:170px">審查類型</th><th style="width:180px">審查方法／頻率</th>
+            <th style="width:220px">審查結果／不符合事項</th><th style="width:200px">矯正措施／追蹤</th><th style="width:150px">關聯</th><th style="width:120px">負責單位</th><th style="width:100px">覆核日</th><th style="width:120px">狀態</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c536')">＋ 新增遵循性審查</button>
+        <button class="btn ghost" onclick="loadSample('c536')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 年度簽核 ================= -->
+  <section class="panel" id="year">
+    <div class="card">
+      <h2 class="sec"><span class="tag">年度</span>年度遵循性作業與簽核</h2>
+      <div class="clauseref">遵循性各項控制（法律、法令、法規及契約要求事項、智慧財產權、紀錄之保護、隱私及PII保護、遵循性審查）應<b>至少每年覆核一次</b>，並於<b>法律/法規/契約異動、新增重大業務或系統、重大稽核或裁罰、個資/智財事件、組織或主管機關要求變更時</b>即時審查。每年度完成覆核後，請填寫本簽核表並完成三級簽核，再按「封存本年度」建立年度紀錄，作為管理審查（條文 9.3）之輸入。<span class="xref">🔗 <b>整合連結：</b>本年度遵循性覆核結論應提報 <code>條文9 績效評估 › 9.3 管理審查</code>，並回饋 <code>條文10 改善（10.2）</code>。</span></div>
+      <div class="grid3">
+        <div class="field"><label>作業年度</label><input id="y_year" placeholder="例：2026"></div>
+        <div class="field"><label>作業期間（起）</label><input type="date" id="y_from"></div>
+        <div class="field"><label>作業期間（迄）</label><input type="date" id="y_to"></div>
+      </div>
+      <div class="field"><label>本年度遵循性變化摘要（法律/法規/契約異動、新增遵循要求、遵循缺口與改善、IPR/軟體授權合規、紀錄保存與處置、隱私/PII 與 DPIA、遵循性審查發現、裁罰或重大事件等）</label><textarea id="y_summary" placeholder="說明與前一年度相比之重大變化（新增/修訂之法律法規與契約要求、遵循缺口與矯正進度、智慧財產權與軟體授權合規情形、紀錄保存與屆期處置、隱私/PII 法規義務與 DPIA 結果、年度遵循性審查與內外部稽核發現、主管機關裁罰或重大客訴等）；若無變化亦請敘明「經覆核無重大變化」。"></textarea></div>
+      <h2 class="sec" style="font-size:15px"><span class="tag">簽核</span>三級簽核</h2>
+      <div class="scroll" style="max-height:none">
+        <table>
+          <thead><tr><th style="width:80px">層級</th><th>角色 / 職稱</th><th style="width:160px">簽核人姓名</th><th style="width:150px">簽核日期</th><th style="width:150px">簽章 / 用印</th></tr></thead>
+          <tbody>
+            <tr><td><b>執行</b></td><td>法務 / 合規 / ISMS 執行</td><td><input id="y_exec_n" placeholder="姓名"></td><td><input type="date" id="y_exec_d"></td><td><div class="sealbox" id="seal_exec" onclick="pickSeal('exec')"></div></td></tr>
+            <tr><td><b>審查</b></td><td>資安長 / ISMS 主管</td><td><input id="y_rev_n" placeholder="姓名"></td><td><input type="date" id="y_rev_d"></td><td><div class="sealbox" id="seal_rev" onclick="pickSeal('rev')"></div></td></tr>
+            <tr><td><b>核准</b></td><td>最高管理階層</td><td><input id="y_app_n" placeholder="姓名"></td><td><input type="date" id="y_app_d"></td><td><div class="sealbox" id="seal_app" onclick="pickSeal('app')"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">「簽章 / 用印」格可點擊上傳電子簽章或公司印章圖檔（PNG/JPG）；亦可留白，列印後實體簽名用印。</p>
+      <div class="grid2" style="margin-top:12px">
+        <div class="field"><label>是否已提報管理審查（9.3）</label><select id="y_mr"><option value=""></option><option>是</option><option>否（待提報）</option></select></div>
+        <div class="field"><label>下次應辦理日（核准日填入後自動帶次年，可手動調整）</label><input type="date" id="y_next"></div>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="archiveYear()">📦 封存本年度並建立紀錄</button>
+        <button class="btn ghost" onclick="printSignoff()">🖨 列印簽核表</button>
+        <button class="btn ghost" onclick="printReportCurrent()">📄 列印年度報告（含各控制項）</button>
+      </div>
+      <p class="hint">封存後，目前各控制項之資料與本簽核表將一併存入下方「歷年紀錄」；現有資料會保留供新年度延續編修（請更新「作業年度」與簽核欄後再次封存）。</p>
+      <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
+    </div>
+    <div class="card arch-card">
+      <h2 class="sec"><span class="tag">紀錄</span>歷年遵循性作業紀錄</h2>
+      <p class="hint">每一年度封存後在此列管，可檢視、匯出或還原為目前編輯版本，呈現年度資料軌跡。</p>
+      <div id="archiveBox"><p class="hint">尚無年度紀錄。完成簽核後請按「封存本年度」。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 作業說明（程序書） ================= -->
+  <section class="panel" id="guide">
+    <div class="card guide">
+      <h2 class="sec"><span class="tag">程序書</span>ISMS-A15 遵循性作業程序書</h2>
+      <div class="clauseref">本作業說明為內嵌之精簡程序書（文件編號建議：<b>ISMS-A15</b>），規範 ISO 27001:2022 附錄A 遵循性相關控制（<b>A.5.31 法律、法令、法規及契約要求事項、A.5.32 智慧財產權、A.5.33 紀錄之保護、A.5.34 隱私及PII保護、A.5.36 資訊安全政策、規則及標準之遵循性</b>）依<b>識別 → 落實 → 審查 → 矯正 → 年度覆核</b>之作業活動、職責分工、產出與覆核時機，可直接列印作為文件化資訊。</div>
+
+      <h3>1. 目的</h3>
+      <p>建立組織<b>遵循性（Legal and compliance）</b>之作業方法，以<b>法律、法令、法規及契約要求事項（A.5.31）</b>識別、書面紀錄並保持更新組織須符合之要求事項及符合作法；以<b>智慧財產權（A.5.32）</b>實作適切程序保護智慧財產權；以<b>紀錄之保護（A.5.33）</b>保護紀錄免於遺失、毀損、偽造、未經授權存取及發布，並符合法規/契約之保存要求；以<b>隱私及PII保護（A.5.34）</b>依適用法律、法規及契約要求識別並符合 PII 隱私及保護之要求；以<b>資訊安全政策、規則及標準之遵循性（A.5.36）</b>定期審查遵循情形，確保組織持續符合外部法律法規契約與內部政策規則標準，且作為全 ISMS 法律、法令、法規及契約要求之單一真實來源，避免與其他流程重複維護或產生矛盾。</p>
+
+      <h3>2. 適用範圍</h3>
+      <p>適用於 ISMS 範圍內<b>所有適用之法律、法令、法規及契約要求，與智慧財產權、紀錄保存、隱私/PII 保護及遵循性審查</b>之識別、書面紀錄、保持更新、落實與審查，對應 ISO 27001:2022 附錄A 之 <b>A.5.31、A.5.32、A.5.33、A.5.34、A.5.36</b>。<b>本工具為 A.5.31、A.5.32（及 A.5.33 法規保存面、A.5.34 法規義務面）之單一真實來源</b>；A.5.36 對內部政策/規則/標準之遵循性與獨立審查以 A14 為主，本工具聚焦對外部法規/契約之遵循查核並協同之。其輸入之主規範來源見第 8 章界定。</p>
+
+      <h3>3. 名詞與控制項對照</h3>
+      <table>
+        <thead><tr><th>階段</th><th>控制項</th><th>名稱</th><th>控制要求（摘要）／SSOT</th></tr></thead>
+        <tbody>
+          <tr><td>① 識別</td><td>A.5.31 ★</td><td>法律、法令、法規及契約要求事項</td><td>識別、書面紀錄及保持更新法律/法令/法規/契約要求及符合作法。（<b>A15＝SSOT</b>／各流程引用）</td></tr>
+          <tr><td rowspan="3">② 落實</td><td>A.5.32 ★</td><td>智慧財產權</td><td>實作適切程序保護智慧財產權。（<b>A15＝SSOT</b>／資產 A04、軟體安裝 A06/8.19）</td></tr>
+          <tr><td>A.5.33 ★</td><td>紀錄之保護</td><td>保護紀錄免於遺失/毀損/偽造/未授權存取及發布。（<b>A15＝法規保存面 SSOT</b>／技術保護 A03、備份 A13）</td></tr>
+          <tr><td>A.5.34 ★</td><td>隱私及PII保護</td><td>依適用法律/法規/契約識別並符合 PII 隱私及保護要求。（<b>A15＝法規義務面 SSOT</b>／資料處理 A03）</td></tr>
+          <tr><td>③ 審查</td><td>A.5.36</td><td>資訊安全政策、規則及標準之遵循性</td><td>定期審查政策/主題特定政策/規則/標準之遵循性。（<b>內部遵循/獨立審查 SSOT＝A14</b>／本工具聚焦法規遵循查核）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>4. 權責分工</h3>
+      <table class="roles">
+        <thead><tr><th>角色</th><th>職責</th></tr></thead>
+        <tbody>
+          <tr><td>最高管理階層</td><td>核可遵循性政策與本程序書；提供資源；對重大法遵風險、裁罰與不符合事項決策；確保組織持續符合法律法規契約要求。</td></tr>
+          <tr><td>資安長 / ISMS 主管</td><td>統籌遵循性制度、督導法規/契約要求之識別與保持更新、督導 IPR/紀錄/隱私之遵循落實、督導年度遵循性審查並提報管理審查。</td></tr>
+          <tr><td>法務 / 合規</td><td>識別、解讀並更新法律/法令/法規/契約要求（A.5.31），判斷智慧財產權與隱私/PII 法規義務（A.5.32/A.5.34），界定紀錄保存法規要求（A.5.33），辦理法規遵循查核（A.5.36）。</td></tr>
+          <tr><td>IT / 系統與資料管理</td><td>落實軟體授權與 IPR 管控（A.5.32，→A06/A04）、實作紀錄之技術保護與保存/處置（→A03/A13）、實作 PII 之資料處理保護（→A03），提供遵循證據。</td></tr>
+          <tr><td>個資 / 隱私保護負責人（DPO）</td><td>盤點 PII、辦理隱私衝擊評估（DPIA）、處理當事人權利請求與跨境傳輸適法性、督導 PII 法規義務之符合（A.5.34）。</td></tr>
+          <tr><td>各業務／部門</td><td>遵循適用之法律法規契約與政策規則標準、配合法規要求識別與遵循性審查、維護其業務之紀錄保存與授權合規。</td></tr>
+          <tr><td>稽核 / 獨立審查（協同 A14）</td><td>辦理對內部政策/規則/標準之遵循性與獨立審查（A.5.35/A.5.36），其結果供本流程遵循性審查引用。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>5. 作業流程（對應 A15 流程圖）</h3>
+      <h4>遵循性流程方塊圖</h4>
+      <div id="flowDiagramGuide" style="margin-bottom:6px"></div>
+      <h4>作業步驟序列</h4>
+      <div class="flow">
+        <div class="step">①識別<br><span style="font-weight:400">A.5.31★（識別、書面紀錄及保持更新法規/契約要求與符合作法）</span></div><span class="arr">→</span>
+        <div class="step">②落實<br><span style="font-weight:400">A.5.32★智財／A.5.33★紀錄保護／A.5.34★隱私PII</span></div><span class="arr">→</span>
+        <div class="step">③審查<br><span style="font-weight:400">A.5.36（定期審查政策/規則/標準及法規之遵循性；協同 A14）</span></div><span class="arr">↻</span>
+        <div class="step">④矯正<br><span style="font-weight:400">不符合事項矯正改善（持續循環）</span></div>
+      </div>
+      <p class="hint" style="margin-top:6px">＊<b>各流程之法律/法規/契約要求</b>皆引用 <b>A.5.31</b>；<b>紀錄之技術保護</b>依 <b>A03/5.33</b>、<b>備份</b> A13/8.13、<b>PII資料處理</b> A03(5.34/8.11/8.12)、<b>軟體授權資產</b> A04/5.9、<b>軟體安裝管控</b> A06/8.19、<b>人員法規認知</b> A02/6.3＋條文7、<b>供應者契約義務</b> A11/5.20、<b>事件法定通報</b> A12、<b>內部政策遵循/獨立審查</b> A14/5.35~5.36、<b>文件控制</b> 7.5、<b>改善</b> 循 10.2、提報 9.3。</p>
+
+      <h4>5.1 法律、法令、法規及契約要求事項（A.5.31★）—① 識別</h4>
+      <ol>
+        <li><b>識別、書面紀錄及保持更新要求事項</b>：盤點適用於組織之<b>法律、法令、法規、主管機關函令及契約（含客戶/供應者）要求</b>（如個人資料保護法、資通安全管理法、著作權法、營業秘密法、勞動相關法規、產業別規範、國際規範如 GDPR、客戶資安契約等），建立<b>法規/契約要求登記簿</b>。</li>
+        <li>逐項記錄<b>對組織之適用性與具體要求事項</b>，及<b>組織為符合此等要求之作法/控制措施與遵循證據</b>；指派負責單位並<b>定期保持更新</b>（法規異動追蹤）；本登記簿為全 ISMS 之法規/契約要求 SSOT，供各流程引用。</li>
+      </ol>
+      <h4>5.2 智慧財產權（A.5.32★）—② 落實</h4>
+      <ol>
+        <li><b>實作適切程序以保護智慧財產權</b>：盤點<b>商用軟體授權、作業系統授權、著作權、商標、專利、營業秘密及開源軟體（OSS）授權</b>，建立<b>軟體資產與授權對帳</b>機制，明定授權數量/期限與權利狀態。</li>
+        <li>實施<b>禁止安裝/使用未授權軟體之政策與管控</b>（→A06/8.19 軟體安裝、A04/5.9 資產清冊）、<b>OSS 授權相容性審查與標示（SBOM）</b>，定期查核並處理超量使用、到期續約或違規情形。</li>
+      </ol>
+      <h4>5.3 紀錄之保護（A.5.33★）—② 落實</h4>
+      <ol>
+        <li><b>保護紀錄免於遺失、毀損、偽造、未經授權存取及未經授權發布</b>：依紀錄類別（財務憑證帳冊、人事出勤薪資、合約、稽核日誌、個資等）界定<b>法規/契約之保存要求與保存期限</b>，建立紀錄保存清冊。</li>
+        <li>明定<b>保護要求與屆期處置/銷毀</b>方式；<b>紀錄之技術保護（完整性、存取控制、加密）依 A03/5.33、A06/8.24</b>、<b>備份副本依 A13/8.13</b>、日誌存錄與防竄改 A12/8.15，本工具維護法規保存要求本體。</li>
+      </ol>
+      <h4>5.4 隱私及PII保護（A.5.34★）—② 落實</h4>
+      <ol>
+        <li><b>依適用之法律、法規及契約要求事項，識別並符合有關 PII 隱私及保護的要求</b>：盤點各<b>PII 類別/資料項目與當事人類型</b>，對應<b>適用法規/契約（個資法、特定產業規範、GDPR 等）</b>，識別<b>法規義務與當事人權利</b>（告知、同意、特定目的、查閱更正、刪除、跨境傳輸）。</li>
+        <li>實作<b>隱私保護措施</b>並辦理<b>隱私衝擊評估（DPIA）</b>；<b>PII 之資料處理（遮蔽、DLP、可接受使用、分級）依 A03/5.34、8.11、8.12、5.10、5.12</b>、傳送 A03/5.14、雲端處理供應者 A11/5.23。</li>
+      </ol>
+      <h4>5.5 資訊安全政策、規則及標準之遵循性（A.5.36）—③ 審查</h4>
+      <ol>
+        <li><b>定期審查資訊安全政策、主題特定政策、規則及標準之遵循性</b>：規劃並執行<b>遵循性審查/查核</b>（法規遵循查核、契約遵循查核、技術合規檢查），登錄審查對象、方法/頻率與結果。</li>
+        <li>對<b>不符合事項</b>開立並追蹤<b>矯正措施</b>（→10.2）；<b>對內部政策/規則/標準之遵循性與獨立審查（A.5.35）之 SSOT 為 A14</b>，本工具聚焦外部法規/契約遵循查核並引用 A14 結果，二者協同形成完整遵循性審查。</li>
+      </ol>
+      <h4>5.6 矯正與持續改善（持續循環）—④</h4>
+      <ol>
+        <li>將遵循性審查、內外部稽核及法規異動所發現之<b>遵循缺口/不符合</b>回饋至要求識別（A.5.31）與遵循作法（A.5.32~A.5.34），形成持續改善循環；<b>矯正措施循條文10/10.2</b>，並提報年度管理審查（9.3）。</li>
+      </ol>
+
+      <h3>6. 覆核時機與年度簽核</h3>
+      <ul>
+        <li><b>定期：</b>各控制項至少<b>每年覆核一次</b>；<b>法規/契約要求定期保持更新（法規異動追蹤）、軟體授權定期對帳、紀錄保存與屆期處置定期檢視、隱私/PII 與 DPIA 定期複核、遵循性審查至少每年辦理</b>，並於管理審查（條文 9.3）前更新。每年度完成覆核後，須於「🗓 年度簽核」分頁完成<b>執行 → 審查 → 核准</b>三級簽核。</li>
+        <li><b>事件／變更觸發：</b>法律/法規/契約異動、新增重大業務或資訊系統、重大稽核或主管機關裁罰、個資/智財事件、組織或主管機關要求變更時，即時覆核相關控制項。</li>
+        <li><b>年度紀錄：</b>每年度簽核後按「封存本年度」建立年度快照，系統自動推算<b>下次應辦日（核准日次年）</b>並於儀表板提醒逾期或即將到期。</li>
+      </ul>
+
+      <h3>7. 文件化資訊與保存</h3>
+      <table>
+        <thead><tr><th>產出</th><th>對應控制</th><th>建議保存</th></tr></thead>
+        <tbody>
+          <tr><td><b>法規/契約要求登記簿（識別/作法/證據）（SSOT 核心）</b></td><td>A.5.31 ★</td><td><b>是（受控文件，核心）</b></td></tr>
+          <tr><td>智慧財產權與軟體授權清冊／對帳紀錄</td><td>A.5.32 ★</td><td>是（符合性證據）</td></tr>
+          <tr><td>紀錄保存清冊（保存期限/保護/處置）</td><td>A.5.33 ★</td><td>是（受控文件）</td></tr>
+          <tr><td>PII/隱私盤點與隱私衝擊評估（DPIA）紀錄</td><td>A.5.34 ★</td><td>是（受控文件／符合性證據）</td></tr>
+          <tr><td>遵循性審查／查核與矯正追蹤紀錄</td><td>A.5.36</td><td>是（符合性證據）</td></tr>
+          <tr><td>年度遵循性作業簽核紀錄</td><td>全部（年度覆核）</td><td>建議保存為符合性證據</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">＊保存方式：可於本工具維護後，使用「資料管理」分頁匯出 JSON 備份，或列印為 PDF 併入 ISMS 文件體系；另可使用隨附之 Excel 管理台帳作為離線受控副本。</p>
+
+      <h3>8. 與其他條文／流程之整合及權責分界（避免重複作業與矛盾）</h3>
+      <p>本程序為 ISMS 之<b>法律、法令、法規及契約要求之真實來源</b>：以法律法令法規及契約要求事項（A.5.31）、智慧財產權（A.5.32）、紀錄之保護（A.5.33）、隱私及PII保護（A.5.34）管理法規/契約要求之識別與遵循作法；以遵循性（A.5.36）審查遵循情形。惟其<b>實作面（紀錄之技術保護、PII資料處理、資產/媒體、備份、人員認知、供應者契約、事件通報、內部政策獨立審查）</b>之 SSOT 位於對應流程工具。為避免在多處重複維護或產生不一致，各項目之 SSOT 界定如下，填表時應交叉參照而非重複登錄：</p>
+      <table>
+        <thead><tr><th>本程序控制項／項目</th><th>單一真實來源（SSOT）</th><th>本工具之角色</th></tr></thead>
+        <tbody>
+          <tr><td>A.5.31／5.32 法規契約要求識別、智慧財產權</td><td><b>本工具（A15）★</b></td><td>全 ISMS 法律/法令/法規/契約要求與智財遵循之準據，供各流程引用</td></tr>
+          <tr><td>A.5.33 紀錄之技術保護（完整性/存取/加密）</td><td>A03 資訊保護（5.33）／A06（8.24）</td><td>紀錄之技術保護依 A03/A06，本工具維護法規保存要求與保存期限</td></tr>
+          <tr><td>紀錄之備份副本／日誌存錄</td><td>A13（8.13 備份）／A12（8.15 存錄）</td><td>備份依 A13、日誌存錄與防竄改依 A12，本工具界定保存要求</td></tr>
+          <tr><td>A.5.34 PII 之資料處理（遮蔽/DLP/可接受使用/分級）</td><td>A03 資訊保護（5.34/8.11/8.12/5.10/5.12）</td><td>PII 資料處理保護依 A03，本工具維護 PII 法規義務、當事人權利與 DPIA</td></tr>
+          <tr><td>智慧財產權之軟體資產／安裝管控</td><td>A04（5.9 資產）／A06（8.19 軟體安裝）</td><td>軟體資產清冊依 A04、安裝管控依 A06，本工具維護授權合規與保護程序</td></tr>
+          <tr><td>A.5.36 對內部政策/規則/標準之遵循性與獨立審查</td><td>A14 資訊安全保證（5.35/5.36）</td><td>內部政策遵循與獨立審查 SSOT 為 A14，本工具聚焦外部法規/契約遵循查核並引用之</td></tr>
+          <tr><td>人員法規認知與訓練</td><td>A02 人資安全（6.3）／條文7（7.2/7.3）</td><td>法規認知與訓練依 A02 與條文7，本工具提供法規要求清單作為依據</td></tr>
+          <tr><td>供應者契約之法遵義務</td><td>A11 供應者關係安全（5.20）</td><td>供應者協議之法律/契約義務於 A11 議定，本工具維護法規/契約要求本體</td></tr>
+          <tr><td>個資外洩等法定通報之執行</td><td>A12 資安事件管理（5.26/5.28）</td><td>法定通報義務與時限由本工具界定，通報執行與鑑識證據循 A12</td></tr>
+          <tr><td>文件版次／審查／發行（文件控制）</td><td>條文7（7.5）</td><td>文件化資訊控制依 7.5，本工具維護遵循性各登記簿內容</td></tr>
+          <tr><td>矯正措施與控制改善</td><td>條文10（10.2）／SoA（6.1.3）</td><td>由遵循缺口/不符合驅動矯正措施與控制調整，回饋各流程與 SoA</td></tr>
+          <tr><td>年度遵循性覆核結論</td><td>條文9 績效評估（9.3 管理審查）</td><td>三級簽核後作為管理審查輸入，回饋 10.2</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">＊原則：凡屬「紀錄技術保護、PII資料處理、軟體資產與安裝管控、備份與存錄、人員認知、供應者契約、事件通報執行、內部政策獨立審查、文件控制」者，以上述 SSOT 工具為準；<b>惟「法律、法令、法規及契約要求事項 A.5.31、智慧財產權 A.5.32、紀錄之保護（法規保存面）A.5.33、隱私及PII保護（法規義務面）A.5.34」以本工具為全 ISMS 單一真實來源</b>，其餘工具引用之。本工具負責法規/契約要求之識別、書面紀錄、保持更新、遵循作法與審查，並以交叉參照保持一致。</p>
+
+      <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
+    </div>
+  </section>
+
+  <!-- ================= 資料管理 ================= -->
+  <section class="panel" id="data">
+    <div class="card" id="dataPanel">
+      <h2 class="sec"><span class="tag">資料</span>儲存 / 備份 / 還原</h2>
+      <p class="hint">所有資料儲存於本機瀏覽器（localStorage），不會上傳。建議定期匯出 JSON 備份。法規/契約要求登記簿、紀錄保存清冊與隱私/DPIA 紀錄為核心受控文件/證據，請妥善保存。</p>
+      <div class="rowtools">
+        <button class="btn primary" onclick="exportJSON()">⬇ 匯出 JSON 備份</button>
+        <button class="btn ghost" onclick="document.getElementById('imp').click()">⬆ 匯入 JSON</button>
+        <input type="file" id="imp" accept="application/json" style="display:none" onchange="importJSON(event)">
+        <button class="btn ghost" onclick="exportCSV()">⬇ 匯出 CSV（各表）</button>
+        <button class="btn danger" onclick="clearAll()">🗑 清空所有資料</button>
+      </div>
+      <div class="meta" id="dataMeta"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">說明</span>與 Excel 管理台帳之搭配</h2>
+      <p>本工具與隨附之 <b>Excel 管理台帳（ISO27001_A15遵循性台帳.xlsx）</b> 涵蓋相同欄位（各控制項分頁）。建議：日常以本 HTML 工具維護與覆核，需提交稽核或離線簽核時，匯出資料填入 Excel 台帳作為受控文件副本。兩者欄位一致，可雙向對照。</p>
+    </div>
+  </section>
+</main>
+
+<!-- 年度報告（僅列印時顯示） -->
+<div id="reportArea"></div>
+
+<div class="toast" id="toast"></div>
+<footer>
+  ISO/IEC 27001:2022 Annex A — A15 Legal and compliance 遵循性（5.31／5.32／5.33／5.34＋5.36 遵循性審查，協同 A14）｜本機儲存．離線可用<br>
+  設計：Allan Lo 顧問（<a href="mailto:allanlo.plus@gmail.com">allanlo.plus@gmail.com</a>）｜
+  <a href="http://www.123hi.org" target="_blank" rel="noopener">http://www.123hi.org</a>｜2026年6月｜版本 v1.0
+</footer>
+
+<script>
+const KEY='iso27001_A15legal_v1';
+
+// ---------- 控制項對照（儀表板卡片，識別 → 落實 → 審查） ----------
+const CTRLS=[
+  {id:'A.5.31',name:'法律、法令、法規及契約要求事項',p:'c531',stg:'① 識別',core:true},
+  {id:'A.5.32',name:'智慧財產權',p:'c532',stg:'② 落實',core:true},
+  {id:'A.5.33',name:'紀錄之保護',p:'c533',stg:'② 落實',core:true},
+  {id:'A.5.34',name:'隱私及PII保護',p:'c534',stg:'② 落實',core:true},
+  {id:'A.5.36',name:'資訊安全政策、規則及標準之遵循性',p:'c536',stg:'③ 審查',core:false},
+];
+
+// ---------- 欄位定義 ----------
+const COLS={
+  c531:[
+    {k:'id',t:'text'},
+    {k:'reqtype',t:'select',opt:['法律','法令／法規','主管機關函令／裁罰','契約／客戶要求','產業標準／自律規範','國際規範(如GDPR)','其他']},
+    {k:'reqname',t:'textarea'},
+    {k:'reqsource',t:'textarea'},
+    {k:'applicability',t:'textarea'},
+    {k:'compliancemeasure',t:'textarea'},
+    {k:'evidence',t:'textarea'},
+    {k:'crossref',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+    {k:'status',t:'select',opt:['已識別','評估中','已符合','部分符合待改善','不符合待改善']},
+  ],
+  c532:[
+    {k:'id',t:'text'},
+    {k:'iprtype',t:'select',opt:['商用軟體授權','作業系統授權','著作權／著作','商標','專利','營業秘密','開源軟體(OSS)授權','第三方素材/字型/圖庫','其他']},
+    {k:'asset',t:'textarea'},
+    {k:'license',t:'textarea'},
+    {k:'protectmeasure',t:'textarea'},
+    {k:'legalbasis',t:'textarea'},
+    {k:'crossref',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+    {k:'status',t:'select',opt:['合規','待補授權','超量使用待處理','授權到期待續約','違規待改善']},
+  ],
+  c533:[
+    {k:'id',t:'text'},
+    {k:'recordtype',t:'textarea'},
+    {k:'legalreq',t:'textarea'},
+    {k:'retention',t:'text'},
+    {k:'protectreq',t:'textarea'},
+    {k:'disposal',t:'textarea'},
+    {k:'crossref',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+    {k:'status',t:'select',opt:['已建立','保存中','屆期待處置','待更新']},
+  ],
+  c534:[
+    {k:'id',t:'text'},
+    {k:'piicategory',t:'textarea'},
+    {k:'subject',t:'select',opt:['客戶／消費者','員工','求職者','供應商／合作夥伴','會員／網站用戶','病患／學生','其他']},
+    {k:'legalbasis',t:'textarea'},
+    {k:'obligation',t:'textarea'},
+    {k:'privacymeasure',t:'textarea'},
+    {k:'crossref',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+    {k:'status',t:'select',opt:['已識別','符合','DPIA進行中','部分符合待改善','不符合待改善']},
+  ],
+  c536:[
+    {k:'id',t:'text'},
+    {k:'scope',t:'textarea'},
+    {k:'reviewtype',t:'select',opt:['法規遵循查核','契約遵循查核','政策/標準遵循查核(協同A14)','技術合規檢查','內部稽核(9.2)','外部／驗證稽核','管理審查(9.3)']},
+    {k:'method',t:'textarea'},
+    {k:'finding',t:'textarea'},
+    {k:'corrective',t:'textarea'},
+    {k:'crossref',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+    {k:'status',t:'select',opt:['規劃中','審查中','完全遵循','部分遵循待改善','不遵循待改善']},
+  ],
+};
+const PANELS=['c531','c532','c533','c534','c536'];
+const PREFIX={c531:'LEG',c532:'IPR',c533:'REC',c534:'PII',c536:'CMP'};
+const CORE=['c531','c532','c533','c534'];
+
+// ---------- 範例資料 ----------
+const SAMPLES={
+  c531:[
+    {id:'LEG-01',reqtype:'法律',reqname:'個人資料保護法及其施行細則',reqsource:'法務部／全國法規資料庫',applicability:'處理客戶與員工個資須符合蒐集、處理、利用之特定目的、告知義務、當事人權利及安全維護措施',compliancemeasure:'建立個資盤點表、隱私權政策、同意機制與安全維護計畫（對應 A.5.34）；指派個資/隱私負責人',evidence:'個資盤點表、隱私權政策、安全維護計畫、教育訓練紀錄',crossref:'PII→c534；資料處理→A03/5.34；通報→A12',owner:'法務/合規',review:'2026-12-31',status:'已符合'},
+    {id:'LEG-02',reqtype:'法律',reqname:'著作權法／電腦軟體保護（智慧財產）',reqsource:'經濟部智慧財產局',applicability:'禁止使用未授權之電腦程式著作，須保有合法授權；保護自有著作與營業秘密',compliancemeasure:'軟體資產與授權對帳、禁止安裝未授權軟體政策（對應 A.5.32）',evidence:'軟體授權清冊、授權對帳紀錄、軟體使用政策',crossref:'智財→c532；軟體安裝→A06/8.19；資產→A04/5.9',owner:'法務/IT',review:'2026-12-31',status:'部分符合待改善'},
+    {id:'LEG-03',reqtype:'契約／客戶要求',reqname:'主要客戶資訊安全契約要求（MSA/DPA）',reqsource:'主要企業客戶主服務協議與資料處理協議',applicability:'加密傳輸與儲存、事件通報時限(72小時)、稽核權、資料返還與刪除、保密義務',compliancemeasure:'納入控制要求並反映於供應者協議（A11/5.20）、事件通報程序（A12）、保密協議（A02/6.6）',evidence:'客戶契約、合規對應表、通報程序、稽核回覆',crossref:'供應者→A11/5.20；通報→A12；保密→A02/6.6',owner:'法務/業務',review:'2026-12-31',status:'已符合'},
+  ],
+  c532:[
+    {id:'IPR-01',iprtype:'商用軟體授權',asset:'辦公軟體與設計軟體（Microsoft 365、Adobe CC 等）',license:'訂閱授權 120 席，年度續約；依使用者指派授權',protectmeasure:'軟體資產盤點、每季授權對帳、集中派發、禁止安裝未授權軟體政策',legalbasis:'著作權法；各廠商授權合約(EULA)',crossref:'資產→A04/5.9；安裝管控→A06/8.19',owner:'IT 資產管理',review:'2026-12-31',status:'合規'},
+    {id:'IPR-02',iprtype:'作業系統授權',asset:'伺服器作業系統與用戶端存取授權（Windows Server／CAL）',license:'Server 授權 12 套、CAL 依使用者/裝置計；部分主機 CAL 不足',protectmeasure:'授權清點與部署管控、虛擬化授權合規檢視',legalbasis:'微軟授權條款；著作權法',crossref:'安裝→A06/8.19；資產→A04/5.9',owner:'IT 系統組',review:'2026-12-31',status:'待補授權'},
+    {id:'IPR-03',iprtype:'開源軟體(OSS)授權',asset:'產品與內部系統使用之開源元件',license:'MIT／Apache-2.0／GPL 等；部分 GPL 元件授權相容性待審查',protectmeasure:'SBOM 元件盤點、授權相容性審查（GPL 傳染性）、授權標示與保存',legalbasis:'各 OSS 授權條款',crossref:'SBOM→A08/8.8；開發→A09；資產→A04/5.9',owner:'開發/IT',review:'2026-12-31',status:'違規待改善'},
+  ],
+  c533:[
+    {id:'REC-01',recordtype:'財務會計憑證與帳冊',legalreq:'商業會計法、稅捐稽徵法等規定之保存義務',retention:'會計憑證 5 年；會計帳簿及財務報表 10 年',protectreq:'限財會/稽核存取、完整性保護、異地備份、防偽造篡改',disposal:'屆期經權責審核後安全銷毀並留存銷毀紀錄',crossref:'技術保護→A03/5.33；備份→A13/8.13；要求→c531',owner:'財會',review:'2026-12-31',status:'保存中'},
+    {id:'REC-02',recordtype:'人事與勞工出勤、薪資紀錄',legalreq:'勞動基準法（出勤紀錄保存）等勞動法規',retention:'勞工出勤紀錄至少 5 年；其他依規定',protectreq:'限 HR 存取、加密、最小揭露、保護個資',disposal:'離職屆期後依規定安全銷毀',crossref:'人資→A02；PII→c534；技術保護→A03/5.33',owner:'人資',review:'2026-12-31',status:'保存中'},
+    {id:'REC-03',recordtype:'資安日誌與稽核軌跡',legalreq:'資通安全相關規範／契約（日誌留存）',retention:'依政策至少 6 個月～1 年（重要系統 1 年）',protectreq:'防竄改、完整性雜湊、存取控制、鐘訊同步（對應 A12/8.15、8.17）',disposal:'屆期自動輪替刪除並留存處理紀錄',crossref:'存錄→A12/8.15；保護→A03/5.33；要求→c531',owner:'資安/IT',review:'2026-12-31',status:'已建立'},
+  ],
+  c534:[
+    {id:'PII-01',piicategory:'客戶個人資料（姓名、聯絡方式、交易與帳務資料）',subject:'客戶／消費者',legalbasis:'個人資料保護法；契約之資料處理協議(DPA)',obligation:'特定目的內蒐集處理利用、告知義務、當事人查閱/更正/刪除/停止利用、安全維護',privacymeasure:'隱私權政策與同意機制、欄位遮蔽（→A03/8.11）、最小化、存取限縮、保存期限控管',crossref:'資料處理→A03/5.34/8.11；分級→A03/5.12；要求→c531',owner:'隱私保護(DPO)',review:'2026-12-31',status:'符合'},
+    {id:'PII-02',piicategory:'員工與求職者個人資料',subject:'員工',legalbasis:'個人資料保護法；勞動相關法規',obligation:'聘僱與人事管理特定目的內使用、離職後保存期限、最小揭露',privacymeasure:'HR 系統存取限縮、加密、保存期限連動紀錄保存（c533）、招募資料屆期刪除',crossref:'人資→A02；紀錄保存→c533；資料處理→A03/5.34',owner:'人資/DPO',review:'2026-12-31',status:'符合'},
+    {id:'PII-03',piicategory:'跨境傳輸／雲端處理之 PII',subject:'客戶／消費者',legalbasis:'個資法跨境傳輸規定；GDPR（如有歐盟當事人）',obligation:'跨境傳輸適法性、標準契約條款(SCC)、告知與同意、雲端供應者資料處理協議(DPA)',privacymeasure:'隱私衝擊評估（DPIA）進行中、雲端供應者 DPA 與盡職調查（A11/5.23）、傳輸加密（A03/5.14）',crossref:'雲端→A11/5.23；傳送→A03/5.14；要求→c531',owner:'DPO/法務',review:'2026-12-31',status:'DPIA進行中'},
+  ],
+  c536:[
+    {id:'CMP-01',scope:'法律/法規/契約要求登記簿全項（c531）之遵循情形',reviewtype:'法規遵循查核',method:'每年法遵盤點＋法規異動追蹤（季度）；逐項對照符合作法與證據',finding:'多數要求已符合；資通安全/個資事件法定通報時限之程序待強化',corrective:'更新事件通報程序與時限對應（A12），開立 CAR-2026-01 追蹤',crossref:'要求→c531；通報→A12；矯正→10.2',owner:'法務/合規',review:'2026-12-31',status:'部分遵循待改善'},
+    {id:'CMP-02',scope:'智慧財產權與軟體授權合規（c532）',reviewtype:'技術合規檢查',method:'每季軟體資產與授權對帳掃描；OSS 元件(SBOM)授權審查',finding:'發現 2 台主機 OS CAL 不足、1 專案 GPL 元件授權相容性待審',corrective:'補購授權、OSS 元件改用相容授權或隔離；開立 CAR-2026-02',crossref:'智財→c532；安裝→A06/8.19；矯正→10.2',owner:'IT/法務',review:'2026-12-31',status:'部分遵循待改善'},
+    {id:'CMP-03',scope:'資訊安全政策、主題特定政策、規則及標準之遵循（協同 A14）',reviewtype:'政策/標準遵循查核(協同A14)',method:'引用 A14 獨立審查（A.5.35）與內部遵循性審查（A.5.36）結果，併入本年度遵循性審查',finding:'整體遵循良好；少數作業文件與實務略有落差，待更新',corrective:'更新相關作業文件並再查核；列入管理審查（9.3）',crossref:'內部遵循/獨立審查 SSOT→A14/5.35~5.36；提報→9.3',owner:'ISMS/稽核',review:'2026-12-31',status:'完全遵循'},
+  ],
+};
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function migrate(d){
+  PANELS.forEach(p=>{d[p]=d[p]||[];});
+  d.signoff=d.signoff||{};d.archives=d.archives||[];
+  return d;
+}
+function blank(){const o={};PANELS.forEach(p=>o[p]=[]);o.signoff={};o.archives=[];o.updated=null;return o;}
+function seeded(){
+  const o={};PANELS.forEach(p=>o[p]=clone(SAMPLES[p]));
+  o.signoff={year:String(new Date().getFullYear())};o.archives=[];o.updated=null;o.seeded=true;
+  return o;
+}
+let DATA=load();
+
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return migrate(d);}catch(e){}
+  return seeded();
+}
+function saveNow(){DATA.updated=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(DATA));toast('已儲存');renderDash();renderDataMeta();}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+// ---------- 表格渲染 ----------
+function cellInput(panel,rowIdx,col,val){
+  const common=`data-p="${panel}" data-i="${rowIdx}" data-k="${col.k}" oninput="onEdit(this)" onchange="onEdit(this)"`;
+  if(col.t==='select'){
+    let o='<option value=""></option>'+col.opt.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('');
+    return `<select ${common}>${o}</select>`;
+  }
+  if(col.t==='textarea')return `<textarea ${common}>${esc(val||'')}</textarea>`;
+  if(col.t==='date')return `<input type="date" ${common} value="${esc(val||'')}">`;
+  return `<textarea rows="1" class="cellt" ${common}>${esc(val||'')}</textarea>`;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function tbodyOf(panel){return document.querySelector('#t'+panel.slice(1)+' tbody');}
+function renderTable(panel){
+  const tb=tbodyOf(panel);
+  if(!tb)return;
+  const rows=DATA[panel]||[];
+  tb.innerHTML=rows.map((r,i)=>{
+    const due=isDue(r.review)?'due':'';
+    const cells=COLS[panel].map(c=>`<td>${cellInput(panel,i,c,r[c.k])}</td>`).join('');
+    return `<tr class="${due}">${cells}<td style="text-align:center"><button class="delx" title="刪除" onclick="delRow('${panel}',${i})">✕</button></td></tr>`;
+  }).join('');
+}
+function onEdit(el){
+  const p=el.dataset.p,i=+el.dataset.i,k=el.dataset.k;
+  DATA[p][i][k]=el.value;
+  scheduleSave();
+}
+let saveTimer;
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{DATA.updated=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(DATA));renderDash();renderDataMeta();},500);}
+
+function addRow(panel){
+  const obj={};COLS[panel].forEach(c=>obj[c.k]='');
+  obj.id=PREFIX[panel]+'-'+String((DATA[panel].length+1)).padStart(2,'0');
+  DATA[panel].push(obj);saveNow();renderTable(panel);
+}
+function delRow(panel,i){
+  if(!confirm('確定刪除此列？'))return;
+  DATA[panel].splice(i,1);saveNow();renderTable(panel);
+}
+function loadSample(panel){
+  if(DATA[panel].length && !confirm('將附加範例資料於現有清單之後，是否繼續？'))return;
+  DATA[panel]=DATA[panel].concat(clone(SAMPLES[panel]));
+  saveNow();renderTable(panel);toast('已載入範例');
+}
+
+// ---------- 覆核到期 ----------
+function isDue(d){if(!d)return false;const t=new Date();t.setHours(0,0,0,0);return new Date(d)<=t;}
+
+// ---------- 儀表板 ----------
+const PLABEL={c531:'5.31 法規/契約要求',c532:'5.32 智慧財產權',c533:'5.33 紀錄之保護',c534:'5.34 隱私及PII',c536:'5.36 遵循性審查'};
+function sumRows(arr){return arr.reduce((s,p)=>s+(DATA[p]||[]).length,0);}
+function legalReqCount(){return (DATA.c531||[]).length;}
+function openGap(){
+  let n=0;const re=/待改善|不符合|不遵循|超量|違規|待補|待續約|到期/;
+  PANELS.forEach(p=>(DATA[p]||[]).forEach(r=>{if(re.test(r.status||''))n++;}));
+  return n;
+}
+function renderDash(){
+  renderAnnual();
+  // 控制項對照卡片
+  const cm=document.getElementById('ctrlMap');
+  if(cm){cm.innerHTML=CTRLS.map(c=>{
+    const n=(DATA[c.p]||[]).length;
+    const cls=c.core?'cc core':'cc stage';
+    const star=c.core?' ★':'';
+    return `<div class="${cls}" onclick="goPanel('${c.p}')" style="cursor:pointer"><b>${c.id}${star}</b> ${esc(c.name)}<span>${esc(c.stg)}｜已登錄 ${n} 筆</span></div>`;
+  }).join('');}
+
+  // KPI
+  const dueCount=countDue();
+  document.getElementById('kpiBox').innerHTML=[
+    {n:sumRows(CORE),l:'核心遵循項目（5.31/5.32/5.33/5.34）★'},
+    {n:legalReqCount(),l:'納管法規／契約要求（5.31）'},
+    {n:openGap(),l:'遵循缺口待改善（不符合/待改善）'},
+    {n:dueCount,l:'待覆核／待處置（到期）'},
+  ].map(b=>`<div class="box"><div class="n">${b.n}</div><div class="l">${b.l}</div></div>`).join('');
+
+  // 進度：各子項是否有產出
+  const done=PANELS.filter(p=>(DATA[p]||[]).length>0).length;
+  const pct=Math.round(done/PANELS.length*100);
+  document.getElementById('progressBox').innerHTML=
+    `<div style="margin-top:4px;font-size:13px;color:var(--mut)">遵循性控制項建置完成度：<b style="color:var(--c1)">${done}/${PANELS.length}（${pct}%）</b></div>
+     <div class="progress"><i style="width:${pct}%"></i></div>`;
+
+  // 待覆核明細
+  const due=collectDue();
+  const box=document.getElementById('dueBox');
+  if(due.length===0){box.innerHTML='<p class="hint">目前沒有到期或逾期的覆核／待處置項目。✅</p>';}
+  else{
+    box.innerHTML='<table><thead><tr><th>控制項</th><th>編號</th><th>項目</th><th>覆核/期限日</th><th>狀態</th></tr></thead><tbody>'+
+      due.map(d=>`<tr class="due"><td>${esc(d.lab)}</td><td>${esc(d.id||'')}</td><td>${esc(d.name)}</td><td>${esc(d.review)}</td><td><span class="pill bad">需覆核/處置</span></td></tr>`).join('')+
+      '</tbody></table>';
+  }
+}
+const NAMEKEY={c531:'reqname',c532:'asset',c533:'recordtype',c534:'piicategory',c536:'scope'};
+function collectDue(){
+  const due=[];
+  PANELS.forEach(p=>{(DATA[p]||[]).forEach(r=>{if(isDue(r.review))due.push({lab:PLABEL[p],id:r.id,name:r[NAMEKEY[p]]||'',review:r.review});});});
+  return due;
+}
+function countDue(){return collectDue().length;}
+function renderDataMeta(){
+  const m=document.getElementById('dataMeta');
+  const total=PANELS.reduce((s,p)=>s+(DATA[p]||[]).length,0);
+  m.innerHTML=`<span>資料筆數合計：<b>${total}</b></span><span>最後更新：<b>${DATA.updated?new Date(DATA.updated).toLocaleString('zh-TW'):'—'}</b></span>`;
+}
+
+// ---------- 匯出入 ----------
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  dl(blob,'ISO27001_A15遵循性_'+ymd()+'.json');toast('已匯出 JSON');
+}
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);DATA=migrate(d);saveNow();renderAll();toast('已匯入');}catch(err){alert('檔案格式錯誤');}};
+  r.readAsText(f);e.target.value='';
+}
+function exportCSV(){
+  let parts=[];
+  PANELS.forEach(p=>{
+    const cols=COLS[p].map(c=>c.k);
+    let csv=PLABEL[p]+'\n'+cols.join(',')+'\n';
+    (DATA[p]||[]).forEach(r=>{csv+=cols.map(k=>'"'+String(r[k]||'').replace(/"/g,'""')+'"').join(',')+'\n';});
+    parts.push(csv);
+  });
+  const blob=new Blob(['﻿'+parts.join('\n\n')],{type:'text/csv;charset=utf-8'});
+  dl(blob,'ISO27001_A15遵循性_'+ymd()+'.csv');toast('已匯出 CSV');
+}
+function clearAll(){
+  if(!confirm('確定清空所有資料？此動作無法復原（建議先匯出備份）。'))return;
+  DATA=blank();saveNow();renderAll();
+}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+function ymd(){const d=new Date();return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+
+// ---------- 導覽 ----------
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  goPanel(b.dataset.p);
+});
+function goPanel(p){
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.p===p));
+  document.querySelectorAll('.panel').forEach(s=>s.classList.toggle('active',s.id===p));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ---------- 年度簽核 ----------
+const SIGN_FIELDS=['year','from','to','summary','exec_n','exec_d','rev_n','rev_d','app_n','app_d','mr','next'];
+function renderSignoff(){
+  DATA.signoff=DATA.signoff||{};
+  if(!DATA.signoff.year)DATA.signoff.year=String(new Date().getFullYear());
+  SIGN_FIELDS.forEach(f=>{const el=document.getElementById('y_'+f);if(el)el.value=DATA.signoff[f]||'';});
+  renderSeals();
+}
+function renderSeals(){
+  ['exec','rev','app'].forEach(k=>{
+    const box=document.getElementById('seal_'+k);if(!box)return;
+    const d=DATA.signoff[k+'_seal'];
+    box.innerHTML=d?('<img src="'+d+'"><button class="sealx" title="清除" onclick="clearSeal(\''+k+'\');event.stopPropagation()">✕</button>')
+                   :'<span class="sealhint">點此用印 / 上傳</span>';
+  });
+}
+function pickSeal(k){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/*';
+  inp.onchange=()=>{const f=inp.files[0];if(!f)return;
+    if(f.size>800*1024){alert('圖檔請小於 800KB。');return;}
+    const r=new FileReader();r.onload=()=>{DATA.signoff=DATA.signoff||{};DATA.signoff[k+'_seal']=r.result;scheduleSave();renderSeals();toast('已套用簽章');};r.readAsDataURL(f);};
+  inp.click();
+}
+function clearSeal(k){DATA.signoff[k+'_seal']='';scheduleSave();renderSeals();}
+function bindSignoff(){
+  SIGN_FIELDS.forEach(f=>{
+    const el=document.getElementById('y_'+f);
+    if(!el)return;
+    el.addEventListener('input',()=>{
+      DATA.signoff=DATA.signoff||{};DATA.signoff[f]=el.value;
+      if(f==='app_d' && el.value && !DATA.signoff.next){
+        const d=new Date(el.value);d.setFullYear(d.getFullYear()+1);
+        const nx=d.toISOString().slice(0,10);
+        DATA.signoff.next=nx;const ne=document.getElementById('y_next');if(ne)ne.value=nx;
+      }
+      scheduleSave();renderAnnual();
+    });
+  });
+}
+function addYears(dstr,n){const d=new Date(dstr);d.setFullYear(d.getFullYear()+n);return d;}
+function archiveYear(){
+  const s=DATA.signoff||{};
+  if(!s.year){alert('請先填寫「作業年度」。');return;}
+  if(!s.app_n||!s.app_d){if(!confirm('尚未完成「核准」簽核，仍要封存嗎？建議完成核准後再封存。'))return;}
+  const counts={};PANELS.forEach(p=>counts[p]=(DATA[p]||[]).length);
+  const snapshot={};PANELS.forEach(p=>snapshot[p]=clone(DATA[p]||[]));
+  const rec={
+    year:s.year, archivedDate:new Date().toISOString().slice(0,10),
+    counts, approver:s.app_n||'', approveDate:s.app_d||'',
+    mr:s.mr||'', next:s.next||(s.app_d?addYears(s.app_d,1).toISOString().slice(0,10):''),
+    signoff:clone(s), snapshot
+  };
+  DATA.archives=DATA.archives||[];
+  const i=DATA.archives.findIndex(a=>a.year===rec.year);
+  if(i>=0){if(!confirm('已存在 '+rec.year+' 年度紀錄，將覆蓋更新，是否繼續？'))return;DATA.archives[i]=rec;}
+  else DATA.archives.push(rec);
+  DATA.archives.sort((a,b)=>String(b.year).localeCompare(String(a.year)));
+  saveNow();renderArchives();renderAnnual();toast('已封存 '+rec.year+' 年度紀錄');
+}
+function renderArchives(){
+  const box=document.getElementById('archiveBox');if(!box)return;
+  const a=DATA.archives||[];
+  if(a.length===0){box.innerHTML='<p class="hint">尚無年度紀錄。完成簽核後請按「封存本年度」。</p>';return;}
+  const hdr=PANELS.map(p=>'<th>'+PLABEL[p].split(' ')[0]+'</th>').join('');
+  box.innerHTML='<div class="scroll" style="max-height:46vh"><table><thead><tr>'+
+    '<th>年度</th><th>封存日</th>'+hdr+'<th>核准人</th><th>核准日</th><th>提報9.3</th><th>下次應辦</th><th>簽核</th><th>操作</th>'+
+    '</tr></thead><tbody>'+
+    a.map((r,i)=>{
+      const c=r.counts||{};
+      const signed=r.approver&&r.approveDate;
+      const pill=signed?'<span class="pill ok">已簽核</span>':'<span class="pill warn">未完成</span>';
+      const cnts=PANELS.map(p=>'<td>'+(c[p]||0)+'</td>').join('');
+      return `<tr><td><b>${esc(r.year)}</b></td><td>${esc(r.archivedDate)}</td>
+        ${cnts}
+        <td>${esc(r.approver||'—')}</td><td>${esc(r.approveDate||'—')}</td><td>${esc(r.mr||'—')}</td><td>${esc(r.next||'—')}</td>
+        <td>${pill}</td>
+        <td style="white-space:nowrap">
+          <button class="btn ghost sm" onclick="printReportArchive(${i})">📄報告</button>
+          <button class="btn ghost sm" onclick="exportYear(${i})">匯出</button>
+          <button class="btn ghost sm" onclick="restoreYear(${i})">還原</button>
+          <button class="btn danger sm" onclick="delYear(${i})">刪</button>
+        </td></tr>`;
+    }).join('')+'</tbody></table></div>';
+}
+function exportYear(i){
+  const r=DATA.archives[i];
+  const blob=new Blob([JSON.stringify(r,null,2)],{type:'application/json'});
+  dl(blob,'A15遵循性_'+r.year+'年度_'+ymd()+'.json');toast('已匯出 '+r.year+' 年度');
+}
+function restoreYear(i){
+  const r=DATA.archives[i];
+  if(!confirm('將以「'+r.year+' 年度」之封存內容覆蓋目前編輯中的各控制項與簽核資料，是否繼續？（目前資料若未封存將遺失）'))return;
+  PANELS.forEach(p=>{DATA[p]=clone((r.snapshot||{})[p]||[]);});
+  DATA.signoff=clone(r.signoff);
+  saveNow();renderAll();toast('已還原 '+r.year+' 年度');
+}
+function delYear(i){
+  if(!confirm('確定刪除此年度紀錄？'))return;
+  DATA.archives.splice(i,1);saveNow();renderArchives();renderAnnual();
+}
+function renderAnnual(){
+  const box=document.getElementById('annualBox');if(!box)return;
+  const s=DATA.signoff||{};
+  const today=new Date();today.setHours(0,0,0,0);
+  let html='',cls='',icon='',msg='';
+  const lastApp=s.app_d?new Date(s.app_d):null;
+  const next=s.next?new Date(s.next):(lastApp?addYears(s.app_d,1):null);
+  if(!lastApp){
+    cls='warn';icon='⚠';msg='本年度（'+(s.year||'—')+'）遵循性作業<b>尚未完成核准簽核</b>。請至「🗓 年度簽核」分頁完成覆核與三級簽核。';
+  }else{
+    const overdue=next&&next<today;
+    const soon=next&&!overdue&&((next-today)/86400000<=60);
+    if(overdue){cls='bad';icon='⛔';msg='上次核准日 <b>'+s.app_d+'</b>（'+(s.year||'')+' 年度），下次應辦日 <b>'+(s.next||'')+'</b> <b>已逾期</b>，請儘速辦理年度覆核（含法規異動、遵循缺口、IPR/授權合規、紀錄保存、隱私/DPIA、遵循性審查）。';}
+    else if(soon){cls='warn';icon='⏰';msg='上次核准日 <b>'+s.app_d+'</b>，下次應辦日 <b>'+(s.next||'')+'</b> <b>即將到期（60天內）</b>，請預為安排。';}
+    else{cls='ok';icon='✅';msg='本年度（'+(s.year||'')+'）已於 <b>'+s.app_d+'</b> 完成核准簽核'+(s.mr?'，提報管理審查：<b>'+s.mr+'</b>':'')+'。下次應辦日：<b>'+(s.next||'—')+'</b>。';}
+  }
+  const colors={ok:['#e7f4e8','#2e7d32'],warn:['#fdf0e3','#e67e22'],bad:['#fbe9e7','#c0392b']};
+  const c=colors[cls];
+  html='<div style="display:flex;gap:12px;align-items:center;background:'+c[0]+';border-left:5px solid '+c[1]+
+    ';border-radius:8px;padding:12px 16px;margin-bottom:16px">'+
+    '<div style="font-size:24px">'+icon+'</div>'+
+    '<div style="flex:1;font-size:13.5px;color:#2b3a47"><b style="color:'+c[1]+'">年度遵循性作業狀態</b><br>'+msg+'</div>'+
+    '<button class="btn ghost sm" onclick="goPanel(\'year\')">前往年度簽核</button></div>';
+  box.innerHTML=html;
+}
+
+// ---------- 列印：簽核表 ----------
+function printWith(cls){
+  document.body.classList.add(cls);
+  const done=()=>{document.body.classList.remove(cls);window.removeEventListener('afterprint',done);};
+  window.addEventListener('afterprint',done);
+  setTimeout(()=>{window.print();},60);
+}
+function printSignoff(){goPanel('year');renderSeals();printWith('print-signoff');}
+
+// ---------- 列印：年度報告 ----------
+const RHEAD={
+  c531:['編號','要求類別','法規/契約名稱','來源/主管機關/條款','適用性與要求事項','符合作法/控制措施','遵循證據','關聯','負責單位','覆核日','狀態'],
+  c532:['編號','IPR類別','IPR標的/資產','授權/權利狀態','保護程序/管控','法規依據/契約','關聯','負責單位','覆核日','狀態'],
+  c533:['編號','紀錄類別','法規/契約保存要求','保存期限','保護要求','屆期處置/銷毀','關聯','負責單位','覆核日','狀態'],
+  c534:['編號','PII類別/資料項目','當事人類型','適用法規/契約','法規義務/當事人權利','隱私保護措施/DPIA','關聯','負責單位','覆核日','狀態'],
+  c536:['編號','審查對象','審查類型','審查方法/頻率','審查結果/不符合事項','矯正措施/追蹤','關聯','負責單位','覆核日','狀態'],
+};
+const RSECT=[
+  ['c531','一、A.5.31 法律、法令、法規及契約要求事項（★）'],
+  ['c532','二、A.5.32 智慧財產權（★）'],
+  ['c533','三、A.5.33 紀錄之保護（★）'],
+  ['c534','四、A.5.34 隱私及PII保護（★）'],
+  ['c536','五、A.5.36 資訊安全政策、規則及標準之遵循性（協同 A14）'],
+];
+function rptTable(panel,arr){
+  const ks=COLS[panel].map(c=>c.k);
+  let h='<table class="rpt"><thead><tr>'+RHEAD[panel].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
+  if(!arr||!arr.length){h+='<tr><td colspan="'+ks.length+'" style="text-align:center;color:#888">（無資料）</td></tr>';}
+  else{h+=arr.map(r=>'<tr>'+ks.map(k=>'<td>'+esc(r[k]||'')+'</td>').join('')+'</tr>').join('');}
+  return h+'</tbody></table>';
+}
+function currentSrc(){
+  const o={year:(DATA.signoff||{}).year||'',signoff:DATA.signoff||{}};
+  PANELS.forEach(p=>o[p]=DATA[p]||[]);return o;
+}
+function buildReport(s){
+  const so=s.signoff||{};
+  const seal=k=>{const d=so[k+'_seal'];return d?'<img src="'+d+'">':'';};
+  const row=(lvl,role,nk,dk)=>`<tr><td><b>${lvl}</b></td><td>${role}</td><td>${esc(so[nk]||'')}</td><td>${esc(so[dk]||'')}</td><td><div class="rt-sealbox">${seal(nk.split('_')[0])}</div></td></tr>`;
+  const period=(so.from||'')+(so.to?(' ~ '+so.to):'');
+  const sections=RSECT.map(([p,title])=>`<h2 class="rt">${title}</h2>${rptTable(p,s[p])}`).join('');
+  const html=`<div class="rpt-doc">
+    <h1 class="rt">資訊安全管理系統　遵循性（A15 Legal and compliance 遵循性）年度作業報告</h1>
+    <div class="rt-sub">ISO/IEC 27001:2022　Annex A — A.5.31、A.5.32、A.5.33、A.5.34、A.5.36（協同 A14）</div>
+    <table class="rt-meta">
+      <tr><td class="k">作業年度</td><td>${esc(s.year||'')}</td><td class="k">作業期間</td><td>${esc(period)}</td></tr>
+      <tr><td class="k">提報管理審查(9.3)</td><td>${esc(so.mr||'')}</td><td class="k">下次應辦理日</td><td>${esc(so.next||'')}</td></tr>
+    </table>
+    <h2 class="rt">年度遵循性變化摘要</h2>
+    <div style="font-size:12px;white-space:pre-wrap;border:1px solid #aab4bd;padding:8px;border-radius:4px;min-height:40px">${esc(so.summary||'（未填寫）')}</div>
+    ${sections}
+    <h2 class="rt">六、簽核</h2>
+    <table class="rt-sign">
+      <thead><tr><th style="width:70px">層級</th><th>角色 / 職稱</th><th style="width:120px">簽核人</th><th style="width:110px">日期</th><th style="width:140px">簽章 / 用印</th></tr></thead>
+      <tbody>
+        ${row('執行','法務 / 合規 / ISMS執行','exec_n','exec_d')}
+        ${row('審查','資安長 / ISMS主管','rev_n','rev_d')}
+        ${row('核准','最高管理階層','app_n','app_d')}
+      </tbody>
+    </table>
+    <div style="margin-top:14px;border-top:1px solid #ccc;padding-top:6px;font-size:10px;color:#6b7884;text-align:center">
+      設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0
+    </div>
+  </div>`;
+  document.getElementById('reportArea').innerHTML=html;
+}
+function printReportCurrent(){buildReport(currentSrc());printWith('print-report');}
+function printReportArchive(i){
+  const a=DATA.archives[i];if(!a)return;
+  const src={year:a.year,signoff:a.signoff||{}};
+  PANELS.forEach(p=>src[p]=(a.snapshot||{})[p]||[]);
+  buildReport(src);
+  printWith('print-report');
+}
+
+const FLOW_HTML=`<div class="flifeline">
+  <span class="stg">① 識別與書面紀錄</span><span class="lkarr">→</span>
+  <span class="stg alt">② 遵循作法之落實</span><span class="lkarr">→</span>
+  <span class="stg">③ 遵循性審查</span><span class="lkarr">↻</span>
+  <span class="stg alt">④ 矯正與持續改善</span>
+</div>
+<div class="fchart">
+  <div class="fgroup">
+    <div class="fgrouphead">⚖ ① 法律、法令、法規及契約要求事項（識別、書面紀錄及保持更新）</div>
+    <div class="fctrl core" onclick="goPanel('c531')"><span class="fnum">A.5.31 ★</span><b>法律、法令、法規及契約要求事項</b><div class="fnote" style="margin-top:3px">識別、書面紀錄及保持更新資訊安全相關法律/法令/法規/契約要求及組織為符合之作法（全 ISMS 法規/契約要求 SSOT，供各流程引用）</div></div>
+    <div class="fnote" style="text-align:left">↓ 於下列領域實作遵循作法</div>
+    <div class="frow">
+      <div class="fctrl core" onclick="goPanel('c532')"><span class="fnum">A.5.32 ★</span><b>智慧財產權</b><div class="fnote" style="margin-top:3px">實作適切程序保護智財（軟體授權/著作權/商標/專利/營業秘密/OSS；資產→A04、安裝→A06/8.19）</div></div>
+      <div class="fctrl core" onclick="goPanel('c533')"><span class="fnum">A.5.33 ★</span><b>紀錄之保護</b><div class="fnote" style="margin-top:3px">保護紀錄免於遺失/毀損/偽造/未授權存取及發布（法規保存面；技術保護→A03、備份→A13）</div></div>
+      <div class="fctrl core" onclick="goPanel('c534')"><span class="fnum">A.5.34 ★</span><b>隱私及PII保護</b><div class="fnote" style="margin-top:3px">依法律/法規/契約識別並符合 PII 隱私保護要求（法規義務/DPIA；資料處理→A03/5.34）</div></div>
+    </div>
+  </div>
+  <div class="fgroup gov">
+    <div class="fgrouphead">🔍 ② 資訊安全政策、規則及標準之遵循性</div>
+    <div class="fctrl xrefbox" onclick="goPanel('c536')"><span class="fnum">A.5.36</span><b>遵循性審查</b><div class="fnote" style="margin-top:3px">定期審查政策/主題特定政策/規則/標準之遵循性（內部政策遵循/獨立審查 SSOT→A14/5.35~5.36；本工具聚焦外部法律/法規/契約遵循查核）</div></div>
+    <div class="frow">
+      <div class="fbox role">📜 資訊安全政策</div>
+      <div class="fbox role">📑 主題特定政策</div>
+      <div class="fbox role">📐 規則與標準</div>
+    </div>
+    <div class="fnote" style="text-align:left">不符合事項 → 矯正措施（→10.2）→ 回饋 ① 識別與 ② 作法（持續循環）</div>
+  </div>
+</div>
+<div class="fcolhead out" style="margin-top:12px">整合輸入／輸出（其他流程工具）</div>
+<div class="frow" style="margin-top:6px">
+  <div class="fbox role">🗂 紀錄技術保護（完整性/存取/加密）<div class="fnote" style="margin-top:3px">→A03/5.33・A06/8.24</div></div>
+  <div class="fbox role">💾 紀錄備份／日誌存錄<div class="fnote" style="margin-top:3px">→A13/8.13・A12/8.15</div></div>
+  <div class="fbox role">🛡 PII資料處理（遮蔽/DLP/分級）<div class="fnote" style="margin-top:3px">→A03(5.34/8.11/8.12/5.12)</div></div>
+  <div class="fbox role">📋 軟體資產／安裝管控<div class="fnote" style="margin-top:3px">→A04/5.9・A06/8.19</div></div>
+  <div class="fbox role">🎓 人員法規認知與訓練<div class="fnote" style="margin-top:3px">→A02/6.3・條文7</div></div>
+  <div class="fbox role">🤝 供應者契約法遵義務<div class="fnote" style="margin-top:3px">→A11/5.20</div></div>
+  <div class="fbox role">🚨 個資外洩等法定通報<div class="fnote" style="margin-top:3px">→A12/5.26・5.28</div></div>
+  <div class="fbox role">🔎 內部政策遵循/獨立審查<div class="fnote" style="margin-top:3px">→A14/5.35~5.36</div></div>
+  <div class="fbox role">📈 矯正措施/管理審查<div class="fnote" style="margin-top:3px">→10.2／9.3／SoA 6.1.3</div></div>
+</div>
+<div class="fnote" style="margin-top:8px">＊★＝A15 為單一真實來源（SSOT）：A.5.31 法律、法令、法規及契約要求事項、A.5.32 智慧財產權、A.5.33 紀錄之保護（法規保存面）、A.5.34 隱私及PII保護（法規義務面）。各流程之法律/法規/契約要求皆引用 A.5.31；A.5.36 對內部政策/規則/標準之遵循與獨立審查 SSOT 為 A14（5.35~5.36），本工具聚焦外部法規/契約遵循查核並協同之。紀錄技術保護 A03/5.33・A06/8.24；備份 A13/8.13；存錄 A12/8.15；PII資料處理 A03(5.34/8.11/8.12)；軟體資產 A04/5.9・安裝 A06/8.19；人員認知 A02/6.3＋條文7；供應者契約 A11/5.20；法定通報 A12；文件控制 7.5；改善循 10.2、提報 9.3。</div>`;
+function renderFlow(){['flowDiagram','flowDiagramGuide'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=FLOW_HTML;});}
+function renderAll(){
+  PANELS.forEach(renderTable);
+  renderFlow();renderSignoff();renderArchives();renderDash();renderAnnual();renderDataMeta();
+}
+bindSignoff();
+renderAll();
+</script>
+<script>
+/* ===== 表格欄寬與列印修正：autosize 撐高 + 固定版面 + 列印轉純文字（避免內容截斷） ===== */
+(function(){
+function autosize(el){if(!el||el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
+function autosizeActive(){var a=document.querySelector('.panel.active');if(a)a.querySelectorAll('textarea').forEach(autosize);}
+window.autosize=autosize;window.autosizeActive=autosizeActive;
+window.convertControlsForPrint=function(on){var s=document.querySelector('.panel.active');if(!s)return;if(on){s.querySelectorAll('table tbody td').forEach(function(td){var c=td.querySelector('input,select,textarea');if(!c)return;td.innerHTML='<div class="cellprint">'+esc(c.value||'')+'</div>';});}else{renderAll();}};
+window.doPrint=function(){convertControlsForPrint(true);var r=function(){convertControlsForPrint(false);window.removeEventListener('afterprint',r);};window.addEventListener('afterprint',r);setTimeout(function(){window.print();},80);};
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA')autosize(e.target);},true);
+var nav=document.getElementById('nav');if(nav)nav.addEventListener('click',function(){setTimeout(autosizeActive,0);});
+try{document.querySelectorAll('.panel table').forEach(function(t){if(!t.tHead||!t.querySelector('tbody input,tbody select,tbody textarea'))return;t.style.tableLayout='fixed';var tb=t.tBodies[0];if(tb&&window.MutationObserver){new MutationObserver(function(){autosizeActive();}).observe(tb,{childList:true});}});}catch(e){}
+window.addEventListener('load',function(){setTimeout(autosizeActive,40);});
+setTimeout(autosizeActive,60);
+})();
+</script>
+</body>
+</html>
