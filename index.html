@@ -391,7 +391,7 @@ const editIco='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-line
 
 function cardHTML(c,group,idx){
   return `<a class="card" href="${hrefOf(c)}" data-group="${group}" data-idx="${idx}" data-search="${(c.code+' '+c.name+' '+(c.desc||'')+' '+(c.kw||'')).toLowerCase()}">
-    <span class="missing">檔案未找到</span>
+    <span class="missing">未開放</span>
     <span class="cardedit"><button title="編輯" data-act="edit">${editIco}</button></span>
     <div class="card-top">
       <div class="ico">${svg(c.icon)}</div>
