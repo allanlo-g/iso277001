@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISO 27001:2022 條文7「支援」管理工具</title>
+<style>
+  :root{
+    --c1:#13476b; --c2:#1e6ba8; --c3:#2e8bc0; --bg:#f4f6f9; --line:#d9e0e7;
+    --ok:#2e7d32; --warn:#e67e22; --bad:#c0392b; --mut:#6b7884; --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Microsoft JhengHei","Segoe UI",system-ui,sans-serif;background:var(--bg);color:#1c2733;font-size:14px;line-height:1.55}
+  header{background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  header h1{font-size:18px;margin:0;font-weight:700}
+  header .sub{font-size:12px;opacity:.85}
+  header .grow{flex:1}
+  .toolbtn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px}
+  .toolbtn:hover{background:rgba(255,255,255,.28)}
+  nav{display:flex;gap:2px;background:var(--c1);padding:0 12px;flex-wrap:wrap}
+  nav button{background:transparent;border:none;color:#cfe0ee;padding:11px 16px;cursor:pointer;font-size:14px;border-bottom:3px solid transparent}
+  nav button:hover{color:#fff}
+  nav button.active{color:#fff;border-bottom-color:#7fd0ff;font-weight:700;background:rgba(255,255,255,.06)}
+  main{max-width:1320px;margin:18px auto;padding:0 18px 60px}
+  .panel{display:none;animation:fade .2s}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:18px;box-shadow:0 1px 3px rgba(20,40,60,.05)}
+  h2.sec{font-size:17px;color:var(--c1);margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2.sec .tag{background:var(--c3);color:#fff;font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .clauseref{font-size:12.5px;color:var(--mut);background:#eef3f7;border-left:3px solid var(--c3);padding:8px 12px;border-radius:4px;margin:10px 0 16px}
+  .clauseref b{color:var(--c1)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#eaf1f7;color:var(--c1);font-weight:700;position:sticky;top:0;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fafcfe}
+  td input,td select,td textarea{width:100%;border:1px solid transparent;background:transparent;font:inherit;color:inherit;padding:3px 4px;border-radius:4px;resize:vertical}
+  td input:focus,td select:focus,td textarea:focus{border-color:var(--c3);background:#fff;outline:none}
+  td textarea{min-height:30px;overflow:hidden;line-height:1.4}
+  td textarea.cellt{min-height:26px;min-width:72px;white-space:pre-wrap;overflow-wrap:break-word}
+  .cellprint{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:2px 1px;line-height:1.45}
+  .btn{border:none;border-radius:6px;padding:7px 14px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn.primary{background:var(--c2);color:#fff}.btn.primary:hover{background:var(--c1)}
+  .btn.ghost{background:#fff;border:1px solid var(--c2);color:var(--c2)}.btn.ghost:hover{background:#eef5fb}
+  .btn.danger{background:#fff;border:1px solid var(--bad);color:var(--bad)}.btn.danger:hover{background:#fdecea}
+  .btn.sm{padding:3px 9px;font-size:12px}
+  .rowtools{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .delx{color:var(--bad);cursor:pointer;font-weight:700;border:none;background:none;font-size:15px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+  .pill.ok{background:#e7f4e8;color:var(--ok)} .pill.warn{background:#fdf0e3;color:var(--warn)} .pill.bad{background:#fbe9e7;color:var(--bad)} .pill.mut{background:#eef1f4;color:var(--mut)}
+  .due{background:#fff6f5 !important}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-weight:600;color:var(--c1);margin-bottom:4px;font-size:13px}
+  .field textarea,.field input,.field select{width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit}
+  .field textarea{min-height:64px;resize:vertical}
+  .kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px}
+  .kpi .box{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;border-top:4px solid var(--c3)}
+  .kpi .box .n{font-size:30px;font-weight:800;color:var(--c1)}
+  .kpi .box .l{font-size:12.5px;color:var(--mut)}
+  .progress{height:10px;background:#e6ecf2;border-radius:6px;overflow:hidden;margin-top:6px}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--c3),var(--ok))}
+  .hint{font-size:12.5px;color:var(--mut);margin:4px 0 0}
+  .guide h3{color:var(--c1);font-size:15px;margin:18px 0 6px;border-left:4px solid var(--c3);padding-left:10px}
+  .guide ol,.guide ul{margin:6px 0 6px 4px;padding-left:22px}
+  .guide li{margin-bottom:5px}
+  .guide table{margin:10px 0}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .flow .step{background:#eef5fb;border:1px solid var(--c3);color:var(--c1);border-radius:8px;padding:8px 12px;font-size:12.5px;font-weight:600;max-width:180px}
+  .flow .arr{color:var(--c3);font-weight:800}
+  .roles td:first-child{white-space:nowrap;font-weight:600;color:var(--c1)}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--c1);color:#fff;padding:11px 18px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:.25s;z-index:99}
+  .toast.show{opacity:1;transform:none}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:6px}
+  .scroll{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:8px}
+  footer{text-align:center;color:var(--mut);font-size:12px;padding:20px}
+  /* 用印 / 電子簽章格 */
+  .sealbox{position:relative;height:62px;border:1px dashed #b9c4ce;border-radius:6px;background:#fcfdfe;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+  .sealbox img{max-height:56px;max-width:130px}
+  .sealbox .sealhint{font-size:11px;color:#9aa7b2}
+  .sealx{position:absolute;top:2px;right:2px;border:none;background:rgba(0,0,0,.45);color:#fff;border-radius:50%;width:18px;height:18px;cursor:pointer;font-size:11px;line-height:16px;padding:0}
+  /* 年度報告（列印用版面） */
+  #reportArea{display:none}
+  #reportArea .rpt-doc{max-width:1000px;margin:0 auto;color:#1c2733}
+  #reportArea h1.rt{font-size:20px;color:var(--c1);text-align:center;margin:0 0 2px}
+  #reportArea .rt-sub{text-align:center;color:var(--mut);font-size:12px;margin-bottom:14px}
+  #reportArea .rt-meta{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+  #reportArea .rt-meta td{border:1px solid #aab4bd;padding:5px 8px}
+  #reportArea .rt-meta td.k{background:#eef3f7;font-weight:700;color:var(--c1);width:120px;white-space:nowrap}
+  #reportArea h2.rt{font-size:14px;color:#fff;background:var(--c2);padding:5px 10px;border-radius:4px;margin:16px 0 6px}
+  #reportArea table.rpt{width:100%;border-collapse:collapse;font-size:10.5px;margin:4px 0 8px}
+  #reportArea table.rpt th,#reportArea table.rpt td{border:1px solid #999;padding:3px 5px;vertical-align:top}
+  #reportArea table.rpt th{background:#eaf1f7;color:var(--c1)}
+  #reportArea .rt-sign{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+  #reportArea .rt-sign th,#reportArea .rt-sign td{border:1px solid #888;padding:6px 8px;text-align:center}
+  #reportArea .rt-sign th{background:#eaf1f7;color:var(--c1)}
+  #reportArea .rt-sealbox{height:60px;display:flex;align-items:center;justify-content:center}
+  #reportArea .rt-sealbox img{max-height:54px;max-width:120px}
+  /* ===== 程序書文件管制（7.5 / 7.5.1） ===== */
+  .proc-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 14px;padding:10px 12px;background:#eef3f7;border:1px solid var(--line);border-radius:8px}
+  .proc-toolbar .ttl{font-weight:700;color:var(--c1);font-size:13px;margin-right:auto}
+  .procmeta{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 16px}
+  .procmeta td{border:1px solid #aab4bd;padding:6px 9px;vertical-align:middle}
+  .procmeta td.k{background:#eef3f7;font-weight:700;color:var(--c1);white-space:nowrap;width:84px}
+  .procmeta .docno{font-weight:800;color:var(--c1);letter-spacing:.5px}
+  .proc-status{display:inline-block;padding:1px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+  .proc-status.s-ok{background:#e7f4e8;color:var(--ok)} .proc-status.s-draft{background:#fdf0e3;color:var(--warn)} .proc-status.s-void{background:#fbe9e7;color:var(--bad)} .proc-status.s-mut{background:#eef1f4;color:var(--mut)}
+  h3.procrevh{color:var(--c1);font-size:15px;margin:14px 0 6px;border-left:4px solid var(--c3);padding-left:10px}
+  .procrev{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 14px}
+  .procrev th,.procrev td{border:1px solid #aab4bd;padding:5px 7px;text-align:center;vertical-align:top}
+  .procrev th{background:#eaf1f7;color:var(--c1);position:static;white-space:nowrap}
+  .procrev td.sum{text-align:left}
+  .proc-editor{border:1px dashed var(--c3);border-radius:8px;background:#f7fafd;padding:14px 16px;margin:4px 0 18px}
+  .proc-editor h4{color:var(--c2);margin:14px 0 4px} .proc-editor h4:first-child{margin-top:0}
+  .grid-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 14px}
+  .grid-meta .field{margin-bottom:0}
+  .grid-meta .field label{font-size:12px}
+  .grid-meta input,.grid-meta select{padding:6px 8px}
+  .revedit{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0}
+  .revedit th,.revedit td{border:1px solid var(--line);padding:4px 5px;vertical-align:top}
+  .revedit th{background:#eaf1f7;color:var(--c1);position:static}
+  .revedit textarea,.revedit input{width:100%;border:1px solid transparent;background:#fff;font:inherit;padding:3px 4px;border-radius:4px}
+  .revedit textarea:focus,.revedit input:focus{border-color:var(--c3);outline:none}
+  #procBody.editing{outline:2px dashed var(--warn);outline-offset:8px;background:#fffdf6;border-radius:6px;padding:6px}
+  #procBody.editing :is(h3,h4,p,li,td){cursor:text}
+  .edit-flag{display:none;font-size:11.5px;color:#8a5a00;background:#fff8ec;border:1px solid #e0930a;border-radius:6px;padding:4px 10px;margin:4px 0 10px}
+  body.proc-bodyediting .edit-flag{display:inline-block}
+  @media print{
+    .proc-toolbar{display:none !important}
+    #procEditor{display:none !important}
+    #procBody.editing{outline:none !important;background:#fff;padding:0}
+    .edit-flag{display:none !important}
+    .procmeta,.procrev{break-inside:avoid}
+  }
+  @media print{
+    @page{margin:14mm}
+    header,nav,.toolbtn,.rowtools,.btn,.delx,footer,.sealx,.sealhint{display:none !important}
+    body{background:#fff}
+    .scroll{max-height:none !important;overflow:visible !important;border:none !important}
+    .card{box-shadow:none;border:1px solid #bbb;break-inside:auto}
+    th{position:static;white-space:normal}
+    main table{font-size:10px}
+    main table th,main table td{word-break:break-word}
+    td .cellprint{white-space:pre-wrap;word-break:break-word;font-size:10px}
+    td textarea{white-space:pre-wrap;overflow:visible !important;border:none !important}
+    td input,td select{border:none !important}
+    tr{break-inside:avoid}
+    .panel{display:none !important}
+    .panel.active{display:block !important}
+    #reportArea{display:none !important}
+    body.print-signoff .panel{display:none !important}
+    body.print-signoff #year{display:block !important}
+    body.print-signoff #year .arch-card{display:none !important}
+    .sealbox{border:1px solid #888;background:#fff}
+    body.print-report .panel{display:none !important}
+    body.print-report #reportArea{display:block !important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>ISO 27001:2022 條文7「支援」管理工具</h1>
+    <div class="sub">Support · 資源 / 能力 / 認知 / 溝通 / 文件化資訊</div>
+  </div>
+  <div class="grow"></div>
+  <button class="toolbtn" onclick="saveNow()">💾 儲存</button>
+  <button class="toolbtn" onclick="doPrint()">🖨 列印 / PDF</button>
+</header>
+
+<nav id="nav">
+  <button data-p="dash" class="active">📊 儀表板</button>
+  <button data-p="c71">7.1 資源</button>
+  <button data-p="c72">7.2 能力</button>
+  <button data-p="c73">7.3 認知</button>
+  <button data-p="c74">7.4 溝通</button>
+  <button data-p="c75">7.5 文件化資訊</button>
+  <button data-p="year">🗓 年度簽核</button>
+  <button data-p="guide">📘 作業說明</button>
+  <button data-p="data">⚙ 資料管理</button>
+</nav>
+
+<main>
+  <!-- ================= 儀表板 ================= -->
+  <section class="panel active" id="dash">
+    <div class="card">
+      <h2 class="sec"><span class="tag">總覽</span>支援作業建置進度</h2>
+      <div class="clauseref">本工具對應 ISO/IEC 27001:2022 <b>第7章 支援（Support）</b>，協助組織系統化完成 7.1 資源、7.2 能力、7.3 認知、7.4 溝通、7.5 文件化資訊之鑑別、配置、執行與定期覆核，並產生符合性證據。</div>
+      <div id="annualBox"></div>
+      <div class="kpi" id="kpiBox"></div>
+      <div id="progressBox"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">提醒</span>待覆核 / 到期項目（覆核日已到期或逾期）</h2>
+      <div id="dueBox"><p class="hint">尚無資料。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 7.1 資源 ================= -->
+  <section class="panel" id="c71">
+    <div class="card">
+      <h2 class="sec"><span class="tag">7.1</span>資源（Resources）</h2>
+      <div class="clauseref"><b>條文要求：</b>組織應決定並提供 ISMS 之<b>建立、實作、維持與持續改進</b>所需之資源。建議涵蓋人力、財務預算、技術工具、基礎設施、外部服務與資訊知識等構面，並追蹤其提供狀態與落差。</div>
+      <div class="scroll">
+        <table id="t71">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:110px">資源類別</th>
+            <th style="width:220px">資源項目 / 說明</th><th style="width:220px">用途（對應ISMS活動/條文）</th>
+            <th style="width:140px">需求 / 配置量</th><th style="width:100px">提供狀態</th>
+            <th style="width:100px">負責人</th><th style="width:110px">覆核日</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c71')">＋ 新增資源</button>
+        <button class="btn ghost" onclick="loadSample('c71')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7.2 能力 ================= -->
+  <section class="panel" id="c72">
+    <div class="card">
+      <h2 class="sec"><span class="tag">7.2</span>能力（Competence）</h2>
+      <div class="clauseref"><b>條文要求：</b>組織應 (a) 決定影響資安績效之人員所需<b>能力</b>；(b) 確保其基於適當<b>教育、訓練或經驗</b>而能勝任；(c) 必要時採取行動取得能力並<b>評估行動之有效性</b>；(d) 保存能力證據之文件化資訊。</div>
+      <div class="scroll">
+        <table id="t72">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:130px">角色 / 職務</th><th style="width:90px">姓名(可選)</th>
+            <th style="width:200px">所需能力 / 職能</th><th style="width:110px">能力依據</th><th style="width:90px">現況評估</th>
+            <th style="width:200px">落差 / 取得能力之行動</th><th style="width:160px">行動有效性評估</th>
+            <th style="width:160px">能力證據(文件)</th><th style="width:100px">負責人</th><th style="width:110px">覆核日</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c72')">＋ 新增能力項目</button>
+        <button class="btn ghost" onclick="loadSample('c72')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7.3 認知 ================= -->
+  <section class="panel" id="c73">
+    <div class="card">
+      <h2 class="sec"><span class="tag">7.3</span>認知（Awareness）</h2>
+      <div class="clauseref"><b>條文要求：</b>受組織控制之工作人員應認知 (a) <b>資訊安全政策</b>；(b) 其對 ISMS 有效性之<b>貢獻</b>，含改善資安績效之效益；(c) <b>不符合</b> ISMS 要求之<b>後果與影響</b>。下表盤點認知宣導活動、對象、方式與成效驗證。</div>
+      <div class="scroll">
+        <table id="t73">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:140px">對象族群</th><th style="width:150px">認知主題</th>
+            <th style="width:130px">傳達方式</th><th style="width:100px">頻率</th><th style="width:120px">辦理日期/期間</th>
+            <th style="width:110px">涵蓋人數/比率</th><th style="width:180px">成效驗證</th>
+            <th style="width:100px">負責人</th><th style="width:90px">狀態</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c73')">＋ 新增認知活動</button>
+        <button class="btn ghost" onclick="loadSample('c73')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7.4 溝通 ================= -->
+  <section class="panel" id="c74">
+    <div class="card">
+      <h2 class="sec"><span class="tag">7.4</span>溝通（Communication）</h2>
+      <div class="clauseref"><b>條文要求：</b>組織應決定與 ISMS 相關之<b>內部與外部溝通</b>需求，包含 (a) 溝通<b>什麼</b>；(b) <b>何時</b>溝通；(c) 與<b>誰</b>溝通；(d) <b>如何</b>溝通。下表以 5W1H 建立溝通計畫。</div>
+      <div class="scroll">
+        <table id="t74">
+          <thead><tr>
+            <th style="width:84px">編號</th><th style="width:200px">溝通事項（What）</th><th style="width:80px">內/外部</th>
+            <th style="width:170px">溝通對象（With whom）</th><th style="width:140px">時機 / 頻率（When）</th>
+            <th style="width:190px">方式 / 管道（How）</th><th style="width:100px">負責人（Who）</th>
+            <th style="width:160px">紀錄 / 保存</th><th style="width:110px">覆核日</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c74')">＋ 新增溝通事項</button>
+        <button class="btn ghost" onclick="loadSample('c74')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7.5 文件化資訊 ================= -->
+  <section class="panel" id="c75">
+    <div class="card">
+      <h2 class="sec"><span class="tag">7.5.2 / 7.5.3</span>文件編製與管制規則</h2>
+      <div class="clauseref"><b>條文要求：</b>7.5.2 製作與更新文件時應確保適當之 (a) <b>識別與描述</b>（標題、日期、作者、編號）；(b) <b>格式與媒體</b>；(c) <b>審查與核准</b>其適切性與充分性。7.5.3 文件化資訊應受管制以確保<b>可取用、受保護</b>，並處理<b>發行/取用、儲存保存、變更管制、保存處置、外來文件</b>等活動。</div>
+      <div class="grid2">
+        <div class="field"><label>本規則文件編號</label><input id="d_docno" placeholder="例：ISMS-PR-7.5-001"></div>
+        <div class="field"><label>版本 / 生效日</label><input id="d_ver" placeholder="例：V1.0 / 2026-06-01"></div>
+      </div>
+      <div class="grid3">
+        <div class="field"><label>7.5.2(a) 識別與描述規則</label><textarea id="d_ident" placeholder="文件編號編碼原則、標題、版次、日期、作者/制定單位之標示方式。"></textarea></div>
+        <div class="field"><label>7.5.2(b) 格式與媒體規範</label><textarea id="d_format" placeholder="語言、檔案格式（PDF/Word）、軟體版本、紙本/電子媒體規定、範本套用。"></textarea></div>
+        <div class="field"><label>7.5.2(c) 審查與核准規則</label><textarea id="d_review" placeholder="誰負責審查適切性與充分性、誰核准、發行前簽核流程。"></textarea></div>
+      </div>
+      <div class="grid3">
+        <div class="field"><label>7.5.3(c) 發行 / 取用 / 檢索 / 使用</label><textarea id="d_dist" placeholder="文件發行方式、存取權限分級、檢索與取用管道（文管系統/共享區）。"></textarea></div>
+        <div class="field"><label>7.5.3(d) 儲存 / 保存（含可讀性）</label><textarea id="d_store" placeholder="儲存位置、備份、防止毀損與維持可讀性之措施。"></textarea></div>
+        <div class="field"><label>7.5.3(e) 變更管制（版本控制）</label><textarea id="d_change" placeholder="變更申請、審核、版次更新、舊版作廢與回收方式。"></textarea></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>7.5.3(f) 保存期限與處置</label><textarea id="d_reten" placeholder="各類文件/紀錄之保存年限及屆期之銷毀或歸檔處置。"></textarea></div>
+        <div class="field"><label>7.5.3 外來文件之鑑別與管制</label><textarea id="d_ext" placeholder="法規、標準、合約、供應商文件等外來文件之鑑別、登錄與版本控管方式。"></textarea></div>
+      </div>
+      <div class="field"><label>核准（職稱 / 姓名）</label><input id="d_appr" placeholder="例：資安長 王大明"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="sec"><span class="tag">7.5.1</span>文件管制清冊（Documented information register）</h2>
+      <div class="clauseref"><b>條文要求：</b>ISMS 應包含 (a) 本標準<b>要求</b>之文件化資訊；(b) 組織判定為 ISMS 有效性所<b>必要</b>之文件化資訊。下表為文件總清冊，集中管制版本、機密等級、保存期限與存取權限。</div>
+      <div class="scroll">
+        <table id="t75">
+          <thead><tr>
+            <th style="width:70px">編號</th><th style="width:170px">文件名稱</th><th style="width:120px">文件編號</th>
+            <th style="width:90px">類型</th><th style="width:90px">對應條文</th><th style="width:70px">版本</th>
+            <th style="width:100px">制定/作者</th><th style="width:110px">生效日</th><th style="width:100px">核准者</th>
+            <th style="width:90px">媒體</th><th style="width:90px">機密等級</th><th style="width:110px">保存期限</th>
+            <th style="width:90px">處置</th><th style="width:160px">存放位置 / 存取權限</th><th style="width:100px">狀態</th>
+            <th style="width:110px">覆核日</th><th style="width:36px"></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="addRow('c75')">＋ 新增文件</button>
+        <button class="btn ghost" onclick="loadSample('c75')">載入範例</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 年度簽核 ================= -->
+  <section class="panel" id="year">
+    <div class="card">
+      <h2 class="sec"><span class="tag">年度</span>年度支援作業與簽核</h2>
+      <div class="clauseref">支援作業（7.1～7.5）應<b>至少每年覆核一次</b>，並經簽核後作為管理審查（條文 9.3）之輸入。每年度完成資源配置檢討、能力盤點、認知宣導、溝通計畫執行與文件管制覆核後，請填寫本簽核表並完成三級簽核，再按「封存本年度」建立年度紀錄。</div>
+      <div class="grid3">
+        <div class="field"><label>作業年度</label><input id="y_year" placeholder="例：2026"></div>
+        <div class="field"><label>作業期間（起）</label><input type="date" id="y_from"></div>
+        <div class="field"><label>作業期間（迄）</label><input type="date" id="y_to"></div>
+      </div>
+      <div class="field"><label>本年度支援作業摘要（資源 / 能力 / 認知 / 溝通 / 文件之執行與變化）</label><textarea id="y_summary" placeholder="說明本年度資源配置與落差、教育訓練與能力提升成果、認知宣導涵蓋率、重大溝通事項、文件版本異動等；若無重大變化亦請敘明「經覆核無重大變化」。"></textarea></div>
+      <h2 class="sec" style="font-size:15px"><span class="tag">簽核</span>三級簽核</h2>
+      <div class="scroll" style="max-height:none">
+        <table>
+          <thead><tr><th style="width:80px">層級</th><th>角色 / 職稱</th><th style="width:160px">簽核人姓名</th><th style="width:150px">簽核日期</th><th style="width:150px">簽章 / 用印</th></tr></thead>
+          <tbody>
+            <tr><td><b>執行</b></td><td>ISMS 推動小組 / 執行單位</td><td><input id="y_exec_n" placeholder="姓名"></td><td><input type="date" id="y_exec_d"></td><td><div class="sealbox" id="seal_exec" onclick="pickSeal('exec')"></div></td></tr>
+            <tr><td><b>審查</b></td><td>資安長 / ISMS 主管</td><td><input id="y_rev_n" placeholder="姓名"></td><td><input type="date" id="y_rev_d"></td><td><div class="sealbox" id="seal_rev" onclick="pickSeal('rev')"></div></td></tr>
+            <tr><td><b>核准</b></td><td>最高管理階層</td><td><input id="y_app_n" placeholder="姓名"></td><td><input type="date" id="y_app_d"></td><td><div class="sealbox" id="seal_app" onclick="pickSeal('app')"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">「簽章 / 用印」格可點擊上傳電子簽章或公司印章圖檔（PNG/JPG）；亦可留白，列印後實體簽名用印。</p>
+      <div class="grid2" style="margin-top:12px">
+        <div class="field"><label>是否已提報管理審查（9.3）</label><select id="y_mr"><option value=""></option><option>是</option><option>否（待提報）</option></select></div>
+        <div class="field"><label>下次應辦理日（核准日填入後自動帶次年，可手動調整）</label><input type="date" id="y_next"></div>
+      </div>
+      <div class="rowtools">
+        <button class="btn primary" onclick="archiveYear()">📦 封存本年度並建立紀錄</button>
+        <button class="btn ghost" onclick="printSignoff()">🖨 列印簽核表</button>
+        <button class="btn ghost" onclick="printReportCurrent()">📄 列印年度報告（含7.1~7.5）</button>
+      </div>
+      <p class="hint">封存後，目前 7.1～7.5 之資料與本簽核表將一併存入下方「歷年紀錄」；現有資料會保留供新年度延續編修（請更新「作業年度」與簽核欄後再次封存）。</p>
+      <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
+    </div>
+    <div class="card arch-card">
+      <h2 class="sec"><span class="tag">紀錄</span>歷年支援作業紀錄</h2>
+      <p class="hint">每一年度封存後在此列管，可檢視、匯出或還原為目前編輯版本，呈現年度資料軌跡。</p>
+      <div id="archiveBox"><p class="hint">尚無年度紀錄。完成簽核後請按「封存本年度」。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 作業說明（程序書） ================= -->
+  <section class="panel" id="guide">
+    <div class="card guide">
+      <h2 class="sec"><span class="tag">程序書</span>ISMS-7 支援作業管理程序書</h2>
+      <div class="clauseref">本作業說明為內嵌之精簡程序書，規範 ISO 27001:2022 第7章之作業活動、職責分工、產出與覆核時機，可直接列印作為文件化資訊。</div>
+      <!-- ===== 程序書維護工具列 ===== -->
+      <div class="proc-toolbar">
+        <span class="ttl">📄 程序書文件管制與維護</span>
+        <button class="btn ghost sm" id="procEditToggle" onclick="toggleProcEditor()">✏ 編輯文件資訊與版次</button>
+        <button class="btn ghost sm" id="procBodyEditToggle" onclick="toggleProcBodyEdit()">📝 內文編輯模式</button>
+        <span id="procBodyEditBtns" style="display:none;gap:8px">
+          <button class="btn primary sm" onclick="saveProcBody()">💾 儲存內文</button>
+          <button class="btn danger sm" onclick="restoreProcBody()">↺ 還原預設範本</button>
+        </span>
+        <button class="btn ghost sm" onclick="doPrint()">🖨 列印 / 匯出 PDF</button>
+      </div>
+
+      <!-- ===== 文件管制資訊抬頭（7.5.1） ===== -->
+      <div id="procDocHeader"></div>
+
+      <!-- ===== 文件資訊與版次編輯器（預設隱藏；列印時隱藏） ===== -->
+      <div id="procEditor" class="proc-editor" style="display:none">
+        <h4>📄 文件管制資訊（對應 7.5 文件化資訊 / 7.5.1 文件管制清冊）</h4>
+        <p class="hint">下列欄位構成本程序書之文件管制資訊（識別、版次、核准者、機密等級、保存期限等）。變更後會即時同步至上方文件抬頭，並輸出至列印 / PDF。<b>核准者</b>欄位對應 7.5.2(c) 文件之審查與核准要求。</p>
+        <div class="grid-meta" id="procMetaGrid"></div>
+        <h4>🗓 版次修訂歷程（對應 7.5.2 變更管制）</h4>
+        <p class="hint">每次改版請按「新增修訂紀錄」增列一筆，記錄<b>版次、日期、修訂摘要、修訂者與核准者</b>，以維持完整之版本軌跡。</p>
+        <table class="revedit"><thead><tr>
+          <th style="width:72px">版次</th><th style="width:120px">日期</th><th>修訂摘要</th>
+          <th style="width:110px">修訂者</th><th style="width:110px">核准者</th><th style="width:34px"></th>
+        </tr></thead><tbody id="revEditorBody"></tbody></table>
+        <div class="rowtools"><button class="btn ghost sm" onclick="addRev()">＋ 新增修訂紀錄</button>
+          <span class="hint" style="align-self:center">＊新增時自動帶入目前版次與制定/核准者，可再行修改。</span></div>
+      </div>
+
+      <!-- ===== 版次修訂歷程（唯讀，列印用） ===== -->
+      <h3 class="procrevh">文件版次修訂歷程</h3>
+      <div id="procRevTable"></div>
+
+      <div class="edit-flag">📝 內文編輯模式進行中：可直接點擊下方任一段落文字進行修改，完成後請按工具列「💾 儲存內文」。</div>
+
+      <!-- ===== 程序書本文（可編輯／可還原預設範本） ===== -->
+      <div id="procBody">
+
+      <h3>1. 目的</h3>
+      <p>建立組織系統化提供 ISMS 所需資源、確保人員能力、建立資安認知、規劃內外部溝通，並管制文件化資訊之作業方法，以支撐 ISMS 之有效運作與持續改進。</p>
+
+      <h3>2. 適用範圍</h3>
+      <p>適用於 ISMS 範圍內所有部門與受組織控制之工作人員（含委外/約聘），涵蓋 ISO 27001:2022 條文 7.1、7.2、7.3、7.4、7.5。</p>
+
+      <h3>3. 權責分工</h3>
+      <table class="roles">
+        <thead><tr><th>角色</th><th>職責</th></tr></thead>
+        <tbody>
+          <tr><td>最高管理階層</td><td>核准資源配置與預算；核准文件管制規則；確認支援作業足以達成 ISMS 預期成果。</td></tr>
+          <tr><td>資安長 / ISMS 主管</td><td>統籌資源需求、能力盤點、認知計畫與溝通計畫；審查文件清冊；提報管理審查。</td></tr>
+          <tr><td>人力資源單位</td><td>協同辦理能力評估、教育訓練、認知宣導與訓練紀錄保存。</td></tr>
+          <tr><td>各部門主管</td><td>提出本單位資源與能力需求；落實認知宣導與溝通；維護所屬文件。</td></tr>
+          <tr><td>文件管理員（文管）</td><td>維護文件管制清冊、版本控制、發行回收、保存與處置、外來文件登錄。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>4. 作業流程</h3>
+      <div class="flow">
+        <div class="step">①7.1 鑑別並提供資源<br><span style="font-weight:400">人力/預算/技術/設施</span></div><span class="arr">→</span>
+        <div class="step">②7.2 盤點能力與落差<br><span style="font-weight:400">訓練/輔導/招募/委外</span></div><span class="arr">→</span>
+        <div class="step">③7.3 規劃並執行認知宣導<br><span style="font-weight:400">政策/貢獻/後果</span></div><span class="arr">→</span>
+        <div class="step">④7.4 建立溝通計畫<br><span style="font-weight:400">5W1H 內外部</span></div><span class="arr">→</span>
+        <div class="step">⑤7.5 製作與管制文件<br><span style="font-weight:400">識別/審核/版本/保存</span></div><span class="arr">→</span>
+        <div class="step">⑥保存符合性證據<br><span style="font-weight:400">能力/訓練/溝通紀錄</span></div><span class="arr">→</span>
+        <div class="step">⑦定期/變更時覆核<br><span style="font-weight:400">回饋管理審查(9.3)</span></div>
+      </div>
+
+      <h3>7.1 資源</h3>
+      <ol>
+        <li>盤點 ISMS 建立、實作、維持與改進所需資源：<b>人力、財務預算、技術工具、基礎設施、外部服務、資訊與知識</b>。</li>
+        <li>評估各資源之需求量與目前配置，標示<b>提供狀態（已提供／規劃中／不足待補）</b>。</li>
+        <li>對「不足待補」之資源提出補足計畫，必要時陳報最高管理階層核定預算與資源。</li>
+      </ol>
+
+      <h3>7.2 能力</h3>
+      <ol>
+        <li>決定影響資安績效之角色/職務所<b>需能力</b>（技術、管理、法遵）。</li>
+        <li>依<b>教育、訓練、經驗、證照</b>評估人員現況（符合／部分符合／不足）。</li>
+        <li>對落差採取行動（內訓、外訓、輔導、招募、委外），並於事後<b>評估行動之有效性</b>。</li>
+        <li><b>保存能力證據</b>（證照、訓練紀錄、考核結果）作為文件化資訊。</li>
+      </ol>
+
+      <h3>7.3 認知</h3>
+      <ol>
+        <li>規劃對全體人員（含新進、委外）之認知宣導，主題至少涵蓋：<b>(a) 資安政策、(b) 對 ISMS 之貢獻與效益、(c) 不遵循之後果</b>。</li>
+        <li>選擇傳達方式（教育訓練、公告、電子報、海報、數位學習、簽署承諾書）並訂定<b>頻率</b>（到職時、年度）。</li>
+        <li>以測驗、問卷或簽到表<b>驗證認知成效</b>並記錄涵蓋率。</li>
+      </ol>
+
+      <h3>7.4 溝通</h3>
+      <ol>
+        <li>以 <b>5W1H</b> 建立內外部溝通計畫：溝通<b>什麼、何時、與誰、如何</b>，並指派<b>負責人</b>。</li>
+        <li>內部溝通如政策宣達、事故通報、教育訓練；外部溝通如主管機關通報、客戶與供應商聯繫。</li>
+        <li>保存溝通紀錄（會議紀錄、公告、往來文件）作為證據。</li>
+      </ol>
+
+      <h3>7.5 文件化資訊</h3>
+      <ol>
+        <li><b>7.5.1：</b>ISMS 文件應包含本標準要求及組織判定必要之文件化資訊，集中登錄於<b>文件管制清冊</b>。</li>
+        <li><b>7.5.2：</b>製作與更新文件時確保適當之<b>識別與描述、格式與媒體、審查與核准</b>。</li>
+        <li><b>7.5.3：</b>管制文件以確保可<b>取用且受保護</b>，並處理<b>發行/取用、儲存保存、變更管制（版本控制）、保存與處置</b>；<b>外來文件</b>須鑑別並控管。</li>
+      </ol>
+
+      <h3>5. 覆核時機與年度簽核</h3>
+      <ul>
+        <li><b>定期：</b>至少<b>每年一次</b>，並於管理審查（條文 9.3）前更新。每年度完成覆核後，須於「🗓 年度簽核」分頁完成<b>執行 → 審查 → 核准</b>三級簽核。</li>
+        <li><b>變更觸發：</b>組織/人力異動、新增系統或服務、法規更新、重大事故、文件大幅改版等發生時，即時覆核相關支援項目。</li>
+        <li>覆核結果（資源充足性、能力落差、認知成效、溝通有效性、文件適切性）應作為管理審查輸入。</li>
+        <li><b>年度紀錄：</b>每年度簽核後按「封存本年度」建立年度快照，系統會自動推算<b>下次應辦日（核准日次年）</b>並於儀表板提醒逾期或即將到期，歷年資料可於年度紀錄區檢視、匯出與還原。</li>
+      </ul>
+
+      <h3>6. 文件化資訊與保存</h3>
+      <table>
+        <thead><tr><th>產出</th><th>對應條文</th><th>強制文件化</th></tr></thead>
+        <tbody>
+          <tr><td>資源清單 / 配置與落差</td><td>7.1</td><td>否（建議保存）</td></tr>
+          <tr><td>能力盤點與落差行動</td><td>7.2(a~c)</td><td>否（建議保存）</td></tr>
+          <tr><td>能力證據（證照/訓練/考核）</td><td>7.2(d)</td><td><b>是</b></td></tr>
+          <tr><td>認知宣導計畫與成效紀錄</td><td>7.3</td><td>否（建議保存為證據）</td></tr>
+          <tr><td>內外部溝通計畫與紀錄</td><td>7.4</td><td>否（建議保存為證據）</td></tr>
+          <tr><td>文件編製與管制規則</td><td>7.5.2 / 7.5.3</td><td>否（建議文件化）</td></tr>
+          <tr><td>文件管制清冊</td><td>7.5.1</td><td><b>是（受控）</b></td></tr>
+          <tr><td>年度支援作業簽核紀錄</td><td>7.1~7.5（年度覆核）</td><td>否（建議保存為符合性證據）</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">＊保存方式：可於本工具維護後，使用「資料管理」分頁匯出 JSON 備份，或列印為 PDF 併入 ISMS 文件體系；另可使用隨附之 Excel 管理台帳作為離線受控副本。</p>
+      </div><!-- /procBody -->
+
+      <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
+    </div>
+  </section>
+
+  <!-- ================= 資料管理 ================= -->
+  <section class="panel" id="data">
+    <div class="card" id="dataPanel">
+      <h2 class="sec"><span class="tag">資料</span>儲存 / 備份 / 還原</h2>
+      <p class="hint">所有資料儲存於本機瀏覽器（localStorage），不會上傳。建議定期匯出 JSON 備份。</p>
+      <div class="rowtools">
+        <button class="btn primary" onclick="exportJSON()">⬇ 匯出 JSON 備份</button>
+        <button class="btn ghost" onclick="document.getElementById('imp').click()">⬆ 匯入 JSON</button>
+        <input type="file" id="imp" accept="application/json" style="display:none" onchange="importJSON(event)">
+        <button class="btn ghost" onclick="exportCSV()">⬇ 匯出 CSV（各表）</button>
+        <button class="btn danger" onclick="clearAll()">🗑 清空所有資料</button>
+      </div>
+      <div class="meta" id="dataMeta"></div>
+    </div>
+    <div class="card">
+      <h2 class="sec"><span class="tag">說明</span>與 Excel 管理台帳之搭配</h2>
+      <p>本工具與隨附之 <b>Excel 管理台帳</b> 涵蓋相同欄位（7.1～7.5）。建議：日常以本 HTML 工具維護與覆核，需提交稽核或離線簽核時，匯出資料填入 Excel 台帳作為受控文件副本。兩者欄位一致，可雙向對照。</p>
+    </div>
+  </section>
+</main>
+
+<!-- 年度報告（僅列印時顯示） -->
+<div id="reportArea"></div>
+
+<div class="toast" id="toast"></div>
+<footer>
+  ISO/IEC 27001:2022 Clause 7 — Support｜本機儲存．離線可用<br>
+  設計：Allan Lo 顧問（<a href="mailto:allanlo.plus@gmail.com">allanlo.plus@gmail.com</a>）｜
+  <a href="http://www.123hi.org" target="_blank" rel="noopener">http://www.123hi.org</a>｜2026年6月｜版本 v1.0
+</footer>
+
+<script>
+const KEY='iso27001_clause7_v1';
+
+// ---------- 欄位定義 ----------
+const COLS={
+  c71:[
+    {k:'id',t:'text'},
+    {k:'cat',t:'select',opt:['人力資源','財務預算','技術/工具','基礎設施','外部服務/委外','資訊/知識']},
+    {k:'item',t:'textarea'},
+    {k:'purpose',t:'textarea'},
+    {k:'demand',t:'textarea'},
+    {k:'provided',t:'select',opt:['已提供','規劃中','不足待補']},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+  ],
+  c72:[
+    {k:'id',t:'text'},
+    {k:'role',t:'textarea'},
+    {k:'person',t:'text'},
+    {k:'competence',t:'textarea'},
+    {k:'basis',t:'select',opt:['教育','訓練','經驗','證照','教育+訓練','訓練+經驗','綜合']},
+    {k:'current',t:'select',opt:['符合','部分符合','不足']},
+    {k:'action',t:'textarea'},
+    {k:'effect',t:'textarea'},
+    {k:'evidence',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'review',t:'date'},
+  ],
+  c73:[
+    {k:'id',t:'text'},
+    {k:'audience',t:'textarea'},
+    {k:'topic',t:'select',opt:['資安政策(a)','對ISMS之貢獻與效益(b)','不遵循之後果(c)','綜合(a+b+c)']},
+    {k:'method',t:'select',opt:['教育訓練','內部公告','電子報','海報/標語','數位學習','簽署承諾書','會議宣導']},
+    {k:'freq',t:'text'},
+    {k:'date',t:'text'},
+    {k:'coverage',t:'text'},
+    {k:'verify',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'status',t:'select',opt:['規劃中','進行中','已完成']},
+  ],
+  c74:[
+    {k:'id',t:'text'},
+    {k:'topic',t:'textarea'},
+    {k:'scope',t:'select',opt:['內部','外部']},
+    {k:'party',t:'textarea'},
+    {k:'timing',t:'textarea'},
+    {k:'method',t:'textarea'},
+    {k:'owner',t:'text'},
+    {k:'record',t:'textarea'},
+    {k:'review',t:'date'},
+  ],
+  c75:[
+    {k:'id',t:'text'},
+    {k:'name',t:'textarea'},
+    {k:'docno',t:'text'},
+    {k:'type',t:'select',opt:['政策','程序書','作業辦法','表單','紀錄','計畫','外來文件']},
+    {k:'clause',t:'text'},
+    {k:'ver',t:'text'},
+    {k:'author',t:'text'},
+    {k:'effdate',t:'date'},
+    {k:'approver',t:'text'},
+    {k:'media',t:'select',opt:['電子','紙本','電子+紙本']},
+    {k:'classification',t:'select',opt:['公開','內部','機密','限閱']},
+    {k:'retention',t:'text'},
+    {k:'disposition',t:'select',opt:['歸檔保存','屆期銷毀','移轉']},
+    {k:'location',t:'textarea'},
+    {k:'status',t:'select',opt:['現行有效','草擬','修訂中','作廢']},
+    {k:'review',t:'date'},
+  ],
+};
+
+// ---------- 範例資料 ----------
+const SAMPLES={
+  c71:[
+    {id:'RS-01',cat:'人力資源',item:'專職資安人員（含資安長、資安工程師）',purpose:'推動ISMS、風險評鑑、事故應變（對應5.3、6.1、8）。',demand:'資安長1名、工程師2名',provided:'已提供',owner:'人資/資安長',review:'2026-12-31'},
+    {id:'RS-02',cat:'財務預算',item:'年度資安預算（工具採購、稽核、教育訓練）',purpose:'支應控制措施實作與外部稽核（對應9.2、10）。',demand:'年度新台幣 OOO 萬元',provided:'已提供',owner:'財務/資安長',review:'2026-12-31'},
+    {id:'RS-03',cat:'技術/工具',item:'防火牆、EDR、SIEM、弱點掃描工具',purpose:'監控、偵測與防護（對應A.8技術控制）。',demand:'依架構需求佈署',provided:'規劃中',owner:'IT',review:'2026-09-30'},
+    {id:'RS-04',cat:'外部服務/委外',item:'外部滲透測試與第三方稽核服務',purpose:'獨立驗證控制有效性（對應9.2）。',demand:'年度1次',provided:'規劃中',owner:'資安組',review:'2026-10-31'},
+    {id:'RS-05',cat:'資訊/知識',item:'威脅情資訂閱與法規更新來源',purpose:'維持風險評鑑時效（對應6.1.2、4.2）。',demand:'持續訂閱',provided:'不足待補',owner:'資安組',review:'2026-08-31'},
+  ],
+  c72:[
+    {id:'CP-01',role:'資安長 / ISMS主管',person:'王大明',competence:'ISMS建置與管理、風險管理、法規遵循、領導溝通。',basis:'教育+訓練',current:'符合',action:'維持ISO 27001主導稽核員資格、年度進修。',effect:'通過年度資格維持、稽核零重大缺失。',evidence:'ISO 27001 LA證書、進修時數紀錄。',owner:'人資',review:'2026-12-31'},
+    {id:'CP-02',role:'資安工程師',person:'',competence:'網路與系統防護、弱點管理、SIEM操作、事故鑑識。',basis:'訓練+經驗',current:'部分符合',action:'安排SIEM與鑑識實作訓練、原廠課程。',effect:'訓練後考核通過率≥80%，事故處理時間縮短。',evidence:'訓練簽到、考核成績、原廠證照。',owner:'資安組',review:'2026-12-31'},
+    {id:'CP-03',role:'內部稽核員',person:'',competence:'ISMS內部稽核技巧、條文理解、客觀獨立性。',basis:'訓練',current:'不足',action:'指派2名同仁參加內部稽核員訓練並取得結訓。',effect:'完成訓練、可獨立執行年度內稽。',evidence:'內稽訓練結訓證明。',owner:'資安長',review:'2026-07-31'},
+    {id:'CP-04',role:'系統管理員',person:'',competence:'存取控制、組態強化、備份還原、雲端安全設定。',basis:'經驗',current:'部分符合',action:'補充雲端安全與CIS基準實作訓練。',effect:'組態合規掃描通過率提升。',evidence:'訓練紀錄、組態檢查報告。',owner:'IT',review:'2026-12-31'},
+  ],
+  c73:[
+    {id:'AW-01',audience:'全體員工',topic:'綜合(a+b+c)',method:'數位學習',freq:'每年一次',date:'2026-03（年度）',coverage:'目標100%（達成 95%）',verify:'線上測驗（通過門檻80分）+ 完訓率統計。',owner:'資安組/人資',status:'已完成'},
+    {id:'AW-02',audience:'新進人員',topic:'資安政策(a)',method:'教育訓練',freq:'到職時',date:'每月新人訓',coverage:'100%新進',verify:'簽署資安承諾書、到職訓練簽到。',owner:'人資',status:'進行中'},
+    {id:'AW-03',audience:'全體員工',topic:'不遵循之後果(c)',method:'內部公告',freq:'季度',date:'每季資安電子報',coverage:'全體',verify:'閱讀回條 / 點閱率統計。',owner:'資安組',status:'進行中'},
+    {id:'AW-04',audience:'IT / 開發人員',topic:'對ISMS之貢獻與效益(b)',method:'會議宣導',freq:'半年',date:'2026-06 / 2026-12',coverage:'IT與RD團隊',verify:'會議紀錄與簽到。',owner:'資安組',status:'規劃中'},
+  ],
+  c74:[
+    {id:'CM-01',topic:'資訊安全政策與重大規範宣達',scope:'內部',party:'全體員工',timing:'政策發布/修訂時、年度',method:'內部公告系統、員工大會、Email。',owner:'資安組',record:'公告紀錄、簽收紀錄。',review:'2026-12-31'},
+    {id:'CM-02',topic:'資安事故通報與處理進度',scope:'內部',party:'管理階層、相關單位、CSIRT',timing:'事故發生即時、處理期間',method:'事故通報平台、緊急聯絡、會議。',owner:'事故處理小組',record:'事故單、處理時程紀錄。',review:'2026-12-31'},
+    {id:'CM-03',topic:'個資/資安事故法定通報',scope:'外部',party:'主管機關、受影響當事人',timing:'符合法定時限（如72小時）',method:'公文、官方通報窗口、書面通知。',owner:'法務/資安長',record:'通報函、回執。',review:'2026-12-31'},
+    {id:'CM-04',topic:'供應商/客戶資安要求與協調',scope:'外部',party:'重要供應商、客戶',timing:'合約簽訂、定期檢討、需求變更時',method:'合約附款、檢討會議、Email。',owner:'採購/業務',record:'會議紀錄、往來文件。',review:'2026-12-31'},
+  ],
+  c75:[
+    // ===== 一階文件（Tier-1 政策手冊）=====
+    {id:'DOC-01',name:'資訊安全手冊（一階政策文件）',docno:'ISMS-M-01',type:'政策',clause:'全標準 4–10＋附錄A',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依機密等級設定權限）',status:'現行有效',review:'2026-12-31'},
+    // ===== 二階文件（Tier-2 條文作業程序書 4–10）=====
+    {id:'DOC-02',name:'組織全景管理程序書',docno:'ISMS-4',type:'程序書',clause:'4 組織全景',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-03',name:'領導作為管理程序書',docno:'ISMS-5',type:'程序書',clause:'5 領導',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-04',name:'規劃作業管理程序書',docno:'ISMS-6',type:'程序書',clause:'6 規劃',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-05',name:'支援作業管理程序書',docno:'ISMS-7',type:'程序書',clause:'7 支援',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-06',name:'運作實施管理程序書',docno:'ISMS-8',type:'程序書',clause:'8 運作',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-07',name:'績效評估管理程序書',docno:'ISMS-9',type:'程序書',clause:'9 績效評估',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-08',name:'持續改善管理程序書',docno:'ISMS-10',type:'程序書',clause:'10 改善',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-09',name:'適用性聲明（SoA）管理作業程序書',docno:'ISMS-SoA',type:'程序書',clause:'6.1.3 d（附錄A 93控制）',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    // ===== 二階文件（附錄A 控制作業程序書 A01–A15）=====
+    {id:'DOC-10',name:'資安治理作業程序書',docno:'ISMS-A01',type:'程序書',clause:'A.5.1~5.6 / 5.8 / 5.24',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-11',name:'人員安全作業程序書',docno:'ISMS-A02',type:'程序書',clause:'A.6.1~6.6',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-12',name:'資料保護作業程序書',docno:'ISMS-A03',type:'程序書',clause:'A.5.10/5.12~5.14/5.33/5.34、A.8.1/8.7/8.10~8.12/8.33/8.34',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-13',name:'資產管理作業程序書',docno:'ISMS-A04',type:'程序書',clause:'A.5.9~5.11、A.7.3~7.14、A.8.1/8.10/8.14',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-14',name:'存取管理作業程序書',docno:'ISMS-A05',type:'程序書',clause:'A.5.15~5.18、A.8.2~8.5',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-15',name:'保全組態管理作業程序書',docno:'ISMS-A06',type:'程序書',clause:'A.8.9/8.18/8.19/8.24',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-16',name:'實體安全作業程序書',docno:'ISMS-A07',type:'程序書',clause:'A.7.1~7.14',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-17',name:'威脅與弱點管理作業程序書',docno:'ISMS-A08',type:'程序書',clause:'A.5.7、A.8.8',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-18',name:'應用程式安全作業程序書',docno:'ISMS-A09',type:'程序書',clause:'A.8.25~8.32',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-19',name:'系統與網路安全作業程序書',docno:'ISMS-A10',type:'程序書',clause:'A.8.20~8.23',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-20',name:'供應者關係安全作業程序書',docno:'ISMS-A11',type:'程序書',clause:'A.5.19~5.23',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-21',name:'資安事件管理作業程序書',docno:'ISMS-A12',type:'程序書',clause:'A.5.24~5.28、A.6.8、A.8.15~8.17',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-22',name:'營運持續作業程序書',docno:'ISMS-A13',type:'程序書',clause:'A.5.29/5.30、A.8.6/8.13/8.14',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-23',name:'資訊保證作業程序書',docno:'ISMS-A14',type:'程序書',clause:'A.5.35/5.36',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-24',name:'遵循性作業程序書',docno:'ISMS-A15',type:'程序書',clause:'A.5.31~5.34 / 5.36',ver:'V1.0',author:'ISMS 推動小組',effdate:'2026-06-01',approver:'最高管理階層',media:'電子',classification:'內部',retention:'現行版永久保留；改版後舊版保留3年',disposition:'歸檔保存',location:'ISMS 文件庫 / 內部網站（依權限）',status:'現行有效',review:'2026-12-31'},
+    // ===== 支援性文件（表單 / 紀錄 / 外來文件）範例 =====
+    {id:'DOC-25',name:'教育訓練與認知紀錄表',docno:'ISMS-FM-7.3-001',type:'表單',clause:'7.2 / 7.3',ver:'V1.0',author:'人資',effdate:'2026-01-01',approver:'人資主管',media:'電子',classification:'內部',retention:'3年',disposition:'屆期銷毀',location:'人資系統 / 限閱',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-26',name:'風險評鑑報告',docno:'ISMS-REC-6.1-001',type:'紀錄',clause:'6.1.2 / 8.2',ver:'2026',author:'資安組',effdate:'2026-04-01',approver:'資安長',media:'電子',classification:'機密',retention:'5年',disposition:'歸檔保存',location:'文管系統 / 限ISMS團隊',status:'現行有效',review:'2026-12-31'},
+    {id:'DOC-27',name:'個人資料保護法',docno:'EXT-LAW-001',type:'外來文件',clause:'4.2 / 7.5.3',ver:'最新版',author:'（外部）法務部',effdate:'依公布',approver:'—',media:'電子',classification:'公開',retention:'維持最新版',disposition:'移轉',location:'法規資料庫 / 全員可閱讀',status:'現行有效',review:'2026-12-31'},
+  ],
+};
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function migrate(d){
+  d.c71=d.c71||[];d.c72=d.c72||[];d.c73=d.c73||[];d.c74=d.c74||[];d.c75=d.c75||[];
+  d.docctrl=d.docctrl||{};d.signoff=d.signoff||{};d.archives=d.archives||[];
+  d.procdoc=migrateProc(d.procdoc);
+  return d;
+}
+function blank(){var o={c71:[],c72:[],c73:[],c74:[],c75:[],docctrl:{},signoff:{},archives:[],updated:null};o.procdoc=defaultProc();return o;}
+function seeded(){
+  // 首次開啟即帶入完整範例，供使用者參考填寫
+  return {
+    c71:clone(SAMPLES.c71),c72:clone(SAMPLES.c72),c73:clone(SAMPLES.c73),c74:clone(SAMPLES.c74),c75:clone(SAMPLES.c75),
+    docctrl:{docno:'ISMS-PR-7.5-001',ver:'V1.0 / 2026-06-01',
+      ident:'（範例）文件編號採「ISMS-類別-序號」編碼；每份文件標示標題、版次、生效日期與制定單位。',
+      format:'（範例）正式文件以PDF發行、編輯檔以Word保存；統一套用ISMS文件範本；電子為主、必要時備紙本。',
+      review:'（範例）由文件權責主管審查適切性與充分性，資安長/管理代表核准後發行。',
+      dist:'（範例）經文管系統發行，依機密等級設定存取權限；員工於系統檢索取用最新版。',
+      store:'（範例）文管系統集中儲存並每日備份；紙本存放於上鎖文件櫃，維持可讀性。',
+      change:'（範例）變更須填變更申請單經審核，版次遞增、舊版加註作廢並自系統下架回收。',
+      reten:'（範例）政策永久保留、紀錄類保存3~5年；屆期依規定銷毀或歸檔。',
+      ext:'（範例）法規、標準、合約等外來文件登錄於清冊、標示來源與版本，定期確認為最新版。',
+      appr:'（範例）資安長 王大明'},
+    signoff:{year:String(new Date().getFullYear())},
+    archives:[],updated:null,seeded:true,procdoc:defaultProc()};
+}
+// ---------- 程序書文件管制（7.5 / 7.5.1）預設值 ----------
+const PROC_META_DEFAULT={
+  docno:'ISMS-7', title:'支援作業管理程序書', ver:'V1.0',
+  verdate:'2026-06-01', effdate:'2026-06-01', status:'已核准',
+  classification:'內部', author:'ISMS 推動小組', reviewer:'資安長 / ISMS 主管',
+  approver:'最高管理階層', distribute:'內部網站公告 / ISMS 文件庫（依機密等級設定存取權限）',
+  retention:'現行版永久保留；改版後舊版至少保留 3 年', nextreview:'2026-12-31'
+};
+const PROC_REVS_DEFAULT=[
+  {ver:'V1.0', date:'2026-06-01', summary:'初版發行，依 ISO/IEC 27001:2022 制定本程序書（支援作業管理程序書）。', editor:'ISMS 推動小組', approver:'最高管理階層'}
+];
+function defaultProc(){return{meta:clone(PROC_META_DEFAULT),revs:clone(PROC_REVS_DEFAULT),body:null};}
+function migrateProc(pd){
+  pd=pd||{};
+  pd.meta=Object.assign(clone(PROC_META_DEFAULT),pd.meta||{});
+  pd.revs=(pd.revs&&pd.revs.length)?pd.revs:clone(PROC_REVS_DEFAULT);
+  if(typeof pd.body==='undefined')pd.body=null;
+  return pd;
+}
+let DATA=load();
+
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(KEY));if(d)return migrate(d);}catch(e){}
+  return seeded();
+}
+function saveNow(){DATA.updated=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(DATA));toast('已儲存');renderDash();renderDataMeta();}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+
+// ---------- 表格渲染 ----------
+function cellInput(panel,rowIdx,col,val){
+  const common=`data-p="${panel}" data-i="${rowIdx}" data-k="${col.k}" oninput="onEdit(this)" onchange="onEdit(this)"`;
+  if(col.t==='select'){
+    let o='<option value=""></option>'+col.opt.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('');
+    return `<select ${common}>${o}</select>`;
+  }
+  if(col.t==='textarea')return `<textarea ${common}>${esc(val||'')}</textarea>`;
+  if(col.t==='date')return `<input type="date" ${common} value="${esc(val||'')}">`;
+  return `<textarea rows="1" class="cellt" ${common}>${esc(val||'')}</textarea>`;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function renderTable(panel){
+  const tb=document.querySelector('#t'+panel.slice(1)+' tbody');
+  if(!tb)return;
+  const rows=DATA[panel]||[];
+  tb.innerHTML=rows.map((r,i)=>{
+    const due=isDue(r.review)?'due':'';
+    const cells=COLS[panel].map(c=>`<td>${cellInput(panel,i,c,r[c.k])}</td>`).join('');
+    return `<tr class="${due}">${cells}<td style="text-align:center"><button class="delx" title="刪除" onclick="delRow('${panel}',${i})">✕</button></td></tr>`;
+  }).join('');
+}
+function onEdit(el){
+  const p=el.dataset.p,i=+el.dataset.i,k=el.dataset.k;
+  DATA[p][i][k]=el.value;
+  scheduleSave();
+}
+let saveTimer;
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{DATA.updated=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(DATA));renderDash();renderDataMeta();},500);}
+
+function addRow(panel){
+  const obj={};COLS[panel].forEach(c=>obj[c.k]='');
+  const prefix={c71:'RS',c72:'CP',c73:'AW',c74:'CM',c75:'DOC'}[panel];
+  obj.id=prefix+'-'+String((DATA[panel].length+1)).padStart(2,'0');
+  DATA[panel].push(obj);saveNow();renderTable(panel);
+}
+function delRow(panel,i){
+  if(!confirm('確定刪除此列？'))return;
+  DATA[panel].splice(i,1);saveNow();renderTable(panel);
+}
+function loadSample(panel){
+  if(DATA[panel].length && !confirm('將附加範例資料於現有清單之後，是否繼續？'))return;
+  DATA[panel]=DATA[panel].concat(JSON.parse(JSON.stringify(SAMPLES[panel])));
+  saveNow();renderTable(panel);toast('已載入範例');
+}
+
+// ---------- 7.5 文件管制規則表單 ----------
+const DC_FIELDS=['docno','ver','ident','format','review','dist','store','change','reten','ext','appr'];
+function renderDocctrl(){
+  DC_FIELDS.forEach(f=>{const el=document.getElementById('d_'+f);if(el)el.value=(DATA.docctrl&&DATA.docctrl[f])||'';});
+}
+function bindDocctrl(){
+  DC_FIELDS.forEach(f=>{
+    const el=document.getElementById('d_'+f);
+    if(el)el.addEventListener('input',()=>{DATA.docctrl=DATA.docctrl||{};DATA.docctrl[f]=el.value;scheduleSave();});
+  });
+}
+
+// ---------- 覆核到期 ----------
+function isDue(d){if(!d)return false;const t=new Date();t.setHours(0,0,0,0);return new Date(d)<=t;}
+
+// ---------- 儀表板 ----------
+function renderDash(){
+  renderAnnual();
+  const counts={c71:DATA.c71.length,c72:DATA.c72.length,c73:DATA.c73.length,c74:DATA.c74.length,c75:DATA.c75.length};
+  document.getElementById('kpiBox').innerHTML=[
+    {n:counts.c71,l:'7.1 資源項目'},
+    {n:counts.c72,l:'7.2 能力項目'},
+    {n:counts.c73,l:'7.3 認知活動'},
+    {n:counts.c74,l:'7.4 溝通事項'},
+    {n:counts.c75,l:'7.5 文件數'},
+  ].map(b=>`<div class="box"><div class="n">${b.n}</div><div class="l">${b.l}</div></div>`).join('');
+
+  // 進度：五子條款是否各有產出（7.5 需有清冊或規則）
+  const dcDone=(DATA.docctrl&&(DATA.docctrl.ident||DATA.docctrl.review))?true:false;
+  const c75Done=counts.c75>0||dcDone;
+  const done=[counts.c71>0,counts.c72>0,counts.c73>0,counts.c74>0,c75Done].filter(Boolean).length;
+  const pct=Math.round(done/5*100);
+  document.getElementById('progressBox').innerHTML=
+    `<div style="margin-top:4px;font-size:13px;color:var(--mut)">五子條款建置完成度：<b style="color:var(--c1)">${done}/5（${pct}%）</b></div>
+     <div class="progress"><i style="width:${pct}%"></i></div>`;
+
+  // 待覆核
+  const due=[];
+  [['c71','7.1 資源','item'],['c72','7.2 能力','role'],['c74','7.4 溝通','topic'],['c75','7.5 文件','name']].forEach(([p,lab,key])=>{
+    (DATA[p]||[]).forEach(r=>{if(isDue(r.review))due.push({lab,id:r.id,name:r[key]||'',review:r.review});});
+  });
+  const box=document.getElementById('dueBox');
+  if(due.length===0){box.innerHTML='<p class="hint">目前沒有到期或逾期的覆核項目。✅</p>';}
+  else{
+    box.innerHTML='<table><thead><tr><th>條款</th><th>編號</th><th>項目</th><th>覆核日</th><th>狀態</th></tr></thead><tbody>'+
+      due.map(d=>`<tr class="due"><td>${d.lab}</td><td>${esc(d.id||'')}</td><td>${esc(d.name)}</td><td>${esc(d.review)}</td><td><span class="pill bad">需覆核</span></td></tr>`).join('')+
+      '</tbody></table>';
+  }
+}
+function renderDataMeta(){
+  const m=document.getElementById('dataMeta');
+  const total=DATA.c71.length+DATA.c72.length+DATA.c73.length+DATA.c74.length+DATA.c75.length;
+  m.innerHTML=`<span>資料筆數合計：<b>${total}</b></span><span>最後更新：<b>${DATA.updated?new Date(DATA.updated).toLocaleString('zh-TW'):'—'}</b></span>`;
+}
+
+// ---------- 匯出入 ----------
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  dl(blob,'ISO27001_支援_'+ymd()+'.json');toast('已匯出 JSON');
+}
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);DATA=migrate(d);saveNow();renderAll();toast('已匯入');}catch(err){alert('檔案格式錯誤');}};
+  r.readAsText(f);e.target.value='';
+}
+function exportCSV(){
+  const labels={c71:'7.1資源',c72:'7.2能力',c73:'7.3認知',c74:'7.4溝通',c75:'7.5文件管制清冊'};
+  let parts=[];
+  ['c71','c72','c73','c74','c75'].forEach(p=>{
+    const cols=COLS[p].map(c=>c.k);
+    let csv=labels[p]+'\n'+cols.join(',')+'\n';
+    (DATA[p]||[]).forEach(r=>{csv+=cols.map(k=>'"'+String(r[k]||'').replace(/"/g,'""')+'"').join(',')+'\n';});
+    parts.push(csv);
+  });
+  const blob=new Blob(['﻿'+parts.join('\n\n')],{type:'text/csv;charset=utf-8'});
+  dl(blob,'ISO27001_支援_'+ymd()+'.csv');toast('已匯出 CSV');
+}
+function clearAll(){
+  if(!confirm('確定清空所有資料？此動作無法復原（建議先匯出備份）。'))return;
+  DATA=blank();saveNow();renderAll();
+}
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+function ymd(){const d=new Date();return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+
+// ---------- 導覽 ----------
+document.getElementById('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(b.dataset.p).classList.add('active');
+});
+
+// ---------- 年度簽核 ----------
+const SIGN_FIELDS=['year','from','to','summary','exec_n','exec_d','rev_n','rev_d','app_n','app_d','mr','next'];
+function renderSignoff(){
+  DATA.signoff=DATA.signoff||{};
+  if(!DATA.signoff.year)DATA.signoff.year=String(new Date().getFullYear());
+  SIGN_FIELDS.forEach(f=>{const el=document.getElementById('y_'+f);if(el)el.value=DATA.signoff[f]||'';});
+  renderSeals();
+}
+// 用印 / 電子簽章
+function renderSeals(){
+  ['exec','rev','app'].forEach(k=>{
+    const box=document.getElementById('seal_'+k);if(!box)return;
+    const d=DATA.signoff[k+'_seal'];
+    box.innerHTML=d?('<img src="'+d+'"><button class="sealx" title="清除" onclick="clearSeal(\''+k+'\');event.stopPropagation()">✕</button>')
+                   :'<span class="sealhint">點此用印 / 上傳</span>';
+  });
+}
+function pickSeal(k){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/png,image/jpeg,image/*';
+  inp.onchange=()=>{const f=inp.files[0];if(!f)return;
+    if(f.size>800*1024){alert('圖檔請小於 800KB。');return;}
+    const r=new FileReader();r.onload=()=>{DATA.signoff=DATA.signoff||{};DATA.signoff[k+'_seal']=r.result;scheduleSave();renderSeals();toast('已套用簽章');};r.readAsDataURL(f);};
+  inp.click();
+}
+function clearSeal(k){DATA.signoff[k+'_seal']='';scheduleSave();renderSeals();}
+function bindSignoff(){
+  SIGN_FIELDS.forEach(f=>{
+    const el=document.getElementById('y_'+f);
+    if(!el)return;
+    el.addEventListener('input',()=>{
+      DATA.signoff=DATA.signoff||{};DATA.signoff[f]=el.value;
+      if(f==='app_d' && el.value && !DATA.signoff.next){
+        const d=new Date(el.value);d.setFullYear(d.getFullYear()+1);
+        const nx=d.toISOString().slice(0,10);
+        DATA.signoff.next=nx;const ne=document.getElementById('y_next');if(ne)ne.value=nx;
+      }
+      scheduleSave();renderAnnual();
+    });
+  });
+}
+function addYears(dstr,n){const d=new Date(dstr);d.setFullYear(d.getFullYear()+n);return d;}
+function archiveYear(){
+  const s=DATA.signoff||{};
+  if(!s.year){alert('請先填寫「作業年度」。');return;}
+  if(!s.app_n||!s.app_d){if(!confirm('尚未完成「核准」簽核，仍要封存嗎？建議完成核准後再封存。'))return;}
+  const rec={
+    year:s.year, archivedDate:new Date().toISOString().slice(0,10),
+    counts:{c71:DATA.c71.length,c72:DATA.c72.length,c73:DATA.c73.length,c74:DATA.c74.length,c75:DATA.c75.length},
+    docVer:(DATA.docctrl&&DATA.docctrl.ver)||'', approver:s.app_n||'', approveDate:s.app_d||'',
+    mr:s.mr||'', next:s.next||(s.app_d?addYears(s.app_d,1).toISOString().slice(0,10):''),
+    signoff:clone(s),
+    snapshot:{c71:clone(DATA.c71),c72:clone(DATA.c72),c73:clone(DATA.c73),c74:clone(DATA.c74),c75:clone(DATA.c75),docctrl:clone(DATA.docctrl)}
+  };
+  DATA.archives=DATA.archives||[];
+  const i=DATA.archives.findIndex(a=>a.year===rec.year);
+  if(i>=0){if(!confirm('已存在 '+rec.year+' 年度紀錄，將覆蓋更新，是否繼續？'))return;DATA.archives[i]=rec;}
+  else DATA.archives.push(rec);
+  DATA.archives.sort((a,b)=>String(b.year).localeCompare(String(a.year)));
+  saveNow();renderArchives();renderAnnual();toast('已封存 '+rec.year+' 年度紀錄');
+}
+function renderArchives(){
+  const box=document.getElementById('archiveBox');if(!box)return;
+  const a=DATA.archives||[];
+  if(a.length===0){box.innerHTML='<p class="hint">尚無年度紀錄。完成簽核後請按「封存本年度」。</p>';return;}
+  box.innerHTML='<div class="scroll" style="max-height:46vh"><table><thead><tr>'+
+    '<th>年度</th><th>封存日</th><th>7.1</th><th>7.2</th><th>7.3</th><th>7.4</th><th>7.5</th><th>核准人</th><th>核准日</th><th>提報9.3</th><th>下次應辦</th><th>簽核</th><th>操作</th>'+
+    '</tr></thead><tbody>'+
+    a.map((r,i)=>{
+      const signed=r.approver&&r.approveDate;
+      const pill=signed?'<span class="pill ok">已簽核</span>':'<span class="pill warn">未完成</span>';
+      return `<tr><td><b>${esc(r.year)}</b></td><td>${esc(r.archivedDate)}</td>
+        <td>${r.counts.c71}</td><td>${r.counts.c72}</td><td>${r.counts.c73}</td><td>${r.counts.c74}</td><td>${r.counts.c75}</td>
+        <td>${esc(r.approver||'—')}</td><td>${esc(r.approveDate||'—')}</td><td>${esc(r.mr||'—')}</td><td>${esc(r.next||'—')}</td>
+        <td>${pill}</td>
+        <td style="white-space:nowrap">
+          <button class="btn ghost sm" onclick="printReportArchive(${i})">📄報告</button>
+          <button class="btn ghost sm" onclick="exportYear(${i})">匯出</button>
+          <button class="btn ghost sm" onclick="restoreYear(${i})">還原</button>
+          <button class="btn danger sm" onclick="delYear(${i})">刪</button>
+        </td></tr>`;
+    }).join('')+'</tbody></table></div>';
+}
+function exportYear(i){
+  const r=DATA.archives[i];
+  const blob=new Blob([JSON.stringify(r,null,2)],{type:'application/json'});
+  dl(blob,'支援_'+r.year+'年度_'+ymd()+'.json');toast('已匯出 '+r.year+' 年度');
+}
+function restoreYear(i){
+  const r=DATA.archives[i];
+  if(!confirm('將以「'+r.year+' 年度」之封存內容覆蓋目前編輯中的 7.1～7.5 與簽核資料，是否繼續？（目前資料若未封存將遺失）'))return;
+  DATA.c71=clone(r.snapshot.c71);DATA.c72=clone(r.snapshot.c72);DATA.c73=clone(r.snapshot.c73);DATA.c74=clone(r.snapshot.c74);DATA.c75=clone(r.snapshot.c75);
+  DATA.docctrl=clone(r.snapshot.docctrl);DATA.signoff=clone(r.signoff);
+  saveNow();renderAll();toast('已還原 '+r.year+' 年度');
+}
+function delYear(i){
+  if(!confirm('確定刪除此年度紀錄？'))return;
+  DATA.archives.splice(i,1);saveNow();renderArchives();renderAnnual();
+}
+function renderAnnual(){
+  const box=document.getElementById('annualBox');if(!box)return;
+  const s=DATA.signoff||{};
+  const today=new Date();today.setHours(0,0,0,0);
+  let html='',cls='',icon='',msg='';
+  const lastApp=s.app_d?new Date(s.app_d):null;
+  const next=s.next?new Date(s.next):(lastApp?addYears(s.app_d,1):null);
+  if(!lastApp){
+    cls='warn';icon='⚠';msg='本年度（'+(s.year||'—')+'）支援作業<b>尚未完成核准簽核</b>。請至「🗓 年度簽核」分頁完成覆核與三級簽核。';
+  }else{
+    const overdue=next&&next<today;
+    const soon=next&&!overdue&&((next-today)/86400000<=60);
+    if(overdue){cls='bad';icon='⛔';msg='上次核准日 <b>'+s.app_d+'</b>（'+(s.year||'')+' 年度），下次應辦日 <b>'+(s.next||'')+'</b> <b>已逾期</b>，請儘速辦理年度覆核。';}
+    else if(soon){cls='warn';icon='⏰';msg='上次核准日 <b>'+s.app_d+'</b>，下次應辦日 <b>'+(s.next||'')+'</b> <b>即將到期（60天內）</b>，請預為安排。';}
+    else{cls='ok';icon='✅';msg='本年度（'+(s.year||'')+'）已於 <b>'+s.app_d+'</b> 完成核准簽核'+(s.mr?'，提報管理審查：<b>'+s.mr+'</b>':'')+'。下次應辦日：<b>'+(s.next||'—')+'</b>。';}
+  }
+  const colors={ok:['#e7f4e8','#2e7d32'],warn:['#fdf0e3','#e67e22'],bad:['#fbe9e7','#c0392b']};
+  const c=colors[cls];
+  html='<div style="display:flex;gap:12px;align-items:center;background:'+c[0]+';border-left:5px solid '+c[1]+
+    ';border-radius:8px;padding:12px 16px;margin-bottom:16px">'+
+    '<div style="font-size:24px">'+icon+'</div>'+
+    '<div style="flex:1;font-size:13.5px;color:#2b3a47"><b style="color:'+c[1]+'">年度支援作業狀態</b><br>'+msg+'</div>'+
+    '<button class="btn ghost sm" onclick="goPanel(\'year\')">前往年度簽核</button></div>';
+  box.innerHTML=html;
+}
+function goPanel(p){
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.p===p));
+  document.querySelectorAll('.panel').forEach(s=>s.classList.toggle('active',s.id===p));
+}
+
+// ---------- 列印：簽核表 ----------
+function printWith(cls){
+  document.body.classList.add(cls);
+  const done=()=>{document.body.classList.remove(cls);window.removeEventListener('afterprint',done);};
+  window.addEventListener('afterprint',done);
+  setTimeout(()=>{window.print();},60);
+}
+function printSignoff(){goPanel('year');renderSeals();printWith('print-signoff');}
+
+// ---------- 列印：年度報告 ----------
+const RHEAD={
+  c71:['編號','資源類別','資源項目/說明','用途','需求/配置','提供狀態','負責人','覆核日'],
+  c72:['編號','角色/職務','姓名','所需能力','能力依據','現況','落差/行動','有效性評估','能力證據','負責人','覆核日'],
+  c73:['編號','對象族群','認知主題','傳達方式','頻率','日期/期間','涵蓋率','成效驗證','負責人','狀態'],
+  c74:['編號','溝通事項','內/外部','對象','時機/頻率','方式/管道','負責人','紀錄/保存','覆核日'],
+  c75:['編號','文件名稱','文件編號','類型','條文','版本','制定','生效日','核准','媒體','機密','保存期限','處置','存放/權限','狀態','覆核日']
+};
+function rptTable(panel,arr){
+  const ks=COLS[panel].map(c=>c.k);
+  let h='<table class="rpt"><thead><tr>'+RHEAD[panel].map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
+  if(!arr||!arr.length){h+='<tr><td colspan="'+ks.length+'" style="text-align:center;color:#888">（無資料）</td></tr>';}
+  else{h+=arr.map(r=>'<tr>'+ks.map(k=>'<td>'+esc(r[k]||'')+'</td>').join('')+'</tr>').join('');}
+  return h+'</tbody></table>';
+}
+function currentSrc(){
+  return {year:(DATA.signoff||{}).year||'',signoff:DATA.signoff||{},docctrl:DATA.docctrl||{},
+          c71:DATA.c71,c72:DATA.c72,c73:DATA.c73,c74:DATA.c74,c75:DATA.c75};
+}
+function buildReport(s){
+  const so=s.signoff||{},dc=s.docctrl||{};
+  const seal=k=>{const d=so[k+'_seal'];return d?'<img src="'+d+'">':'';};
+  const row=(lvl,role,nk,dk)=>`<tr><td><b>${lvl}</b></td><td>${role}</td><td>${esc(so[nk]||'')}</td><td>${esc(so[dk]||'')}</td><td><div class="rt-sealbox">${seal(nk.split('_')[0])}</div></td></tr>`;
+  const period=(so.from||'')+(so.to?(' ~ '+so.to):'');
+  const html=`<div class="rpt-doc">
+    <h1 class="rt">資訊安全管理系統　支援作業年度報告</h1>
+    <div class="rt-sub">ISO/IEC 27001:2022　Clause 7 — Support</div>
+    <table class="rt-meta">
+      <tr><td class="k">作業年度</td><td>${esc(s.year||'')}</td><td class="k">作業期間</td><td>${esc(period)}</td></tr>
+      <tr><td class="k">文件管制規則編號</td><td>${esc(dc.docno||'')}</td><td class="k">規則版本</td><td>${esc(dc.ver||'')}</td></tr>
+      <tr><td class="k">提報管理審查(9.3)</td><td>${esc(so.mr||'')}</td><td class="k">下次應辦理日</td><td>${esc(so.next||'')}</td></tr>
+    </table>
+    <h2 class="rt">一、年度作業摘要（資源/能力/認知/溝通/文件之執行與變化）</h2>
+    <div style="font-size:12px;white-space:pre-wrap;border:1px solid #aab4bd;padding:8px;border-radius:4px;min-height:40px">${esc(so.summary||'（未填寫）')}</div>
+    <h2 class="rt">二、7.1 資源</h2>${rptTable('c71',s.c71)}
+    <h2 class="rt">三、7.2 能力</h2>${rptTable('c72',s.c72)}
+    <h2 class="rt">四、7.3 認知</h2>${rptTable('c73',s.c73)}
+    <h2 class="rt">五、7.4 溝通</h2>${rptTable('c74',s.c74)}
+    <h2 class="rt">六、7.5 文件編製與管制規則</h2>
+    <table class="rt-meta">
+      <tr><td class="k">識別與描述(7.5.2a)</td><td colspan="3">${esc(dc.ident||'')}</td></tr>
+      <tr><td class="k">格式與媒體(7.5.2b)</td><td colspan="3">${esc(dc.format||'')}</td></tr>
+      <tr><td class="k">審查與核准(7.5.2c)</td><td colspan="3">${esc(dc.review||'')}</td></tr>
+      <tr><td class="k">發行/取用(7.5.3c)</td><td colspan="3">${esc(dc.dist||'')}</td></tr>
+      <tr><td class="k">儲存/保存(7.5.3d)</td><td colspan="3">${esc(dc.store||'')}</td></tr>
+      <tr><td class="k">變更管制(7.5.3e)</td><td colspan="3">${esc(dc.change||'')}</td></tr>
+      <tr><td class="k">保存與處置(7.5.3f)</td><td colspan="3">${esc(dc.reten||'')}</td></tr>
+      <tr><td class="k">外來文件管制</td><td colspan="3">${esc(dc.ext||'')}</td></tr>
+    </table>
+    <div style="font-size:12px;font-weight:700;color:#13476b;margin:6px 0 2px">7.5.1 文件管制清冊</div>${rptTable('c75',s.c75)}
+    <h2 class="rt">七、簽核</h2>
+    <table class="rt-sign">
+      <thead><tr><th style="width:70px">層級</th><th>角色 / 職稱</th><th style="width:120px">簽核人</th><th style="width:110px">日期</th><th style="width:140px">簽章 / 用印</th></tr></thead>
+      <tbody>
+        ${row('執行','ISMS推動小組 / 執行單位','exec_n','exec_d')}
+        ${row('審查','資安長 / ISMS主管','rev_n','rev_d')}
+        ${row('核准','最高管理階層','app_n','app_d')}
+      </tbody>
+    </table>
+    <div style="margin-top:14px;border-top:1px solid #ccc;padding-top:6px;font-size:10px;color:#6b7884;text-align:center">
+      設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0
+    </div>
+  </div>`;
+  document.getElementById('reportArea').innerHTML=html;
+}
+function printReportCurrent(){buildReport(currentSrc());printWith('print-report');}
+function printReportArchive(i){
+  const a=DATA.archives[i];if(!a)return;
+  buildReport({year:a.year,signoff:a.signoff||{},docctrl:(a.snapshot||{}).docctrl||{},
+    c71:(a.snapshot||{}).c71||[],c72:(a.snapshot||{}).c72||[],c73:(a.snapshot||{}).c73||[],c74:(a.snapshot||{}).c74||[],c75:(a.snapshot||{}).c75||[]});
+  printWith('print-report');
+}
+
+// ========== 程序書文件管制與維護（7.5 / 7.5.1） ==========
+const PROC_META_FIELDS=[
+  {k:'docno',l:'文件編號'},
+  {k:'ver',l:'版次'},
+  {k:'status',l:'文件狀態',t:'select',opt:['草擬','審查中','已核准','已發布','已作廢']},
+  {k:'title',l:'文件名稱'},
+  {k:'classification',l:'機密等級',t:'select',opt:['公開','內部','機密','極機密']},
+  {k:'verdate',l:'版本日期',t:'date'},
+  {k:'effdate',l:'生效日期',t:'date'},
+  {k:'nextreview',l:'下次審查日',t:'date'},
+  {k:'author',l:'制定（作者 / 單位）'},
+  {k:'reviewer',l:'審查者'},
+  {k:'approver',l:'核准者'},
+  {k:'distribute',l:'發行 / 發布方式'},
+  {k:'retention',l:'保存期限'},
+];
+const PROC_STATUS_CLS={'已核准':'s-ok','已發布':'s-ok','草擬':'s-draft','審查中':'s-draft','已作廢':'s-void'};
+let PROC_BODY_DEFAULT=null;
+let procEditorOpen=false, procBodyEditing=false;
+
+function renderProcHeader(){
+  const h=document.getElementById('procDocHeader');if(!h)return;
+  const m=(DATA.procdoc&&DATA.procdoc.meta)||{};
+  const v=k=>esc(m[k]||'');
+  const scls=PROC_STATUS_CLS[m.status]||'s-mut';
+  h.innerHTML=`<table class="procmeta">
+    <tr><td class="k">文件編號</td><td class="docno">${v('docno')}</td><td class="k">版次</td><td>${v('ver')}</td><td class="k">文件狀態</td><td><span class="proc-status ${scls}">${v('status')||'—'}</span></td></tr>
+    <tr><td class="k">文件名稱</td><td colspan="3">${v('title')}</td><td class="k">機密等級</td><td>${v('classification')}</td></tr>
+    <tr><td class="k">版本日期</td><td>${v('verdate')}</td><td class="k">生效日期</td><td>${v('effdate')}</td><td class="k">下次審查日</td><td>${v('nextreview')}</td></tr>
+    <tr><td class="k">制定</td><td>${v('author')}</td><td class="k">審查</td><td>${v('reviewer')}</td><td class="k">核准</td><td>${v('approver')}</td></tr>
+    <tr><td class="k">發行 / 發布</td><td colspan="3">${v('distribute')}</td><td class="k">保存期限</td><td>${v('retention')}</td></tr>
+  </table>`;
+}
+function renderProcRev(){
+  const rt=document.getElementById('procRevTable');if(!rt)return;
+  const revs=(DATA.procdoc&&DATA.procdoc.revs)||[];
+  let h='<table class="procrev"><thead><tr><th style="width:80px">版次</th><th style="width:110px">日期</th><th>修訂摘要</th><th style="width:120px">修訂者</th><th style="width:120px">核准者</th></tr></thead><tbody>';
+  if(!revs.length){h+='<tr><td colspan="5" style="color:#888">（尚無修訂紀錄）</td></tr>';}
+  else{h+=revs.map(r=>`<tr><td>${esc(r.ver||'')}</td><td>${esc(r.date||'')}</td><td class="sum">${esc(r.summary||'')}</td><td>${esc(r.editor||'')}</td><td>${esc(r.approver||'')}</td></tr>`).join('');}
+  rt.innerHTML=h+'</tbody></table>';
+}
+function applyProcBody(){
+  const b=document.getElementById('procBody');if(!b)return;
+  if(PROC_BODY_DEFAULT===null)PROC_BODY_DEFAULT=b.innerHTML;
+  const ov=DATA.procdoc&&DATA.procdoc.body;
+  if(ov&&!procBodyEditing&&b.innerHTML!==ov)b.innerHTML=ov;
+  if(typeof renderFlow==='function')renderFlow();
+}
+function renderProcDoc(){renderProcHeader();renderProcRev();applyProcBody();}
+
+// ---- 文件資訊 / 版次 編輯器 ----
+function toggleProcEditor(){
+  procEditorOpen=!procEditorOpen;
+  const e=document.getElementById('procEditor');if(e)e.style.display=procEditorOpen?'block':'none';
+  const t=document.getElementById('procEditToggle');if(t)t.textContent=procEditorOpen?'✕ 關閉文件資訊編輯':'✏ 編輯文件資訊與版次';
+  if(procEditorOpen){renderProcMetaGrid();renderRevEditor();}
+}
+function renderProcMetaGrid(){
+  const g=document.getElementById('procMetaGrid');if(!g)return;
+  const m=DATA.procdoc.meta;
+  g.innerHTML=PROC_META_FIELDS.map(f=>{
+    let ctrl;
+    if(f.t==='select')ctrl=`<select data-k="${f.k}" onchange="onProcMetaEdit(this)">`+['',...f.opt].map(o=>`<option ${o===(m[f.k]||'')?'selected':''}>${o}</option>`).join('')+`</select>`;
+    else if(f.t==='date')ctrl=`<input type="date" data-k="${f.k}" value="${esc(m[f.k]||'')}" onchange="onProcMetaEdit(this)">`;
+    else ctrl=`<input type="text" data-k="${f.k}" value="${esc(m[f.k]||'')}" oninput="onProcMetaEdit(this)">`;
+    return `<div class="field"><label>${f.l}</label>${ctrl}</div>`;
+  }).join('');
+}
+function onProcMetaEdit(el){DATA.procdoc.meta[el.dataset.k]=el.value;scheduleSave();renderProcHeader();}
+function renderRevEditor(){
+  const box=document.getElementById('revEditorBody');if(!box)return;
+  box.innerHTML=(DATA.procdoc.revs||[]).map((r,i)=>`<tr>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="ver" oninput="onRevEdit(this)">${esc(r.ver||'')}</textarea></td>
+    <td><input type="date" data-i="${i}" data-k="date" onchange="onRevEdit(this)" value="${esc(r.date||'')}"></td>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="summary" oninput="onRevEdit(this)">${esc(r.summary||'')}</textarea></td>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="editor" oninput="onRevEdit(this)">${esc(r.editor||'')}</textarea></td>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="approver" oninput="onRevEdit(this)">${esc(r.approver||'')}</textarea></td>
+    <td style="text-align:center"><button class="delx" title="刪除" onclick="delRev(${i})">✕</button></td></tr>`).join('');
+  document.querySelectorAll('#revEditorBody textarea').forEach(autosize);
+}
+function onRevEdit(el){const i=+el.dataset.i,k=el.dataset.k;DATA.procdoc.revs[i][k]=el.value;if(el.tagName==='TEXTAREA')autosize(el);scheduleSave();renderProcRev();}
+function addRev(){
+  const m=DATA.procdoc.meta;
+  DATA.procdoc.revs.push({ver:m.ver||'',date:m.verdate||'',summary:'',editor:m.author||'',approver:m.approver||''});
+  saveNow();renderRevEditor();renderProcRev();
+}
+function delRev(i){if(!confirm('確定刪除此筆版次修訂紀錄？'))return;DATA.procdoc.revs.splice(i,1);saveNow();renderRevEditor();renderProcRev();}
+
+// ---- 內文編輯模式 ----
+function toggleProcBodyEdit(){
+  const b=document.getElementById('procBody');if(!b)return;
+  procBodyEditing=!procBodyEditing;
+  b.contentEditable=procBodyEditing;
+  b.classList.toggle('editing',procBodyEditing);
+  document.body.classList.toggle('proc-bodyediting',procBodyEditing);
+  const btns=document.getElementById('procBodyEditBtns');if(btns)btns.style.display=procBodyEditing?'inline-flex':'none';
+  const t=document.getElementById('procBodyEditToggle');if(t)t.textContent=procBodyEditing?'✕ 取消內文編輯':'📝 內文編輯模式';
+  if(procBodyEditing){b.focus();toast('內文編輯模式：可直接點擊文字修改，完成後按「儲存內文」');}
+}
+function saveProcBody(){
+  const b=document.getElementById('procBody');if(!b)return;
+  DATA.procdoc.body=b.innerHTML;saveNow();
+  procBodyEditing=false;b.contentEditable=false;b.classList.remove('editing');document.body.classList.remove('proc-bodyediting');
+  const btns=document.getElementById('procBodyEditBtns');if(btns)btns.style.display='none';
+  const t=document.getElementById('procBodyEditToggle');if(t)t.textContent='📝 內文編輯模式';
+  toast('程序書內文已儲存');
+}
+function restoreProcBody(){
+  if(!confirm('確定將程序書內文還原為系統預設範本？您先前的內文修改將被清除（文件資訊與版次修訂歷程不受影響）。'))return;
+  DATA.procdoc.body=null;
+  const b=document.getElementById('procBody');
+  if(b&&PROC_BODY_DEFAULT!==null)b.innerHTML=PROC_BODY_DEFAULT;
+  if(typeof renderFlow==='function')renderFlow();saveNow();
+  procBodyEditing=false;if(b){b.contentEditable=false;b.classList.remove('editing');}
+  document.body.classList.remove('proc-bodyediting');
+  const btns=document.getElementById('procBodyEditBtns');if(btns)btns.style.display='none';
+  const t=document.getElementById('procBodyEditToggle');if(t)t.textContent='📝 內文編輯模式';
+  toast('已還原為預設範本');
+}
+function initProcDefault(){const b=document.getElementById('procBody');if(b&&PROC_BODY_DEFAULT===null)PROC_BODY_DEFAULT=b.innerHTML;}
+
+function renderAll(){
+  ['c71','c72','c73','c74','c75'].forEach(renderTable);
+  renderDocctrl();renderSignoff();renderArchives();renderDash();renderAnnual();renderDataMeta();
+  renderProcDoc();
+}
+bindDocctrl();
+bindSignoff();
+initProcDefault();
+renderAll();
+</script>
+<script>
+/* ===== 表格欄寬與列印修正：autosize 撐高 + 固定版面 + 列印轉純文字（避免內容截斷） ===== */
+(function(){
+function autosize(el){if(!el||el.tagName!=='TEXTAREA')return;el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px';}
+function autosizeActive(){var a=document.querySelector('.panel.active');if(a)a.querySelectorAll('textarea').forEach(autosize);}
+window.autosize=autosize;window.autosizeActive=autosizeActive;
+window.convertControlsForPrint=function(on){var s=document.querySelector('.panel.active');if(!s)return;if(on){s.querySelectorAll('table tbody td').forEach(function(td){var c=td.querySelector('input,select,textarea');if(!c)return;td.innerHTML='<div class="cellprint">'+esc(c.value||'')+'</div>';});}else{renderAll();}};
+window.doPrint=function(){convertControlsForPrint(true);var r=function(){convertControlsForPrint(false);window.removeEventListener('afterprint',r);};window.addEventListener('afterprint',r);setTimeout(function(){window.print();},80);};
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA')autosize(e.target);},true);
+var nav=document.getElementById('nav');if(nav)nav.addEventListener('click',function(){setTimeout(autosizeActive,0);});
+try{document.querySelectorAll('.panel table').forEach(function(t){if(!t.tHead||!t.querySelector('tbody input,tbody select,tbody textarea'))return;t.style.tableLayout='fixed';var tb=t.tBodies[0];if(tb&&window.MutationObserver){new MutationObserver(function(){autosizeActive();}).observe(tb,{childList:true});}});}catch(e){}
+window.addEventListener('load',function(){setTimeout(autosizeActive,40);});
+setTimeout(autosizeActive,60);
+})();
+</script>
+</body>
+</html>
