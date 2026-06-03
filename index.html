@@ -125,6 +125,15 @@ main{max-width:1180px;margin:0 auto;padding:8px 28px 40px}
 .card p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6;flex:1}
 .card-foot{display:flex;align-items:center;gap:6px;margin-top:13px;font-size:12px;color:var(--c2);font-weight:600}
 .section.appendix .card-foot{color:var(--accentA)}
+/* 一階政策 區段（金棕） */
+.section.policy .sec-head .bar{background:#b0892f}
+.section.policy .sec-head h2{color:#9a7320}
+.section.policy .card::before{background:#b0892f}
+.section.policy .card:hover{border-color:#c2a14e}
+.section.policy .ico{background:#f7f1e3;border-color:#ecdcb6}
+.section.policy .ico svg{stroke:#9a7320}
+.section.policy .code{background:#b0892f}
+.section.policy .card-foot{color:#9a7320}
 .card-foot svg{width:14px;height:14px;stroke:currentColor;transition:.16s}
 .card:hover .card-foot svg{transform:translateX(3px)}
 .card .path{
@@ -214,6 +223,7 @@ footer{border-top:1px solid var(--line);background:#fff;margin-top:8px}
     <input id="q" type="text" placeholder="搜尋條文 / 作業流程 名稱…（如：風險、存取、A12、事件）">
   </div>
   <button class="btn" id="btnEdit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>編輯連結</button>
+  <button class="btn primary" id="btnSaveDefault" title="把目前的卡片設定寫入 DEFAULT_CARDS，下載一份新的 HTML 覆蓋本檔，即成為永久預設值"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>存為預設(下載)</button>
   <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 21h16"/></svg>匯出</button>
   <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M8 13l4-4 4 4"/><path d="M4 3h16"/></svg>匯入</button>
   <button class="btn" id="btnReset" title="清除本機編輯，恢復檔案內建之預設連結"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>重設為預設</button>
@@ -228,6 +238,15 @@ footer{border-top:1px solid var(--line);background:#fff;margin-top:8px}
 </div>
 
 <main>
+  <section class="section policy" id="secPolicy">
+    <div class="sec-head">
+      <span class="bar"></span><h2>一階政策</h2>
+      <span class="count" id="cntPolicy"></span>
+    </div>
+    <p class="sec-desc">ISMS 最高階政策文件：資訊安全手冊與適用性聲明（SoA），統御以下各條文程序書與附錄 A 控制措施。</p>
+    <div class="grid" id="gridPolicy"></div>
+  </section>
+
   <section class="section main-clauses" id="secMain">
     <div class="sec-head">
       <span class="bar"></span><h2>本文 4–10　管理系統條文</h2>
@@ -270,6 +289,7 @@ footer{border-top:1px solid var(--line);background:#fff;margin-top:8px}
       <div class="fld"><label>資料夾路徑（相對於本檔，結尾不含斜線）</label><input id="fDir" placeholder="例：6.規劃"></div>
       <div class="fld"><label>連結檔案（HTML 檔名）</label><input id="fFile" placeholder="例：ISO27001_規劃管理工具.html"></div>
       <div class="fld"><label>說明</label><textarea id="fDesc"></textarea></div>
+      <div class="fld"><label>搜尋關鍵字（控制項編號／條文名稱，以空格分隔，供站內搜尋命中）</label><textarea id="fKw" placeholder="例：A.8.17 鐘訊同步 存錄 監視活動 日誌"></textarea></div>
     </div>
     <div class="foot">
       <button class="btn danger" id="mDelete"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>刪除此卡</button>
@@ -307,48 +327,54 @@ const ICONS = {
   event:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9z"/><path d="M10.5 21a1.8 1.8 0 0 0 3 0"/>',
   continuity:'<rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/><path d="M16 7l2 0M16 17l2 0"/>',
   assurance:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8.5 11l2 2 3.5-3.5"/>',
-  legal:'<path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7l-2 5a3 3 0 0 0 6 0L7 7M19 7l-2 5a3 3 0 0 0 6 0l-2-5"/>'
+  legal:'<path d="M12 3v18M7 21h10"/><path d="M5 7h14"/><path d="M5 7l-2 5a3 3 0 0 0 6 0L7 7M19 7l-2 5a3 3 0 0 0 6 0l-2-5"/>',
+  manual:'<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M9 7h7M9 10.5h7"/>',
+  soa:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3.5h6v1"/><path d="M8.5 12.5l2.2 2.2 4.3-4.3"/>'
 };
 
 /* =========================================================================
    預設卡片設定（可直接修改維護：name 名稱 / dir 路徑 / file 檔案 / desc 說明）
    ========================================================================= */
 const DEFAULT_CARDS = {
+  policy:[
+    {code:'手冊',icon:'manual',  name:'資訊安全手冊',   dir:'', file:'ISO27001_資訊安全手冊.html', desc:'ISMS 一階政策文件：資訊安全政策全文、ISMS 範圍、條文 4–10 框架、文件架構與二階程序書索引。', kw:'一階 政策 手冊 資訊安全政策 ISMS 範圍 文件架構 5.2 manual policy 核准 修訂歷程'},
+    {code:'SoA',icon:'soa',     name:'適用性聲明',     dir:'', file:'ISO27001_適用性聲明SoA管理工具.html', desc:'附錄 A 全 93 控制項之單一主登記簿：適用性、選用依據、實作狀態與對應程序書（6.1.3 d）。', kw:'SoA 適用性聲明 6.1.3 附錄A 93 控制措施 選用依據 statement of applicability 排除理由'}
+  ],
   main:[
-    {code:'4', icon:'org',     name:'組織全景',     dir:'', file:'ISO27001_組織全景管理工具.html', desc:'組織與其全景之理解、利害關係者需求與期望、ISMS 範圍與適用界定。'},
-    {code:'5', icon:'lead',    name:'領導作為',     dir:'', file:'ISO27001_領導作為管理工具.html', desc:'領導與承諾、資訊安全政策、組織角色、責任與權限指派。'},
-    {code:'6', icon:'plan',    name:'規劃',         dir:'', file:'ISO27001_規劃管理工具.html',     desc:'風險與機會之因應、風險評鑑與處理、適用性聲明 SoA、資安目標。'},
-    {code:'7', icon:'support', name:'支援',         dir:'', file:'ISO27001_支援管理工具.html',     desc:'資源、能力、認知、溝通、文件化資訊之建立與控制。'},
-    {code:'8', icon:'ops',     name:'運作',         dir:'', file:'ISO27001_運作管理工具.html',     desc:'運作之規劃與控制、風險評鑑與風險處理之實際執行。'},
-    {code:'9', icon:'perf',    name:'績效評估',     dir:'', file:'ISO27001_績效評估管理工具.html', desc:'監視、量測、分析與評估、內部稽核、管理階層審查。'},
-    {code:'10',icon:'improve', name:'改善',         dir:'', file:'ISO27001_改善管理工具.html',     desc:'不符合事項與矯正措施、ISMS 之持續改善。'}
+    {code:'4', icon:'org',     name:'組織全景',     dir:'',   file:'ISO27001_組織全景管理工具.html', desc:'組織與其全景之理解、利害關係者需求與期望、ISMS 範圍與適用界定。', kw:'4.1 4.2 4.3 4.4 組織及其全景之理解 利害關係者之需求與期望 ISMS範圍之決定 資訊安全管理系統 內外部議題 利害關係方'},
+    {code:'5', icon:'lead',    name:'領導作為',     dir:'',   file:'ISO27001_領導作為管理工具.html', desc:'領導與承諾、資訊安全政策、組織角色、責任與權限指派。', kw:'5.1 5.2 5.3 領導與承諾 資訊安全政策 組織角色責任及權限 方針'},
+    {code:'6', icon:'plan',    name:'規劃',         dir:'',       file:'ISO27001_規劃管理工具.html',     desc:'風險與機會之因應、風險評鑑與處理、適用性聲明 SoA、資安目標。', kw:'6.1 6.1.1 6.1.2 6.1.3 6.2 6.3 因應風險與機會之行動 資訊安全風險評鑑 資訊安全風險處理 適用性聲明 SoA 資訊安全目標及達成之規劃 變更之規劃'},
+    {code:'7', icon:'support', name:'支援',         dir:'',       file:'ISO27001_支援管理工具.html',     desc:'資源、能力、認知、溝通、文件化資訊之建立與控制。', kw:'7.1 7.2 7.3 7.4 7.5 資源 能力 認知 溝通 文件化資訊 教育訓練'},
+    {code:'8', icon:'ops',     name:'運作',         dir:'',       file:'ISO27001_運作管理工具.html',     desc:'運作之規劃與控制、風險評鑑與風險處理之實際執行。', kw:'8.1 8.2 8.3 運作之規劃及控制 資訊安全風險評鑑 資訊安全風險處理'},
+    {code:'9', icon:'perf',    name:'績效評估',     dir:'',   file:'ISO27001_績效評估管理工具.html', desc:'監視、量測、分析與評估、內部稽核、管理階層審查。', kw:'9.1 9.2 9.3 監視量測分析及評估 內部稽核 管理階層審查'},
+    {code:'10',icon:'improve', name:'改善',         dir:'',      file:'ISO27001_改善管理工具.html',     desc:'不符合事項與矯正措施、ISMS 之持續改善。', kw:'10.1 10.2 持續改善 不符合事項及矯正措施 矯正措施 CAR'}
   ],
   app:[
-    {code:'A01',icon:'gov',       name:'治理',           dir:'', file:'ISO27001_A01治理管理工具.html',     desc:'政策架構、角色職責、職務區隔、管理階層責任（A.5.1–5.8）。'},
-    {code:'A02',icon:'hr',        name:'人資安全',       dir:'', file:'ISO27001_A02人資安全管理工具.html', desc:'聘用前／任職期間／終止異動、保密協議、安全認知（A.6.1–6.6）。'},
-    {code:'A03',icon:'data',      name:'資訊保護',       dir:'', file:'ISO27001_A03資訊保護管理工具.html', desc:'資訊分類分級、標示、可接受使用、遮蔽、DLP、PII。'},
-    {code:'A04',icon:'asset',     name:'資產管理',       dir:'', file:'ISO27001_A04資產管理管理工具.html', desc:'資產清冊、擁有權、可接受使用、歸還與汰除（A.5.9–5.11）。'},
-    {code:'A05',icon:'access',    name:'存取管理',       dir:'', file:'ISO27001_A05存取管理管理工具.html', desc:'身分管理、鑑別資訊、存取權限、特殊權限存取。'},
-    {code:'A06',icon:'config',    name:'保全組態',       dir:'', file:'ISO27001_A06保全組態管理工具.html', desc:'組態管理基準、強化標準、密碼技術、特殊權限公用程式。'},
-    {code:'A07',icon:'phys',      name:'實體安全',       dir:'', file:'ISO27001_A07實體安全管理工具.html', desc:'安全區域、實體進入控制、設備安置、佈纜、汰除（A.7.1–7.14）。'},
-    {code:'A08',icon:'threat',    name:'威脅與弱點管理', dir:'', file:'ISO27001_A08威脅與弱點管理工具.html', desc:'威脅情資蒐集分析、技術脆弱性管理、暴露評估與修補。'},
-    {code:'A09',icon:'appsec',    name:'應用程式安全',   dir:'', file:'ISO27001_A09應用程式安全工具.html', desc:'安全開發生命週期、安全測試、委外開發、變更管理。'},
-    {code:'A10',icon:'network',   name:'系統與網路安全', dir:'', file:'ISO27001_A10系統與網路安全工具.html', desc:'網路安全、網路服務之安全、網路區隔、網頁過濾。'},
-    {code:'A11',icon:'supplier',  name:'供應者關係安全', dir:'', file:'ISO27001_A11供應者關係安全工具.html', desc:'供應者協議、ICT 供應鏈、雲端服務、監視審查。'},
-    {code:'A12',icon:'event',     name:'資安事件管理',   dir:'', file:'ISO27001_A12資安事件管理工具.html', desc:'偵測存錄監視、評鑑決策回應、證據蒐集與學習。'},
-    {code:'A13',icon:'continuity',name:'營運持續',       dir:'', file:'ISO27001_A13營運持續管理工具.html', desc:'中斷期間資安、ICT 備妥性、資訊備份、多備、容量管理。'},
-    {code:'A14',icon:'assurance', name:'資訊安全保證',   dir:'', file:'ISO27001_A14資訊保證管理工具.html', desc:'獨立審查、對內部政策之遵循性審查、安全測試保證。'},
-    {code:'A15',icon:'legal',     name:'遵循性',         dir:'', file:'ISO27001_A15遵循性管理工具.html',   desc:'法律法規與契約要求、智慧財產權、紀錄保護、隱私 PII。'}
+    {code:'A01',icon:'gov',       name:'治理',           dir:'',                                file:'ISO27001_A01治理管理工具.html',     desc:'政策架構、角色職責、職務區隔、管理階層責任（A.5.1–5.8）。', kw:'A.5.1 A.5.2 A.5.3 A.5.4 A.5.5 A.5.6 A.5.8 資訊安全政策 資訊安全角色及責任 職務區隔 管理階層責任 與權責機關之聯繫 與特殊利益團體之聯繫 專案管理之資訊安全'},
+    {code:'A02',icon:'hr',        name:'人資安全',       dir:'',               file:'ISO27001_A02人資安全管理工具.html', desc:'聘用前／任職期間／終止異動、保密協議、安全認知（A.6.1–6.6）。', kw:'A.6.1 A.6.2 A.6.3 A.6.4 A.6.5 A.6.6 篩選 雇用條款及條件 資訊安全認知教育及訓練 懲處過程 雇用終止或變更後之責任 保密或不揭露協議 NDA'},
+    {code:'A03',icon:'data',      name:'資訊保護',       dir:'',                 file:'ISO27001_A03資訊保護管理工具.html', desc:'資訊分類分級、標示、可接受使用、遮蔽、DLP、PII。', kw:'A.5.12 A.5.13 A.5.10 A.5.14 A.5.33 A.5.34 A.8.1 A.8.7 A.8.10 A.8.11 A.8.12 A.8.33 A.8.34 資訊之分類 資訊之標示 資訊及其他相關資產之可接受使用 資訊傳送 紀錄之保護 隱私及PII保護 使用者端點裝置 防範惡意軟體 資訊刪除 資料遮蔽 資料外洩防護 DLP 測試資訊 稽核測試期間資訊系統之保護'},
+    {code:'A04',icon:'asset',     name:'資產管理',       dir:'',                      file:'ISO27001_A04資產管理管理工具.html', desc:'資產清冊、擁有權、可接受使用、歸還與汰除（A.5.9–5.11）。', kw:'A.5.9 A.5.10 A.5.11 資訊及其他相關資產之清冊 資產擁有權 資訊及其他相關資產之可接受使用 資產之歸還'},
+    {code:'A05',icon:'access',    name:'存取管理',       dir:'',         file:'ISO27001_A05存取管理管理工具.html', desc:'身分管理、鑑別資訊、存取權限、特殊權限存取。', kw:'A.5.15 A.5.16 A.5.17 A.5.18 A.8.2 A.8.3 A.8.5 A.8.4 A.7.2 存取控制 身分管理 鑑別資訊 存取權 特殊權限存取權 資訊存取限制 安全鑑別 對原始碼之存取 實體進入'},
+    {code:'A06',icon:'config',    name:'保全組態',       dir:'',                  file:'ISO27001_A06保全組態管理工具.html', desc:'組態管理基準、強化標準、密碼技術、特殊權限公用程式。', kw:'A.8.9 A.8.18 A.8.19 A.8.24 組態管理 特殊權限公用程式之使用 運作中系統之軟體安裝 密碼技術之使用 加密 金鑰管理 強化基準'},
+    {code:'A07',icon:'phys',      name:'實體安全',       dir:'',                     file:'ISO27001_A07實體安全管理工具.html', desc:'安全區域、實體進入控制、設備安置、佈纜、汰除（A.7.1–7.14）。', kw:'A.7.1 A.7.2 A.7.3 A.7.4 A.7.5 A.7.6 A.7.7 A.7.8 A.7.9 A.7.10 A.7.11 A.7.12 A.7.13 A.7.14 實體安全周界 實體進入 辦公室房間及設施之安全防護 實體安全監視 防範實體及環境威脅 在安全區域工作 桌面淨空及螢幕淨空 設備之安置及保護 組織場所外資產之安全 儲存媒體 支援之公用服務事業 佈纜安全 設備維護 設備之安全汰除或重新使用'},
+    {code:'A08',icon:'threat',    name:'威脅與弱點管理', dir:'', file:'ISO27001_A08威脅與弱點管理工具.html', desc:'威脅情資蒐集分析、技術脆弱性管理、暴露評估與修補。', kw:'A.5.7 A.8.8 威脅情資 技術脆弱性管理 弱點掃描 CVE CVSS 修補 SBOM'},
+    {code:'A09',icon:'appsec',    name:'應用程式安全',   dir:'',               file:'ISO27001_A09應用程式安全工具.html', desc:'安全開發生命週期、安全測試、委外開發、變更管理。', kw:'A.8.25 A.8.26 A.8.27 A.8.28 A.8.29 A.8.30 A.8.31 A.8.32 安全開發生命週期 應用系統安全要求事項 安全系統架構及工程原則 安全程式設計 開發及驗收中之安全測試 委外開發 開發測試及運作環境之區隔 變更管理 SDLC'},
+    {code:'A10',icon:'network',   name:'系統與網路安全', dir:'',      file:'ISO27001_A10系統與網路安全工具.html', desc:'網路安全、網路服務之安全、網路區隔、網頁過濾。', kw:'A.8.20 A.8.21 A.8.22 A.8.23 網路安全 網路服務之安全 網路之區隔 網頁過濾'},
+    {code:'A11',icon:'supplier',  name:'供應者關係安全', dir:'',   file:'ISO27001_A11供應者關係安全工具.html', desc:'供應者協議、ICT 供應鏈、雲端服務、監視審查。', kw:'A.5.19 A.5.20 A.5.21 A.5.22 A.5.23 供應者關係中之資訊安全 於供應者協議中闡明資訊安全 管理ICT供應鏈中之資訊安全 供應者服務之監視審查及變更管理 使用雲端服務之資訊安全'},
+    {code:'A12',icon:'event',     name:'資安事件管理',   dir:'', file:'ISO27001_A12資安事件管理工具.html', desc:'偵測存錄監視、評鑑決策回應、證據蒐集與學習。', kw:'A.5.24 A.5.25 A.5.26 A.5.27 A.5.28 A.6.8 A.8.15 A.8.16 A.8.17 資訊安全事故管理之規劃及準備 資訊安全事件之評鑑及決策 對資訊安全事故之回應 自資訊安全事故中學習 證據之蒐集 資訊安全事件通報 存錄 監視活動 鐘訊同步 日誌 SIEM'},
+    {code:'A13',icon:'continuity',name:'營運持續',       dir:'',                              file:'ISO27001_A13營運持續管理工具.html', desc:'中斷期間資安、ICT 備妥性、資訊備份、多備、容量管理。', kw:'A.5.29 A.5.30 A.8.6 A.8.13 A.8.14 中斷期間之資訊安全 營運持續之ICT備妥性 容量管理 資訊備份 資訊處理設施之多備 BCP RTO RPO 災難復原'},
+    {code:'A14',icon:'assurance', name:'資訊安全保證',   dir:'',      file:'ISO27001_A14資訊保證管理工具.html', desc:'獨立審查、對內部政策之遵循性審查、安全測試保證。', kw:'A.5.35 A.5.36 A.8.29 資訊安全之獨立審查 對資訊安全政策規則及標準之遵循性 開發及驗收中之安全測試 內部稽核'},
+    {code:'A15',icon:'legal',     name:'遵循性',         dir:'',                    file:'ISO27001_A15遵循性管理工具.html',   desc:'法律法規與契約要求、智慧財產權、紀錄保護、隱私 PII。', kw:'A.5.31 A.5.32 A.5.33 A.5.34 A.5.36 法律法令法規及契約要求事項 智慧財產權 紀錄之保護 隱私及PII保護 對資訊安全政策規則及標準之遵循性'}
   ]
 };
 
 /* =========================================================================
    狀態管理：localStorage 覆寫（線上編輯）＋ 預設值
    ========================================================================= */
-const LS_KEY='isms_portal_cards_v2';
+const LS_KEY='isms_index_cards_v3';
 let CARDS;
 function loadCards(){
-  try{const s=localStorage.getItem(LS_KEY);if(s){const o=JSON.parse(s);if(o&&o.main&&o.app)return o;}}catch(e){}
+  try{const s=localStorage.getItem(LS_KEY);if(s){const o=JSON.parse(s);if(o&&o.main&&o.app){if(!o.policy)o.policy=JSON.parse(JSON.stringify(DEFAULT_CARDS.policy));return o;}}}catch(e){}
   return JSON.parse(JSON.stringify(DEFAULT_CARDS));
 }
 function saveCards(){try{localStorage.setItem(LS_KEY,JSON.stringify(CARDS));}catch(e){alert('儲存失敗：'+e.message);}}
@@ -364,7 +390,7 @@ const arrow='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-lineca
 const editIco='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>';
 
 function cardHTML(c,group,idx){
-  return `<a class="card" href="${hrefOf(c)}" data-group="${group}" data-idx="${idx}" data-search="${(c.code+' '+c.name+' '+c.desc).toLowerCase()}">
+  return `<a class="card" href="${hrefOf(c)}" data-group="${group}" data-idx="${idx}" data-search="${(c.code+' '+c.name+' '+(c.desc||'')+' '+(c.kw||'')).toLowerCase()}">
     <span class="missing">檔案未找到</span>
     <span class="cardedit"><button title="編輯" data-act="edit">${editIco}</button></span>
     <div class="card-top">
@@ -379,8 +405,10 @@ function cardHTML(c,group,idx){
 }
 
 function render(){
+  document.getElementById('gridPolicy').innerHTML=(CARDS.policy||[]).map((c,i)=>cardHTML(c,'policy',i)).join('');
   document.getElementById('gridMain').innerHTML=CARDS.main.map((c,i)=>cardHTML(c,'main',i)).join('');
   document.getElementById('gridApp').innerHTML=CARDS.app.map((c,i)=>cardHTML(c,'app',i)).join('');
+  document.getElementById('cntPolicy').textContent=(CARDS.policy||[]).length+' 項文件';
   document.getElementById('cntMain').textContent=CARDS.main.length+' 項條文';
   document.getElementById('cntApp').textContent=CARDS.app.length+' 項流程';
   bindCards();
@@ -420,7 +448,7 @@ const mask=document.getElementById('mask');
 function openEdit(group,idx){
   editing={group,idx};
   const c=CARDS[group][idx];
-  fCode.value=c.code;fName.value=c.name;fDir.value=c.dir;fFile.value=c.file;fDesc.value=c.desc||'';
+  fCode.value=c.code;fName.value=c.name;fDir.value=c.dir;fFile.value=c.file;fDesc.value=c.desc||'';fKw.value=c.kw||'';
   document.getElementById('mTitle').textContent='編輯卡片　'+c.code+'　'+c.name;
   mask.classList.add('show');
 }
@@ -429,11 +457,33 @@ mask.addEventListener('click',e=>{if(e.target===mask)mask.classList.remove('show
 document.getElementById('mSave').onclick=()=>{
   const c=CARDS[editing.group][editing.idx];
   c.code=fCode.value.trim();c.name=fName.value.trim();
-  c.dir=fDir.value.trim();c.file=fFile.value.trim();c.desc=fDesc.value.trim();
+  c.dir=fDir.value.trim();c.file=fFile.value.trim();c.desc=fDesc.value.trim();c.kw=fKw.value.trim();
   saveCards();mask.classList.remove('show');render();checkFiles();
 };
 document.getElementById('mDelete').onclick=()=>{
   if(confirm('確定刪除此卡片？')){CARDS[editing.group].splice(editing.idx,1);saveCards();mask.classList.remove('show');render();}
+};
+
+/* ---------- 存為預設：把目前設定寫回 DEFAULT_CARDS 並下載新 HTML（離線可用，不需網路） ---------- */
+document.getElementById('btnSaveDefault').onclick=()=>{
+  // 複製目前頁面，清掉動態產生的卡片與暫態，保持輸出乾淨
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelector('body')?.classList.remove('editing');
+  const gp=clone.querySelector('#gridPolicy'); if(gp)gp.innerHTML='';
+  const gm=clone.querySelector('#gridMain'); if(gm)gm.innerHTML='';
+  const ga=clone.querySelector('#gridApp'); if(ga)ga.innerHTML='';
+  const qel=clone.querySelector('#q'); if(qel)qel.removeAttribute('value');
+  let html='<!DOCTYPE html>\n'+clone.outerHTML;
+  // 以目前的 CARDS 取代原始的 DEFAULT_CARDS 區塊（JSON 即為合法 JS 物件實字）
+  const re=/const DEFAULT_CARDS = \{[\s\S]*?\n\};/;
+  if(!re.test(html)){alert('找不到 DEFAULT_CARDS 區塊，無法寫入。');return;}
+  const literal='const DEFAULT_CARDS = '+JSON.stringify(CARDS,null,2)+';';
+  html=html.replace(re,()=>literal);
+  const fname=((location.pathname.split('/').pop()||'').split('?')[0])||'ISMS_Portal.html';
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=fname;a.click();URL.revokeObjectURL(a.href);
+  alert('已產生新的 '+fname+'（目前設定已寫入為預設值）。\n請用下載的檔案覆蓋原檔，即成為永久預設值（換瀏覽器／上傳 GitHub 皆一致）。');
 };
 
 /* ---------- 匯出 / 匯入 ---------- */
@@ -452,7 +502,7 @@ document.getElementById('btnImport').onclick=()=>document.getElementById('fileIm
 document.getElementById('fileImport').onchange=e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.main||!o.app)throw new Error('格式不符（需含 main 與 app）');CARDS=o;saveCards();render();checkFiles();alert('匯入完成。');}catch(err){alert('匯入失敗：'+err.message);}};
+  r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.main||!o.app)throw new Error('格式不符（需含 main 與 app）');if(!o.policy)o.policy=JSON.parse(JSON.stringify(DEFAULT_CARDS.policy));CARDS=o;saveCards();render();checkFiles();alert('匯入完成。');}catch(err){alert('匯入失敗：'+err.message);}};
   r.readAsText(f);e.target.value='';
 };
 

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資訊安全手冊｜普拉斯股份有限公司｜ISO/IEC 27001:2022 一階政策文件</title>
+<!--
+  ============================================================================
+  普拉斯股份有限公司　資訊安全手冊（Information Security Manual）
+  ISO/IEC 27001:2022 ISMS 一階政策文件（Tier-1 Policy / Manual）
+  - 單一自含 HTML，無外部 CDN／字型，離線可用
+  - 文件管制（7.5）資訊與修訂歷程可線上維護，存於 localStorage，可匯出／匯入 JSON
+  - 內容依「之前建立之二階程序書」彙整為頂層政策框架，並交叉參照各程序書（SSOT）
+  - 建立顧問：Allan Lo 顧問（allanlo.plus@gmail.com｜http://www.123hi.org｜版本 v1.0）
+  ============================================================================
+-->
+<style>
+:root{
+  --c1:#13476b; --c1d:#0e3450; --c2:#2e7bb0;
+  --accentA:#0f766e;
+  --bg:#eef2f6; --card:#ffffff; --ink:#1c2733; --muted:#5b6b7a; --line:#dbe3ec;
+  --good:#0f766e; --warn:#b06a00; --soft:#f4f8fc;
+  --shadow:0 1px 3px rgba(19,71,107,.10),0 6px 18px rgba(19,71,107,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Microsoft JhengHei","微軟正黑體",Segoe UI,Roboto,Arial,"PingFang TC","Heiti TC",sans-serif;
+  color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.7;
+}
+
+/* ---------- Header ---------- */
+header{background:linear-gradient(135deg,var(--c1) 0%,var(--c1d) 55%,#0a2538 100%);color:#fff;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-90px;top:-90px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,0) 70%)}
+.hwrap{max-width:1200px;margin:0 auto;padding:26px 30px 22px;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:16px}
+.logo{width:60px;height:60px;border-radius:14px;flex:0 0 auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center}
+.logo svg{width:36px;height:36px;stroke:#fff}
+.brand h1{font-size:23px;margin:0;font-weight:700;letter-spacing:.5px}
+.brand .sub{font-size:13px;opacity:.86;margin-top:3px}
+.badge27{display:inline-block;margin-top:7px;font-size:12px;font-weight:600;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:3px 10px;border-radius:20px;letter-spacing:.4px}
+.hmeta{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:18px;font-size:12.5px;opacity:.92}
+.hmeta div{display:flex;align-items:center;gap:7px}
+.hmeta svg{width:15px;height:15px;stroke:#cfe4f3;flex:0 0 auto}
+
+/* ---------- Toolbar ---------- */
+.toolbar{max-width:1200px;margin:16px auto 0;padding:0 30px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--c1);background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 14px;box-shadow:var(--shadow);transition:.15s}
+.btn:hover{border-color:var(--c2);color:var(--c2)}
+.btn svg{width:16px;height:16px;stroke:currentColor}
+.btn.primary{background:var(--c1);color:#fff;border-color:var(--c1)}
+.btn.primary:hover{background:var(--c2);border-color:var(--c2);color:#fff}
+
+/* ---------- Layout ---------- */
+.layout{max-width:1200px;margin:18px auto 0;padding:0 30px 50px;display:grid;grid-template-columns:248px 1fr;gap:26px;align-items:start}
+nav.toc{position:sticky;top:14px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px 10px;max-height:calc(100vh - 28px);overflow:auto}
+nav.toc h4{margin:4px 10px 8px;font-size:12px;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+nav.toc a{display:block;font-size:13px;color:var(--ink);text-decoration:none;padding:6px 10px;border-radius:8px;border-left:3px solid transparent;line-height:1.4}
+nav.toc a:hover{background:var(--soft);color:var(--c2)}
+nav.toc a.active{background:#eaf2f9;color:var(--c1);font-weight:700;border-left-color:var(--c1)}
+nav.toc a .cl{display:inline-block;min-width:30px;color:var(--muted);font-weight:700;font-size:11.5px}
+nav.toc a.sub{padding-left:26px;font-size:12.3px}
+
+/* ---------- Content ---------- */
+main{min-width:0}
+section.doc{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:26px 30px;margin-bottom:20px;scroll-margin-top:14px}
+.sechead{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--c1);padding-bottom:10px;margin:0 0 16px}
+.sechead .cl{font-size:13px;font-weight:700;color:#fff;background:var(--c1);padding:3px 11px;border-radius:8px;letter-spacing:.3px;white-space:nowrap}
+.sechead h2{font-size:19px;margin:0;color:var(--c1)}
+.sechead .en{font-size:12px;color:var(--muted);font-weight:400;margin-left:auto}
+section.doc h3{font-size:15.5px;color:var(--c1d);margin:20px 0 8px;display:flex;align-items:center;gap:8px}
+section.doc h3::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--c2);flex:0 0 auto}
+section.doc p{margin:8px 0}
+section.doc ul,section.doc ol{margin:8px 0 8px;padding-left:24px}
+section.doc li{margin:4px 0}
+.lead{font-size:14px;color:var(--muted);margin-top:0}
+
+/* tables */
+table.t{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+table.t th,table.t td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.t th{background:#eef4f9;color:var(--c1d);font-weight:700;white-space:nowrap}
+table.t tr:nth-child(even) td{background:#fafcfe}
+table.t td .pill{font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;white-space:nowrap}
+.pill.app{color:#0f766e;background:#e7f3f1;border:1px solid #cfe7e3}
+.pill.cl{color:var(--c1);background:#eaf2f9;border:1px solid #d6e6f2}
+
+/* callout / policy box */
+.policybox{background:linear-gradient(180deg,#f3f8fc,#fff);border:1px solid #d6e6f2;border-left:5px solid var(--c1);border-radius:12px;padding:18px 22px;margin:14px 0}
+.policybox .pp{font-size:14.5px;margin:0 0 12px}
+.note{background:#fff8ec;border:1px solid #ffe1a8;border-left:4px solid var(--warn);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:13px;color:#7a5400}
+.xref{background:#f0f7f5;border:1px solid #cfe7e3;border-left:4px solid var(--accentA);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:13px;color:#0c5750}
+.xref b{color:#0a4640}
+
+/* principle grid */
+.cia{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.cia .c{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--soft)}
+.cia .c b{display:block;color:var(--c1);font-size:15px;margin-bottom:4px}
+.cia .c span{font-size:12.5px;color:var(--muted)}
+
+/* pyramid */
+.pyr{display:flex;flex-direction:column;align-items:center;gap:8px;margin:16px 0}
+.pyr .row{border-radius:10px;color:#fff;text-align:center;padding:12px 16px;font-weight:600;box-shadow:var(--shadow)}
+.pyr .r1{width:46%;background:linear-gradient(135deg,#13476b,#0a2538)}
+.pyr .r2{width:66%;background:linear-gradient(135deg,#2e7bb0,#1c5a86)}
+.pyr .r3{width:86%;background:linear-gradient(135deg,#0f766e,#0c5750)}
+.pyr .row small{display:block;font-weight:400;font-size:11.5px;opacity:.9;margin-top:2px}
+
+/* proc cards */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin:12px 0}
+.pcard{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:11px;padding:12px 14px;text-decoration:none;color:inherit;background:#fff;transition:.15s}
+.pcard:hover{border-color:var(--c2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.pcard.app:hover{border-color:var(--accentA)}
+.pcard .code{font-size:11px;font-weight:700;color:#fff;background:var(--c1);padding:2px 8px;border-radius:7px;width:max-content}
+.pcard.app .code{background:var(--accentA)}
+.pcard h4{margin:4px 0 2px;font-size:14px;color:var(--ink)}
+.pcard p{margin:0;font-size:11.8px;color:var(--muted);line-height:1.5}
+
+/* doc-control */
+.dcgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:12px 0}
+.dcgrid .cell{display:flex;border-bottom:1px solid var(--line)}
+.dcgrid .cell .k{flex:0 0 120px;background:#eef4f9;color:var(--c1d);font-weight:700;font-size:12.5px;padding:9px 12px;border-right:1px solid var(--line)}
+.dcgrid .cell .v{flex:1;padding:9px 12px;font-size:13px}
+.dcgrid .cell.full{grid-column:1 / -1}
+.dcgrid .cell:nth-last-child(1),.dcgrid .cell:nth-last-child(2){border-bottom:none}
+.sign{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+.sign .s{border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;background:var(--soft)}
+.sign .s .role{font-size:12px;color:var(--muted)}
+.sign .s .who{font-weight:700;color:var(--c1);margin-top:4px}
+.sign .s .line{height:46px;border-bottom:1px dashed #b9c6d2;margin:10px 6px 6px}
+.sign .s .date{font-size:11.5px;color:var(--muted)}
+
+/* editable */
+.editwrap{display:none;border:1px solid #ffe1a8;background:#fff8ec;border-radius:12px;padding:16px 18px;margin:12px 0}
+body.editing .editwrap{display:block}
+.editwrap .g{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 16px}
+.editwrap label{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.editwrap input,.editwrap textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px;font-family:inherit;color:var(--ink)}
+.editwrap .full{grid-column:1 / -1}
+.revtable input{width:100%;border:1px solid var(--line);border-radius:6px;padding:5px 7px;font-size:12px;font-family:inherit}
+.tinybtn{font-size:12px;padding:5px 10px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--c1);font-weight:600}
+.tinybtn:hover{border-color:var(--c2)}
+
+footer{border-top:1px solid var(--line);background:#fff;margin-top:8px}
+.fwrap{max-width:1200px;margin:0 auto;padding:20px 30px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px}
+.fwrap .col strong{color:var(--ink)}
+.fwrap a{color:var(--c2);text-decoration:none}
+
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr}
+  nav.toc{position:static;max-height:none}
+  .cia,.sign,.editwrap .g,.dcgrid{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff;font-size:11.5px}
+  header::after{display:none}
+  .toolbar,nav.toc,.editwrap,.btn{display:none!important}
+  .layout{display:block;max-width:100%;padding:0}
+  section.doc{box-shadow:none;border:none;border-bottom:1px solid #ccc;border-radius:0;padding:14px 0;page-break-inside:auto}
+  .sechead{page-break-after:avoid}
+  section.doc h3{page-break-after:avoid}
+  table.t,.policybox,.dcgrid,.sign,.pyr{page-break-inside:avoid}
+  .pcard{page-break-inside:avoid}
+  a{color:var(--ink)!important;text-decoration:none}
+  @page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <div>
+        <h1>資訊安全手冊　Information Security Manual</h1>
+        <div class="sub">普拉斯股份有限公司　｜　ISMS 一階政策文件（Tier-1 Policy）</div>
+        <span class="badge27">ISO/IEC 27001:2022</span>
+      </div>
+    </div>
+    <div class="hmeta">
+      <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg><span id="hdoc">文件編號：ISMS-M-01</span></div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><span id="hver">版本：V1.0　生效日：2026-06-01</span></div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M2 16h20"/></svg><span>離線可用｜本機運作</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="btn primary" id="btnPrint"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>列印 / 匯出 PDF</button>
+  <button class="btn" id="btnEdit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>編輯文件管制資訊</button>
+  <button class="btn" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 21h16"/></svg>匯出 JSON</button>
+  <button class="btn" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M8 13l4-4 4 4"/><path d="M4 3h16"/></svg>匯入 JSON</button>
+  <button class="btn" id="btnReset" title="清除本機編輯，恢復檔案內建之預設值"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>重設</button>
+  <a class="btn" href="../ISMS_Portal.html"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>ISMS Portal 入口</a>
+  <input type="file" id="fileImport" accept="application/json" style="display:none">
+</div>
+
+<div class="layout">
+  <!-- ===================== TOC ===================== -->
+  <nav class="toc" id="toc">
+    <h4>目錄 Contents</h4>
+    <a href="#s0"><span class="cl">0</span>文件管制與核准</a>
+    <a href="#s1"><span class="cl">1</span>目的與適用範圍</a>
+    <a href="#s2"><span class="cl">2</span>引用標準與用語</a>
+    <a href="#s4"><span class="cl">4</span>組織全景</a>
+    <a href="#s5"><span class="cl">5</span>領導作為</a>
+    <a class="sub" href="#s5p">　資訊安全政策（全文）</a>
+    <a href="#s6"><span class="cl">6</span>規劃</a>
+    <a href="#s7"><span class="cl">7</span>支援</a>
+    <a href="#s8"><span class="cl">8</span>運作</a>
+    <a href="#s9"><span class="cl">9</span>績效評估</a>
+    <a href="#s10"><span class="cl">10</span>改善</a>
+    <a href="#sa"><span class="cl">A</span>附錄 A 控制措施</a>
+    <a href="#sdoc"><span class="cl">D</span>文件架構與程序書</a>
+    <a href="#smap"><span class="cl">M</span>條文對照表</a>
+  </nav>
+
+  <main>
+
+  <!-- ===================== 0 文件管制 ===================== -->
+  <section class="doc" id="s0">
+    <div class="sechead"><span class="cl">0</span><h2>文件管制與核准</h2><span class="en">Document Control &amp; Approval</span></div>
+    <p class="lead">本手冊為普拉斯股份有限公司資訊安全管理系統（ISMS）之最高階（一階）政策文件，依 ISO/IEC 27001:2022 條文 7.5「文件化資訊」之要求管制。文件之建立、核准、發行、改版、分發與保留依下表辦理。</p>
+
+    <div class="dcgrid" id="dcView"></div>
+
+    <!-- 編輯區（編輯模式顯示） -->
+    <div class="editwrap" id="dcEdit">
+      <div class="g">
+        <div><label>文件編號 docno</label><input id="f_docno"></div>
+        <div><label>文件名稱 title</label><input id="f_title"></div>
+        <div><label>版本 ver</label><input id="f_ver"></div>
+        <div><label>版本日期 verdate</label><input id="f_verdate"></div>
+        <div><label>生效日期 effdate</label><input id="f_effdate"></div>
+        <div><label>文件狀態 status</label><input id="f_status"></div>
+        <div><label>機密等級 classification</label><input id="f_classification"></div>
+        <div><label>制定 author</label><input id="f_author"></div>
+        <div><label>審查 reviewer</label><input id="f_reviewer"></div>
+        <div><label>核准 approver</label><input id="f_approver"></div>
+        <div class="full"><label>分發範圍 distribute</label><input id="f_distribute"></div>
+        <div class="full"><label>保留期限 retention</label><input id="f_retention"></div>
+        <div><label>下次審查 nextreview</label><input id="f_nextreview"></div>
+        <div><label>適用範圍 scope（一行）</label><input id="f_scope"></div>
+      </div>
+      <p style="margin:14px 0 6px;font-weight:700;color:#7a5400">修訂歷程</p>
+      <div id="revEdit"></div>
+      <div style="margin-top:8px;display:flex;gap:8px"><button class="tinybtn" id="addRev">＋ 新增版次</button></div>
+    </div>
+
+    <h3>核准簽署</h3>
+    <p>本手冊經下列權責人員審查與核准後發行，全體同仁與相關利害關係者均應遵循。</p>
+    <div class="sign">
+      <div class="s"><div class="role">制定（Prepared by）</div><div class="who" id="sg_author">ISMS 推動小組</div><div class="line"></div><div class="date">日期：__________</div></div>
+      <div class="s"><div class="role">審查（Reviewed by）</div><div class="who" id="sg_reviewer">資安長 / ISMS 主管</div><div class="line"></div><div class="date">日期：__________</div></div>
+      <div class="s"><div class="role">核准（Approved by）</div><div class="who" id="sg_approver">最高管理階層</div><div class="line"></div><div class="date">日期：__________</div></div>
+    </div>
+
+    <h3>修訂歷程</h3>
+    <table class="t" id="revView"><thead><tr><th style="width:70px">版本</th><th style="width:110px">日期</th><th>修訂摘要</th><th style="width:120px">修訂者</th><th style="width:120px">核准者</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <!-- ===================== 1 目的與範圍 ===================== -->
+  <section class="doc" id="s1">
+    <div class="sechead"><span class="cl">1</span><h2>目的與適用範圍</h2><span class="en">Purpose &amp; Scope（4.3）</span></div>
+    <h3>1.1 目的</h3>
+    <p>本手冊旨在建立、實作、維持並持續改進本公司資訊安全管理系統（ISMS），以系統化方法保護本公司及利害關係者之資訊資產，確保其<b>機密性（Confidentiality）</b>、<b>完整性（Integrity）</b>與<b>可用性（Availability）</b>，並滿足相關法律、法規與合約之資訊安全要求，支援組織之業務宗旨與策略方向。</p>
+    <div class="cia">
+      <div class="c"><b>機密性 C</b><span>確保資訊僅供經授權之人員、實體或程序存取與揭露。</span></div>
+      <div class="c"><b>完整性 I</b><span>確保資訊與處理方法之正確性與完整，免於未經授權之變更或毀損。</span></div>
+      <div class="c"><b>可用性 A</b><span>確保經授權之使用者在需要時可即時且可靠地存取資訊與服務。</span></div>
+    </div>
+
+    <h3>1.2 適用範圍（ISMS Scope）</h3>
+    <p id="scopeText">本 ISMS 之適用範圍涵蓋本公司提供之核心產品與服務所涉及之資訊資產、資訊處理設施、人員、流程與支援系統。範圍之界定考量內外部議題（4.1）、利害關係者之需求與期望（4.2），以及各介面與相依性。範圍之完整定義、邊界與適用界面，依〈4 組織全景管理程序書〉與〈適用性聲明（SoA）〉維護。</p>
+    <ul>
+      <li><b>場所／實體界面：</b>公司營運場所、機房／資料中心、辦公區域與遠端工作環境。</li>
+      <li><b>技術界面：</b>端點裝置、伺服器與系統、網路與雲端服務、應用系統與開發環境。</li>
+      <li><b>組織／人員界面：</b>全體員工、約聘人員、承包商與供應者於授權範圍內之活動。</li>
+      <li><b>排除項目：</b>凡不在本範圍內者，須於 SoA 與組織全景文件中敘明理由與界面管理方式。</li>
+    </ul>
+    <div class="xref"><b>SSOT 權責分界：</b>範圍、內外部議題與利害關係者分析以〈條文 4 組織全景〉為單一真實來源（SSOT）；控制措施之適用與排除以〈適用性聲明（SoA）〉為準。</div>
+
+    <h3>1.3 適用對象</h3>
+    <p>本手冊適用於本公司全體員工、約聘及臨時人員，以及於授權下接觸本公司資訊資產之供應者、承包商與其他第三方。各層級人員均負有遵循本政策與相關程序之責任。</p>
+  </section>
+
+  <!-- ===================== 2 引用標準 ===================== -->
+  <section class="doc" id="s2">
+    <div class="sechead"><span class="cl">2</span><h2>引用標準與用語定義</h2><span class="en">Normative References &amp; Terms</span></div>
+    <h3>2.1 引用標準</h3>
+    <ul>
+      <li><b>ISO/IEC 27001:2022</b> 資訊安全、網宇安全及隱私保護—資訊安全管理系統—要求事項。</li>
+      <li><b>ISO/IEC 27002:2022</b> 資訊安全控制措施實作指引（附錄 A 控制措施之參考）。</li>
+      <li><b>ISO/IEC 27000</b> 概觀與詞彙。</li>
+      <li>適用之中華民國法律、法規（如個人資料保護法等）及契約要求事項。</li>
+    </ul>
+    <h3>2.2 用語與縮寫</h3>
+    <table class="t">
+      <thead><tr><th style="width:120px">用語／縮寫</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>ISMS</td><td>資訊安全管理系統（Information Security Management System）。</td></tr>
+        <tr><td>SoA</td><td>適用性聲明（Statement of Applicability），列示附錄 A 各控制措施之適用性、選用依據與實作狀態（6.1.3 d）。</td></tr>
+        <tr><td>PDCA</td><td>規劃—執行—查核—行動（Plan-Do-Check-Act）持續改進循環。</td></tr>
+        <tr><td>SSOT</td><td>單一真實來源（Single Source of Truth），指某資訊／控制之權責歸屬與主登記簿所在。</td></tr>
+        <tr><td>C / I / A</td><td>機密性 / 完整性 / 可用性。</td></tr>
+        <tr><td>風險擁有者</td><td>對特定風險之管理負最終責任並具核可權限之人員。</td></tr>
+        <tr><td>利害關係者</td><td>可能影響、受影響或自認受 ISMS 影響之個人或組織。</td></tr>
+      </tbody>
+    </table>
+    <p class="note">完整詞彙以 ISO/IEC 27000 為準；各程序書另有就其專業範疇之定義。</p>
+  </section>
+
+  <!-- ===================== 4 組織全景 ===================== -->
+  <section class="doc" id="s4">
+    <div class="sechead"><span class="cl">4</span><h2>組織及其全景</h2><span class="en">Context of the Organization</span></div>
+    <p class="lead">本公司依條文 4 理解組織及其全景，作為建立 ISMS 之基礎。</p>
+    <h3>4.1 組織及其全景之理解</h3>
+    <p>定期鑑別與本公司宗旨相關、且會影響 ISMS 預期結果之內部與外部議題（如業務策略、法規環境、技術趨勢、威脅情勢、供應鏈、組織文化等），並於管理階層審查（9.3）時檢討更新。</p>
+    <h3>4.2 利害關係者之需求與期望</h3>
+    <p>鑑別與 ISMS 相關之利害關係者（客戶、主管機關、員工、股東、供應者等）及其與資訊安全相關之需求、期望與適用要求（含法規與契約），並決定何者納入 ISMS 管理。</p>
+    <h3>4.3 ISMS 範圍之決定</h3>
+    <p>依 4.1、4.2 及各介面與相依性，界定 ISMS 之範圍與邊界（詳第 1.2 節）。</p>
+    <h3>4.4 資訊安全管理系統</h3>
+    <p>依本標準要求建立、實作、維持並持續改進 ISMS 及其所需過程與互動，並以本手冊及各階文件加以文件化。</p>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../4.組織全景/ISO27001_組織全景管理工具.html">〈4 組織全景管理程序書〉</a>—內外部議題清單、利害關係者登記簿、ISMS 範圍說明書。</div>
+  </section>
+
+  <!-- ===================== 5 領導作為 ===================== -->
+  <section class="doc" id="s5">
+    <div class="sechead"><span class="cl">5</span><h2>領導作為</h2><span class="en">Leadership</span></div>
+    <h3>5.1 領導與承諾</h3>
+    <p>最高管理階層展現對 ISMS 之領導與承諾，包括：確保資訊安全政策與目標之建立並與組織策略方向一致、確保 ISMS 要求整合於業務過程、提供必要資源、傳達有效資訊安全管理之重要性、確保 ISMS 達成預期結果、指導並支援人員、促進持續改進，並支持其他相關管理階層展現其領導。</p>
+
+    <!-- 5.2 政策全文 -->
+    <h3 id="s5p">5.2 資訊安全政策（政策聲明全文）</h3>
+    <div class="policybox">
+      <p class="pp"><b>普拉斯股份有限公司　資訊安全政策</b></p>
+      <p class="pp" id="policyBody">本公司體認資訊為重要資產，致力保護本公司與利害關係者所擁有及受託管理之資訊，確保其機密性、完整性與可用性。為此，本公司最高管理階層特此承諾：</p>
+      <ol>
+        <li><b>適切性：</b>資訊安全管理符合本公司之業務宗旨與策略方向，並提供資訊安全目標設定之框架。</li>
+        <li><b>目標導向：</b>依風險評鑑結果與營運目標，設定可量測之資訊安全目標並定期檢討。</li>
+        <li><b>合規承諾：</b>遵循適用之法律、法令、法規及契約等資訊安全要求事項。</li>
+        <li><b>風險管理：</b>以風險為基礎之方法鑑別、評鑑並處理資訊安全風險至可接受水準。</li>
+        <li><b>持續改進：</b>持續改進資訊安全管理系統之適切性、充分性與有效性。</li>
+        <li><b>全員責任：</b>全體同仁、約聘人員及相關利害關係者均應瞭解並遵循本政策及相關規範；違反者依規定處理。</li>
+      </ol>
+      <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">本政策由最高管理階層核准發行，傳達予組織內全體人員並對相關利害關係者適用，且於規劃期間或重大變更時審查其持續適切性。</p>
+    </div>
+    <p class="note">本政策為主政策；其下另訂主題特定政策（Topic-specific policies，如存取控制、密碼、可接受使用、營運持續等），由各二階程序書與附錄 A 工具承載並維護。</p>
+
+    <h3>5.3 組織角色、責任及權限</h3>
+    <p>最高管理階層指派並傳達各資訊安全角色之責任與權限，確保 ISMS 符合本標準要求並向管理階層報告 ISMS 績效。主要角色與職責如下：</p>
+    <table class="t">
+      <thead><tr><th style="width:160px">角色</th><th>主要職責</th></tr></thead>
+      <tbody>
+        <tr><td>最高管理階層</td><td>核准政策與目標、提供資源、核可風險處理計畫與殘餘風險、主持管理階層審查。</td></tr>
+        <tr><td>資安長 / ISMS 主管</td><td>統籌 ISMS 之建立與維運、督導風險管理、向最高管理階層報告績效。</td></tr>
+        <tr><td>ISMS 推動小組</td><td>制定與維護政策程序、推動控制措施實作、彙整量測與稽核結果。</td></tr>
+        <tr><td>資產／風險擁有者</td><td>維護所轄資產清冊、執行風險評鑑與處理、落實對應控制。</td></tr>
+        <tr><td>各部門主管</td><td>確保所屬人員遵循政策、落實部門內控制與通報。</td></tr>
+        <tr><td>全體人員</td><td>遵循政策與程序、保護所接觸之資訊、通報資安事件與弱點。</td></tr>
+      </tbody>
+    </table>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../5.領導作為/ISO27001_領導作為管理工具.html">〈5 領導作為管理程序書〉</a>（政策本文與角色指派）；治理層之政策架構、職務區隔與管理階層責任另見 <a href="../A01_Governance治理/ISO27001_A01治理管理工具.html">〈A01 治理管理程序書〉</a>（A.5.1–A.5.8）。</div>
+  </section>
+
+  <!-- ===================== 6 規劃 ===================== -->
+  <section class="doc" id="s6">
+    <div class="sechead"><span class="cl">6</span><h2>規劃</h2><span class="en">Planning</span></div>
+    <h3>6.1 因應風險與機會之行動</h3>
+    <p><b>6.1.1 一般要求：</b>規劃 ISMS 時，考量 4.1 議題與 4.2 要求，決定須因應之風險與機會，以確保 ISMS 能達成預期結果、預防或減少非期望之影響，並達成持續改進。</p>
+    <p><b>6.1.2 資訊安全風險評鑑：</b>建立並維持資訊安全風險評鑑過程，定義風險接受準則與執行準則，鑑別風險、分析其後果與可能性、評估風險等級並排定處理優先序。</p>
+    <p><b>6.1.3 資訊安全風險處理：</b>依評鑑結果選擇適切之風險處理選項與控制措施，並與附錄 A 控制措施比對，製作<b>適用性聲明（SoA）</b>（含選用／排除之理由與實作狀態），訂定風險處理計畫並取得風險擁有者核可、殘餘風險之核准。</p>
+    <h3>6.2 資訊安全目標及達成之規劃</h3>
+    <p>於相關職能與層級建立可量測、與政策一致之資訊安全目標，並規劃達成之作為、資源、權責、時程與成效評估方式。</p>
+    <h3>6.3 變更之規劃</h3>
+    <p>當決定變更 ISMS 時，以有計畫之方式執行，評估變更對資訊安全之影響。</p>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../6.規劃/ISO27001_規劃管理工具.html">〈6 規劃管理程序書〉</a>（風險評鑑與處理、資安目標）、<a href="../2.適用性聲明/ISO27001_適用性聲明SoA管理工具.html">〈適用性聲明 SoA〉</a>（6.1.3 d，附錄 A 全 93 控制之單一主登記簿）。資訊分類分級之嚴格度準據以 <a href="../A03_Information protection資訊保護/ISO27001_A03資訊保護管理工具.html">〈A03 資訊保護〉</a>（A.5.12）為全 ISMS SSOT。</div>
+  </section>
+
+  <!-- ===================== 7 支援 ===================== -->
+  <section class="doc" id="s7">
+    <div class="sechead"><span class="cl">7</span><h2>支援</h2><span class="en">Support</span></div>
+    <ul>
+      <li><b>7.1 資源：</b>決定並提供建立、實作、維持與改進 ISMS 所需之資源。</li>
+      <li><b>7.2 能力：</b>決定影響資安績效人員之必要能力，確保其受適切之教育、訓練或經驗，並保存證據。</li>
+      <li><b>7.3 認知：</b>使相關人員認知資訊安全政策、其對 ISMS 有效性之貢獻，以及不符合之後果。</li>
+      <li><b>7.4 溝通：</b>決定與 ISMS 相關之內部與外部溝通需求（溝通內容、時機、對象、方式）。</li>
+      <li><b>7.5 文件化資訊：</b>建立並控制 ISMS 所需之文件化資訊，包含建立／更新（識別、格式、審查核准）與管制（分發、存取、保存、版本、防止失效文件誤用）。<b>本手冊即依 7.5 管制（詳第 0 節）。</b></li>
+    </ul>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../7.支援/ISO27001_支援管理工具.html">〈7 支援管理程序書〉</a>（資源、能力訓練紀錄、認知、溝通、文件管制清冊）。人員認知與訓練之執行另見 <a href="../A02_Human Resource security人資安全/ISO27001_A02人資安全管理工具.html">〈A02 人資安全〉</a>（A.6.3）。文件控制（版本／核准）以本條文 7.5 為 SSOT。</div>
+  </section>
+
+  <!-- ===================== 8 運作 ===================== -->
+  <section class="doc" id="s8">
+    <div class="sechead"><span class="cl">8</span><h2>運作</h2><span class="en">Operation</span></div>
+    <ul>
+      <li><b>8.1 運作之規劃及控制：</b>規劃、實作及控制達成資安要求與 6.1 作為所需之過程，控制計畫性變更並審查非預期變更之後果，亦確保受控之外部提供過程、產品或服務。</li>
+      <li><b>8.2 資訊安全風險評鑑：</b>依 6.1.2 之準則，於規劃期間或當重大變更發生時執行風險評鑑並保存結果。</li>
+      <li><b>8.3 資訊安全風險處理：</b>實作風險處理計畫並保存結果。</li>
+    </ul>
+    <p>運作面之各項控制措施，依附錄 A 之 15 項作業流程（A01–A15）落實執行，詳第 A 節。</p>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../8.運作/ISO27001_運作管理工具.html">〈8 運作管理程序書〉</a>（運作規劃與控制、風險評鑑與處理之執行）。運作之具體控制由附錄 A 各程序書（A01–A15）承載。</div>
+  </section>
+
+  <!-- ===================== 9 績效評估 ===================== -->
+  <section class="doc" id="s9">
+    <div class="sechead"><span class="cl">9</span><h2>績效評估</h2><span class="en">Performance Evaluation</span></div>
+    <ul>
+      <li><b>9.1 監視、量測、分析及評估：</b>決定須監視與量測之對象、方法、時機與評估者，評估資安績效與 ISMS 有效性並保存證據。</li>
+      <li><b>9.2 內部稽核：</b>依規劃之時距執行內部稽核，以判定 ISMS 是否符合本標準及本公司要求且有效實作與維持。</li>
+      <li><b>9.3 管理階層審查：</b>最高管理階層依規劃之時距審查 ISMS，確保其持續之適切性、充分性與有效性，並產出決策與改進事項。</li>
+    </ul>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../9.績效評估/ISO27001_績效評估管理工具.html">〈9 績效評估管理程序書〉</a>（監視量測、內部稽核方案、管理階層審查）。ISMS 之獨立審查與對內部政策之遵循性審查另見 <a href="../A14_Information security assurance資訊安全保證/ISO27001_A14資訊保證管理工具.html">〈A14 資訊安全保證〉</a>（A.5.35–A.5.36）。</div>
+  </section>
+
+  <!-- ===================== 10 改善 ===================== -->
+  <section class="doc" id="s10">
+    <div class="sechead"><span class="cl">10</span><h2>改善</h2><span class="en">Improvement</span></div>
+    <ul>
+      <li><b>10.1 持續改進：</b>持續改進 ISMS 之適切性、充分性與有效性。</li>
+      <li><b>10.2 不符合事項及矯正措施：</b>發生不符合時，採取控制與矯正之行動、評估消除原因之需要、實施所需矯正措施、審查其有效性並於必要時變更 ISMS，並保存不符合與矯正措施之證據（CAR）。</li>
+    </ul>
+    <div class="xref"><b>對應程序書（SSOT）：</b><a href="../10.改善/ISO27001_改善管理工具.html">〈10 改善管理程序書〉</a>（不符合事項與矯正措施 CAR、持續改進）。事故導致之矯正改善由 <a href="../A12_Information security event management資安事件管理/ISO27001_A12資安事件管理工具.html">〈A12 資安事件管理〉</a>（A.5.27）銜接至本條文。</div>
+  </section>
+
+  <!-- ===================== A 附錄A ===================== -->
+  <section class="doc" id="sa">
+    <div class="sechead"><span class="cl">A</span><h2>附錄 A 控制措施</h2><span class="en">Annex A Controls（93 controls）</span></div>
+    <p class="lead">本公司依風險評鑑與處理之結果，自附錄 A 之 4 大主題、93 項控制措施中選用適用之控制，並以 15 項作業流程（A01–A15）組織實作。各控制之適用性、選用依據、實作狀態與證據彙整於<b>適用性聲明（SoA）</b>。</p>
+    <table class="t">
+      <thead><tr><th style="width:70px">主題</th><th>名稱</th><th style="width:90px">控制數</th><th>涵蓋作業流程</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill cl">A.5</span></td><td>組織控制措施（Organizational）</td><td>37</td><td>A01 治理、A11 供應者、A12 事件、A13 持續、A14 保證、A15 遵循 等</td></tr>
+        <tr><td><span class="pill cl">A.6</span></td><td>人員控制措施（People）</td><td>8</td><td>A02 人資安全</td></tr>
+        <tr><td><span class="pill cl">A.7</span></td><td>實體控制措施（Physical）</td><td>14</td><td>A07 實體安全</td></tr>
+        <tr><td><span class="pill cl">A.8</span></td><td>技術控制措施（Technological）</td><td>34</td><td>A03 資訊保護、A05 存取、A06 組態、A08 弱點、A09 應用、A10 網路 等</td></tr>
+      </tbody>
+    </table>
+    <div class="xref"><b>對應主登記簿（SSOT）：</b><a href="../2.適用性聲明/ISO27001_適用性聲明SoA管理工具.html">〈適用性聲明（SoA）〉</a>—附錄 A 全 93 控制項之單一主登記簿，逐項記錄適用性、選用依據、實作狀態、對應程序書與證據。</div>
+  </section>
+
+  <!-- ===================== D 文件架構 ===================== -->
+  <section class="doc" id="sdoc">
+    <div class="sechead"><span class="cl">D</span><h2>文件架構與程序書清單</h2><span class="en">Documentation Hierarchy</span></div>
+    <p class="lead">本公司 ISMS 文件採三階架構。本手冊為一階政策文件，向下統御二階程序書與三階作業辦法／表單／紀錄。</p>
+    <div class="pyr">
+      <div class="row r1">一階　資訊安全手冊／政策<small>本文件　Policy / Manual（ISMS 整體框架與政策聲明）</small></div>
+      <div class="row r2">二階　管理程序書<small>條文 4–10 ＋ 附錄 A（A01–A15）各作業程序書（What / Who / When）</small></div>
+      <div class="row r3">三階　作業辦法／表單／紀錄<small>各程序書產出之台帳、表單、紀錄與證據（How / Evidence）</small></div>
+    </div>
+
+    <h3>二階程序書—管理系統條文（4–10）</h3>
+    <div class="pgrid" id="pgMain"></div>
+
+    <h3>二階程序書—附錄 A 作業流程（A01–A15）</h3>
+    <div class="pgrid" id="pgApp"></div>
+  </section>
+
+  <!-- ===================== M 條文對照 ===================== -->
+  <section class="doc" id="smap">
+    <div class="sechead"><span class="cl">M</span><h2>ISO/IEC 27001:2022 條文對照表</h2><span class="en">Clause Cross-Reference</span></div>
+    <p class="lead">下表對照本標準各條文要求與本手冊章節及承載之二階程序書（SSOT），供驗證稽核查檢。</p>
+    <table class="t">
+      <thead><tr><th style="width:70px">條文</th><th>要求事項</th><th style="width:120px">本手冊章節</th><th>對應程序書（SSOT）</th></tr></thead>
+      <tbody>
+        <tr><td>4</td><td>組織全景、利害關係者、ISMS 範圍</td><td>§1.2、§4</td><td>4 組織全景</td></tr>
+        <tr><td>5.1</td><td>領導與承諾</td><td>§5.1</td><td>5 領導作為 / A01 治理</td></tr>
+        <tr><td>5.2</td><td>資訊安全政策</td><td>§5.2（全文）</td><td>5 領導作為</td></tr>
+        <tr><td>5.3</td><td>角色、責任及權限</td><td>§5.3</td><td>5 領導作為 / A01 治理（A.5.2/5.3）</td></tr>
+        <tr><td>6.1</td><td>風險與機會、風險評鑑與處理、SoA</td><td>§6.1</td><td>6 規劃 / 適用性聲明 SoA</td></tr>
+        <tr><td>6.2</td><td>資訊安全目標</td><td>§6.2</td><td>6 規劃</td></tr>
+        <tr><td>6.3</td><td>變更之規劃</td><td>§6.3</td><td>6 規劃</td></tr>
+        <tr><td>7.1–7.4</td><td>資源、能力、認知、溝通</td><td>§7</td><td>7 支援 / A02 人資安全</td></tr>
+        <tr><td>7.5</td><td>文件化資訊</td><td>§0、§7</td><td>7 支援（文件管制 SSOT）</td></tr>
+        <tr><td>8.1–8.3</td><td>運作規劃與控制、風險評鑑與處理之執行</td><td>§8</td><td>8 運作 / 附錄 A（A01–A15）</td></tr>
+        <tr><td>9.1</td><td>監視、量測、分析及評估</td><td>§9</td><td>9 績效評估</td></tr>
+        <tr><td>9.2</td><td>內部稽核</td><td>§9</td><td>9 績效評估 / A14 保證</td></tr>
+        <tr><td>9.3</td><td>管理階層審查</td><td>§9</td><td>9 績效評估</td></tr>
+        <tr><td>10.1</td><td>持續改進</td><td>§10</td><td>10 改善</td></tr>
+        <tr><td>10.2</td><td>不符合事項及矯正措施</td><td>§10</td><td>10 改善 / A12 事件</td></tr>
+        <tr><td>附錄 A</td><td>A.5–A.8 共 93 項控制措施</td><td>§A</td><td>適用性聲明 SoA / A01–A15</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="fwrap">
+    <div class="col">
+      <strong>普拉斯股份有限公司</strong>　資訊安全手冊（一階政策文件）<br>
+      依 ISO/IEC 27001:2022 建置　｜　文件編號 <span id="fdocno">ISMS-M-01</span>　版本 <span id="fver">V1.0</span>
+    </div>
+    <div class="col" style="text-align:right">
+      建立顧問：Allan Lo 顧問（<a href="mailto:allanlo.plus@gmail.com">allanlo.plus@gmail.com</a>）｜<a href="http://www.123hi.org">http://www.123hi.org</a>｜版本 v1.0<br>
+      © 2026 普拉斯股份有限公司　版權所有．保留一切權利（All Rights Reserved）
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================================
+   一階資訊安全手冊：文件管制（7.5）資料模型 + 二階程序書清單
+   ========================================================================= */
+const LS_KEY='isms_manual_v1';
+
+const META_DEFAULT={
+  docno:'ISMS-M-01', title:'資訊安全手冊', ver:'V1.0',
+  verdate:'2026-06-01', effdate:'2026-06-01', status:'已核准',
+  classification:'內部', author:'ISMS 推動小組', reviewer:'資安長 / ISMS 主管',
+  approver:'最高管理階層',
+  distribute:'內部網站公告 / ISMS 文件庫（依機密等級設定存取權限）',
+  retention:'現行版永久保留；改版後舊版至少保留 3 年',
+  nextreview:'2026-12-31',
+  scope:'本公司核心產品與服務所涉及之資訊資產、處理設施、人員、流程與支援系統（場所、技術、組織三大界面）。'
+};
+const REVS_DEFAULT=[
+  {ver:'V1.0', date:'2026-06-01', summary:'初版發行。依 ISO/IEC 27001:2022 並彙整各二階程序書（條文 4–10 及附錄 A01–A15）制定本一階資訊安全手冊。', editor:'ISMS 推動小組', approver:'最高管理階層'}
+];
+
+/* 二階程序書清單（與 ISMS Portal 一致） */
+const PROC_MAIN=[
+  {code:'4', name:'組織全景', dir:'4.組織全景', file:'ISO27001_組織全景管理工具.html', desc:'內外部議題、利害關係者、ISMS 範圍。'},
+  {code:'5', name:'領導作為', dir:'5.領導作為', file:'ISO27001_領導作為管理工具.html', desc:'領導承諾、資訊安全政策、角色職責。'},
+  {code:'6', name:'規劃', dir:'6.規劃', file:'ISO27001_規劃管理工具.html', desc:'風險評鑑與處理、SoA、資安目標。'},
+  {code:'7', name:'支援', dir:'7.支援', file:'ISO27001_支援管理工具.html', desc:'資源、能力、認知、溝通、文件管制。'},
+  {code:'8', name:'運作', dir:'8.運作', file:'ISO27001_運作管理工具.html', desc:'運作規劃與控制、風險評鑑與處理執行。'},
+  {code:'9', name:'績效評估', dir:'9.績效評估', file:'ISO27001_績效評估管理工具.html', desc:'監視量測、內部稽核、管理階層審查。'},
+  {code:'10', name:'改善', dir:'10.改善', file:'ISO27001_改善管理工具.html', desc:'不符合事項與矯正措施、持續改進。'}
+];
+const PROC_APP=[
+  {code:'A01', name:'治理', dir:'A01_Governance治理', file:'ISO27001_A01治理管理工具.html', desc:'政策架構、角色職責、職務區隔（A.5.1–5.8）。'},
+  {code:'A02', name:'人資安全', dir:'A02_Human Resource security人資安全', file:'ISO27001_A02人資安全管理工具.html', desc:'聘用前/任職/離職、保密協議、安全認知。'},
+  {code:'A03', name:'資訊保護', dir:'A03_Information protection資訊保護', file:'ISO27001_A03資訊保護管理工具.html', desc:'分類分級、標示、可接受使用、遮蔽、DLP、PII。'},
+  {code:'A04', name:'資產管理', dir:'A04_Asset management資產管理', file:'ISO27001_A04資產管理管理工具.html', desc:'資產清冊、擁有權、可接受使用、歸還汰除。'},
+  {code:'A05', name:'存取管理', dir:'A05_Identity and access management存取管理', file:'ISO27001_A05存取管理管理工具.html', desc:'身分管理、鑑別、存取權、特殊權限存取。'},
+  {code:'A06', name:'保全組態', dir:'A06_Secure configuration保全組態', file:'ISO27001_A06保全組態管理工具.html', desc:'組態基準、強化標準、密碼技術、公用程式。'},
+  {code:'A07', name:'實體安全', dir:'A07_Physical security實體安全', file:'ISO27001_A07實體安全管理工具.html', desc:'安全區域、實體進入、設備安置、佈纜汰除。'},
+  {code:'A08', name:'威脅與弱點管理', dir:'A08_Threat and vulnerability management威脅與弱點管理', file:'ISO27001_A08威脅與弱點管理工具.html', desc:'威脅情資、技術脆弱性管理、暴露評估修補。'},
+  {code:'A09', name:'應用程式安全', dir:'A09_Application security應用程式安全', file:'ISO27001_A09應用程式安全工具.html', desc:'安全開發生命週期、安全測試、委外、變更。'},
+  {code:'A10', name:'系統與網路安全', dir:'A10_System and network security系統與網路安全', file:'ISO27001_A10系統與網路安全工具.html', desc:'網路安全、網路服務、區隔、網頁過濾。'},
+  {code:'A11', name:'供應者關係安全', dir:'A11_Supplier relationships security供應者關係安全', file:'ISO27001_A11供應者關係安全工具.html', desc:'供應者協議、ICT 供應鏈、雲端、監視審查。'},
+  {code:'A12', name:'資安事件管理', dir:'A12_Information security event management資安事件管理', file:'ISO27001_A12資安事件管理工具.html', desc:'偵測存錄監視、評鑑決策回應、證據與學習。'},
+  {code:'A13', name:'營運持續', dir:'A13_Continuity持續性', file:'ISO27001_A13營運持續管理工具.html', desc:'中斷期間資安、ICT 備妥、備份、多備、容量。'},
+  {code:'A14', name:'資訊安全保證', dir:'A14_Information security assurance資訊安全保證', file:'ISO27001_A14資訊保證管理工具.html', desc:'獨立審查、對內部政策遵循性、安全測試保證。'},
+  {code:'A15', name:'遵循性', dir:'A15_Legal and compliance遵循性', file:'ISO27001_A15遵循性管理工具.html', desc:'法律法規契約、智財、紀錄保護、隱私 PII。'}
+];
+
+const META_FIELDS=[
+  ['docno','文件編號'],['title','文件名稱'],['ver','版本'],['verdate','版本日期'],
+  ['effdate','生效日期'],['status','文件狀態'],['classification','機密等級'],
+  ['author','制定'],['reviewer','審查'],['approver','核准'],
+  ['distribute','分發範圍'],['retention','保留期限'],['nextreview','下次審查'],['scope','適用範圍']
+];
+
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function load(){
+  try{const s=localStorage.getItem(LS_KEY);if(s){const o=JSON.parse(s);if(o&&o.meta)return{meta:Object.assign(clone(META_DEFAULT),o.meta),revs:(o.revs&&o.revs.length)?o.revs:clone(REVS_DEFAULT)};}}catch(e){}
+  return{meta:clone(META_DEFAULT),revs:clone(REVS_DEFAULT)};
+}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(DATA));}catch(e){alert('儲存失敗：'+e.message);}}
+let DATA=load();
+
+/* ---------- render document control ---------- */
+function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderDC(){
+  const m=DATA.meta;
+  document.getElementById('dcView').innerHTML=META_FIELDS.map(([k,lbl])=>{
+    const full=(k==='distribute'||k==='retention'||k==='scope')?' full':'';
+    return `<div class="cell${full}"><div class="k">${lbl}</div><div class="v">${esc(m[k])}</div></div>`;
+  }).join('');
+  // header / footer mirror
+  document.getElementById('hdoc').textContent='文件編號：'+m.docno;
+  document.getElementById('hver').textContent='版本：'+m.ver+'　生效日：'+m.effdate;
+  document.getElementById('fdocno').textContent=m.docno;
+  document.getElementById('fver').textContent=m.ver;
+  document.getElementById('sg_author').textContent=m.author;
+  document.getElementById('sg_reviewer').textContent=m.reviewer;
+  document.getElementById('sg_approver').textContent=m.approver;
+  document.getElementById('scopeText').firstChild&&0; // scope描述以章節文字為主
+}
+function renderRevView(){
+  const tb=document.querySelector('#revView tbody');
+  tb.innerHTML=DATA.revs.map(r=>`<tr><td>${esc(r.ver)}</td><td>${esc(r.date)}</td><td>${esc(r.summary)}</td><td>${esc(r.editor)}</td><td>${esc(r.approver)}</td></tr>`).join('');
+}
+
+/* ---------- edit form ---------- */
+function fillEdit(){
+  const m=DATA.meta;
+  META_FIELDS.forEach(([k])=>{const el=document.getElementById('f_'+k);if(el)el.value=m[k]||'';});
+  renderRevEdit();
+}
+function renderRevEdit(){
+  const box=document.getElementById('revEdit');
+  box.innerHTML='<table class="t revtable"><thead><tr><th style="width:64px">版本</th><th style="width:104px">日期</th><th>修訂摘要</th><th style="width:104px">修訂者</th><th style="width:104px">核准者</th><th style="width:40px"></th></tr></thead><tbody>'+
+    DATA.revs.map((r,i)=>`<tr>
+      <td><input data-i="${i}" data-f="ver" value="${esc(r.ver)}"></td>
+      <td><input data-i="${i}" data-f="date" value="${esc(r.date)}"></td>
+      <td><input data-i="${i}" data-f="summary" value="${esc(r.summary)}"></td>
+      <td><input data-i="${i}" data-f="editor" value="${esc(r.editor)}"></td>
+      <td><input data-i="${i}" data-f="approver" value="${esc(r.approver)}"></td>
+      <td><button class="tinybtn" data-del="${i}">✕</button></td></tr>`).join('')+
+    '</tbody></table>';
+  box.querySelectorAll('input').forEach(inp=>inp.oninput=e=>{
+    const i=+e.target.dataset.i,f=e.target.dataset.f;DATA.revs[i][f]=e.target.value;save();renderRevView();
+  });
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    if(DATA.revs.length<=1){alert('至少保留一筆版次。');return;}
+    DATA.revs.splice(+b.dataset.del,1);save();renderRevEdit();renderRevView();
+  });
+}
+META_FIELDS.forEach(([k])=>{/* bind later after DOM ready (inline script at end) */});
+
+function bindMetaInputs(){
+  META_FIELDS.forEach(([k])=>{
+    const el=document.getElementById('f_'+k);
+    if(el)el.oninput=()=>{DATA.meta[k]=el.value;save();renderDC();};
+  });
+  document.getElementById('addRev').onclick=()=>{
+    DATA.revs.push({ver:'',date:'',summary:'',editor:'',approver:''});save();renderRevEdit();renderRevView();
+  };
+}
+
+/* ---------- procedure cards ---------- */
+function procHref(p){return encodeURI('../'+p.dir.replace(/\/+$/,'')+'/'+p.file);}
+function pcard(p,cls){
+  return `<a class="pcard ${cls}" href="${procHref(p)}"><span class="code">${p.code}</span><h4>${p.name}</h4><p>${p.desc}</p></a>`;
+}
+function renderProcs(){
+  document.getElementById('pgMain').innerHTML=PROC_MAIN.map(p=>pcard(p,'main')).join('');
+  document.getElementById('pgApp').innerHTML=PROC_APP.map(p=>pcard(p,'app')).join('');
+}
+
+/* ---------- toolbar actions ---------- */
+document.getElementById('btnPrint').onclick=()=>window.print();
+document.getElementById('btnEdit').onclick=function(){
+  const on=document.body.classList.toggle('editing');
+  this.classList.toggle('primary',on);
+  this.querySelector('svg').nextSibling; // keep
+  if(on)fillEdit();
+  document.getElementById('s0').scrollIntoView({behavior:'smooth'});
+};
+document.getElementById('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='資訊安全手冊_文件管制_'+DATA.meta.ver+'.json';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('btnImport').onclick=()=>document.getElementById('fileImport').click();
+document.getElementById('fileImport').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.meta)throw new Error('格式不符（需含 meta）');
+    DATA={meta:Object.assign(clone(META_DEFAULT),o.meta),revs:(o.revs&&o.revs.length)?o.revs:clone(REVS_DEFAULT)};
+    save();renderDC();renderRevView();fillEdit();alert('匯入完成。');}catch(err){alert('匯入失敗：'+err.message);}};
+  r.readAsText(f);e.target.value='';
+};
+document.getElementById('btnReset').onclick=()=>{
+  if(confirm('將清除本機（此瀏覽器）的編輯內容，恢復為檔案內建之預設值。確定？')){
+    try{localStorage.removeItem(LS_KEY);}catch(e){}
+    DATA={meta:clone(META_DEFAULT),revs:clone(REVS_DEFAULT)};renderDC();renderRevView();fillEdit();
+  }
+};
+
+/* ---------- TOC scroll-spy ---------- */
+const tocLinks=[...document.querySelectorAll('nav.toc a')];
+const secs=tocLinks.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function spy(){
+  let cur=secs[0];
+  const y=window.scrollY+120;
+  for(const s of secs){if(s.offsetTop<=y)cur=s;}
+  tocLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur.id));
+}
+tocLinks.forEach(a=>a.onclick=e=>{
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
+});
+window.addEventListener('scroll',spy,{passive:true});
+
+/* ---------- init ---------- */
+bindMetaInputs();
+renderDC();
+renderRevView();
+renderProcs();
+spy();
+</script>
+</body>
+</html>
