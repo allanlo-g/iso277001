@@ -857,7 +857,7 @@ function migrateProc(pd){
   pd=pd||{};
   pd.meta=Object.assign(clone(PROC_META_DEFAULT),pd.meta||{});
   pd.revs=(pd.revs&&pd.revs.length)?pd.revs:clone(PROC_REVS_DEFAULT);
-  if(typeof pd.body==='undefined')pd.body=null;
+  if(typeof pd.body==='undefined')pd.body=null;if(pd.meta&&pd.meta.title)pd.meta.title=pd.meta.title.replace(/作業程序書/g,'流程管理程序書');if(pd.revs)pd.revs.forEach(function(r){if(r&&r.summary)r.summary=r.summary.replace(/作業程序書/g,'流程管理程序書');});if(typeof pd.body==='string')pd.body=pd.body.replace(/作業程序書/g,'流程管理程序書');
   return pd;
 }
 function migrate(d){
