@@ -102,6 +102,42 @@
   #reportArea .rt-sign th{background:#eaf1f7;color:var(--c1)}
   #reportArea .rt-sealbox{height:60px;display:flex;align-items:center;justify-content:center}
   #reportArea .rt-sealbox img{max-height:54px;max-width:120px}
+  /* ===== 程序書文件管制（7.5 / 7.5.1） ===== */
+  .proc-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 14px;padding:10px 12px;background:#eef3f7;border:1px solid var(--line);border-radius:8px}
+  .proc-toolbar .ttl{font-weight:700;color:var(--c1);font-size:13px;margin-right:auto}
+  .procmeta{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 16px}
+  .procmeta td{border:1px solid #aab4bd;padding:6px 9px;vertical-align:middle}
+  .procmeta td.k{background:#eef3f7;font-weight:700;color:var(--c1);white-space:nowrap;width:84px}
+  .procmeta .docno{font-weight:800;color:var(--c1);letter-spacing:.5px}
+  .proc-status{display:inline-block;padding:1px 9px;border-radius:20px;font-size:11.5px;font-weight:700}
+  .proc-status.s-ok{background:#e7f4e8;color:var(--ok)} .proc-status.s-draft{background:#fdf0e3;color:var(--warn)} .proc-status.s-void{background:#fbe9e7;color:var(--bad)} .proc-status.s-mut{background:#eef1f4;color:var(--mut)}
+  h3.procrevh{color:var(--c1);font-size:15px;margin:14px 0 6px;border-left:4px solid var(--c3);padding-left:10px}
+  .procrev{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 14px}
+  .procrev th,.procrev td{border:1px solid #aab4bd;padding:5px 7px;text-align:center;vertical-align:top}
+  .procrev th{background:#eaf1f7;color:var(--c1);position:static;white-space:nowrap}
+  .procrev td.sum{text-align:left}
+  .proc-editor{border:1px dashed var(--c3);border-radius:8px;background:#f7fafd;padding:14px 16px;margin:4px 0 18px}
+  .proc-editor h4{color:var(--c2);margin:14px 0 4px} .proc-editor h4:first-child{margin-top:0}
+  .grid-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 14px}
+  .grid-meta .field{margin-bottom:0}
+  .grid-meta .field label{font-size:12px}
+  .grid-meta input,.grid-meta select{padding:6px 8px}
+  .revedit{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0}
+  .revedit th,.revedit td{border:1px solid var(--line);padding:4px 5px;vertical-align:top}
+  .revedit th{background:#eaf1f7;color:var(--c1);position:static}
+  .revedit textarea,.revedit input{width:100%;border:1px solid transparent;background:#fff;font:inherit;padding:3px 4px;border-radius:4px}
+  .revedit textarea:focus,.revedit input:focus{border-color:var(--c3);outline:none}
+  #procBody.editing{outline:2px dashed var(--warn);outline-offset:8px;background:#fffdf6;border-radius:6px;padding:6px}
+  #procBody.editing :is(h3,h4,p,li,td){cursor:text}
+  .edit-flag{display:none;font-size:11.5px;color:#8a5a00;background:#fff8ec;border:1px solid #e0930a;border-radius:6px;padding:4px 10px;margin:4px 0 10px}
+  body.proc-bodyediting .edit-flag{display:inline-block}
+  @media print{
+    .proc-toolbar{display:none !important}
+    #procEditor{display:none !important}
+    #procBody.editing{outline:none !important;background:#fff;padding:0}
+    .edit-flag{display:none !important}
+    .procmeta,.procrev{break-inside:avoid}
+  }
   @media print{
     @page{margin:12mm}
     header,nav,.toolbtn,.rowtools,.btn,.delx,footer,.sealx,.sealhint,.subtabs,.soafilter{display:none !important}
@@ -447,6 +483,44 @@
     <div class="card guide">
       <h2 class="sec"><span class="tag">程序書</span>ISMS-9 績效評估管理程序書</h2>
       <div class="clauseref">本作業說明為內嵌之精簡程序書，規範 ISO 27001:2022 第9章之作業活動、職責分工、產出與時機，可直接列印作為文件化資訊。</div>
+      <!-- ===== 程序書維護工具列 ===== -->
+      <div class="proc-toolbar">
+        <span class="ttl">📄 程序書文件管制與維護</span>
+        <button class="btn ghost sm" id="procEditToggle" onclick="toggleProcEditor()">✏ 編輯文件資訊與版次</button>
+        <button class="btn ghost sm" id="procBodyEditToggle" onclick="toggleProcBodyEdit()">📝 內文編輯模式</button>
+        <span id="procBodyEditBtns" style="display:none;gap:8px">
+          <button class="btn primary sm" onclick="saveProcBody()">💾 儲存內文</button>
+          <button class="btn danger sm" onclick="restoreProcBody()">↺ 還原預設範本</button>
+        </span>
+        <button class="btn ghost sm" onclick="doPrint()">🖨 列印 / 匯出 PDF</button>
+      </div>
+
+      <!-- ===== 文件管制資訊抬頭（7.5.1） ===== -->
+      <div id="procDocHeader"></div>
+
+      <!-- ===== 文件資訊與版次編輯器（預設隱藏；列印時隱藏） ===== -->
+      <div id="procEditor" class="proc-editor" style="display:none">
+        <h4>📄 文件管制資訊（對應 7.5 文件化資訊 / 7.5.1 文件管制清冊）</h4>
+        <p class="hint">下列欄位構成本程序書之文件管制資訊（識別、版次、核准者、機密等級、保存期限等）。變更後會即時同步至上方文件抬頭，並輸出至列印 / PDF。<b>核准者</b>欄位對應 7.5.2(c) 文件之審查與核准要求。</p>
+        <div class="grid-meta" id="procMetaGrid"></div>
+        <h4>🗓 版次修訂歷程（對應 7.5.2 變更管制）</h4>
+        <p class="hint">每次改版請按「新增修訂紀錄」增列一筆，記錄<b>版次、日期、修訂摘要、修訂者與核准者</b>，以維持完整之版本軌跡。</p>
+        <table class="revedit"><thead><tr>
+          <th style="width:72px">版次</th><th style="width:120px">日期</th><th>修訂摘要</th>
+          <th style="width:110px">修訂者</th><th style="width:110px">核准者</th><th style="width:34px"></th>
+        </tr></thead><tbody id="revEditorBody"></tbody></table>
+        <div class="rowtools"><button class="btn ghost sm" onclick="addRev()">＋ 新增修訂紀錄</button>
+          <span class="hint" style="align-self:center">＊新增時自動帶入目前版次與制定/核准者，可再行修改。</span></div>
+      </div>
+
+      <!-- ===== 版次修訂歷程（唯讀，列印用） ===== -->
+      <h3 class="procrevh">文件版次修訂歷程</h3>
+      <div id="procRevTable"></div>
+
+      <div class="edit-flag">📝 內文編輯模式進行中：可直接點擊下方任一段落文字進行修改，完成後請按工具列「💾 儲存內文」。</div>
+
+      <!-- ===== 程序書本文（可編輯／可還原預設範本） ===== -->
+      <div id="procBody">
 
       <h3>1. 目的</h3>
       <p>建立組織<b>監視、量測、分析與評估</b>資安績效與 ISMS 有效性、執行<b>內部稽核</b>查核符合性與有效實施、由最高管理階層辦理<b>管理審查</b>之作業方法，確保 ISMS 持續適合、充分且有效，並產生持續改善之決議。</p>
@@ -530,6 +604,8 @@
         </tbody>
       </table>
       <p class="hint">＊保存方式：可於本工具維護後，使用「資料管理」分頁匯出 JSON 備份，或列印為 PDF 併入 ISMS 文件體系；另可使用隨附之 Excel 管理台帳作為離線受控副本。</p>
+      </div><!-- /procBody -->
+
       <p class="hint" style="text-align:center;border-top:1px solid var(--line);padding-top:8px;margin-top:10px">設計：Allan Lo 顧問（allanlo.plus@gmail.com）｜http://www.123hi.org｜2026年6月｜版本 v1.0</p>
     </div>
   </section>
@@ -696,11 +772,13 @@ function migrate(d){
   TABLES.forEach(t=>{d[t]=d[t]||[];});
   d.g91=d.g91||{};d.g92=d.g92||{};d.mrg=d.mrg||{};
   d.signoff=d.signoff||{};d.archives=d.archives||[];d.ref=d.ref||null;
+  d.procdoc=migrateProc(d.procdoc);
   return d;
 }
 function blank(){
   const o={g91:{},g92:{},mrg:{},signoff:{},archives:[],ref:null,updated:null};
   TABLES.forEach(t=>o[t]=[]);
+  o.procdoc=defaultProc();
   return o;
 }
 function seeded(){
@@ -725,7 +803,27 @@ function seeded(){
   };
   o.signoff={year:String(new Date().getFullYear())};
   o.archives=[];o.ref=null;o.updated=null;o.seeded=true;
+  o.procdoc=defaultProc();
   return o;
+}
+// ---------- 程序書文件管制（7.5 / 7.5.1）預設值 ----------
+const PROC_META_DEFAULT={
+  docno:'ISMS-9', title:'績效評估管理程序書', ver:'V1.0',
+  verdate:'2026-06-01', effdate:'2026-06-01', status:'已核准',
+  classification:'內部', author:'ISMS 推動小組', reviewer:'資安長 / ISMS 主管',
+  approver:'最高管理階層', distribute:'內部網站公告 / ISMS 文件庫（依機密等級設定存取權限）',
+  retention:'現行版永久保留；改版後舊版至少保留 3 年', nextreview:'2026-12-31'
+};
+const PROC_REVS_DEFAULT=[
+  {ver:'V1.0', date:'2026-06-01', summary:'初版發行，依 ISO/IEC 27001:2022 制定本程序書（績效評估管理程序書）。', editor:'ISMS 推動小組', approver:'最高管理階層'}
+];
+function defaultProc(){return{meta:clone(PROC_META_DEFAULT),revs:clone(PROC_REVS_DEFAULT),body:null};}
+function migrateProc(pd){
+  pd=pd||{};
+  pd.meta=Object.assign(clone(PROC_META_DEFAULT),pd.meta||{});
+  pd.revs=(pd.revs&&pd.revs.length)?pd.revs:clone(PROC_REVS_DEFAULT);
+  if(typeof pd.body==='undefined')pd.body=null;
+  return pd;
 }
 let DATA=load();
 
@@ -1275,12 +1373,135 @@ function printReportArchive(i){
   printWith('print-report');
 }
 
+// ========== 程序書文件管制與維護（7.5 / 7.5.1） ==========
+const PROC_META_FIELDS=[
+  {k:'docno',l:'文件編號'},
+  {k:'ver',l:'版次'},
+  {k:'status',l:'文件狀態',t:'select',opt:['草擬','審查中','已核准','已發布','已作廢']},
+  {k:'title',l:'文件名稱'},
+  {k:'classification',l:'機密等級',t:'select',opt:['公開','內部','機密','極機密']},
+  {k:'verdate',l:'版本日期',t:'date'},
+  {k:'effdate',l:'生效日期',t:'date'},
+  {k:'nextreview',l:'下次審查日',t:'date'},
+  {k:'author',l:'制定（作者 / 單位）'},
+  {k:'reviewer',l:'審查者'},
+  {k:'approver',l:'核准者'},
+  {k:'distribute',l:'發行 / 發布方式'},
+  {k:'retention',l:'保存期限'},
+];
+const PROC_STATUS_CLS={'已核准':'s-ok','已發布':'s-ok','草擬':'s-draft','審查中':'s-draft','已作廢':'s-void'};
+let PROC_BODY_DEFAULT=null;
+let procEditorOpen=false, procBodyEditing=false;
+
+function renderProcHeader(){
+  const h=document.getElementById('procDocHeader');if(!h)return;
+  const m=(DATA.procdoc&&DATA.procdoc.meta)||{};
+  const v=k=>esc(m[k]||'');
+  const scls=PROC_STATUS_CLS[m.status]||'s-mut';
+  h.innerHTML=`<table class="procmeta">
+    <tr><td class="k">文件編號</td><td class="docno">${v('docno')}</td><td class="k">版次</td><td>${v('ver')}</td><td class="k">文件狀態</td><td><span class="proc-status ${scls}">${v('status')||'—'}</span></td></tr>
+    <tr><td class="k">文件名稱</td><td colspan="3">${v('title')}</td><td class="k">機密等級</td><td>${v('classification')}</td></tr>
+    <tr><td class="k">版本日期</td><td>${v('verdate')}</td><td class="k">生效日期</td><td>${v('effdate')}</td><td class="k">下次審查日</td><td>${v('nextreview')}</td></tr>
+    <tr><td class="k">制定</td><td>${v('author')}</td><td class="k">審查</td><td>${v('reviewer')}</td><td class="k">核准</td><td>${v('approver')}</td></tr>
+    <tr><td class="k">發行 / 發布</td><td colspan="3">${v('distribute')}</td><td class="k">保存期限</td><td>${v('retention')}</td></tr>
+  </table>`;
+}
+function renderProcRev(){
+  const rt=document.getElementById('procRevTable');if(!rt)return;
+  const revs=(DATA.procdoc&&DATA.procdoc.revs)||[];
+  let h='<table class="procrev"><thead><tr><th style="width:80px">版次</th><th style="width:110px">日期</th><th>修訂摘要</th><th style="width:120px">修訂者</th><th style="width:120px">核准者</th></tr></thead><tbody>';
+  if(!revs.length){h+='<tr><td colspan="5" style="color:#888">（尚無修訂紀錄）</td></tr>';}
+  else{h+=revs.map(r=>`<tr><td>${esc(r.ver||'')}</td><td>${esc(r.date||'')}</td><td class="sum">${esc(r.summary||'')}</td><td>${esc(r.editor||'')}</td><td>${esc(r.approver||'')}</td></tr>`).join('');}
+  rt.innerHTML=h+'</tbody></table>';
+}
+function applyProcBody(){
+  const b=document.getElementById('procBody');if(!b)return;
+  if(PROC_BODY_DEFAULT===null)PROC_BODY_DEFAULT=b.innerHTML;
+  const ov=DATA.procdoc&&DATA.procdoc.body;
+  if(ov&&!procBodyEditing&&b.innerHTML!==ov)b.innerHTML=ov;
+  if(typeof renderFlow==='function')renderFlow();
+}
+function renderProcDoc(){renderProcHeader();renderProcRev();applyProcBody();}
+
+// ---- 文件資訊 / 版次 編輯器 ----
+function toggleProcEditor(){
+  procEditorOpen=!procEditorOpen;
+  const e=document.getElementById('procEditor');if(e)e.style.display=procEditorOpen?'block':'none';
+  const t=document.getElementById('procEditToggle');if(t)t.textContent=procEditorOpen?'✕ 關閉文件資訊編輯':'✏ 編輯文件資訊與版次';
+  if(procEditorOpen){renderProcMetaGrid();renderRevEditor();}
+}
+function renderProcMetaGrid(){
+  const g=document.getElementById('procMetaGrid');if(!g)return;
+  const m=DATA.procdoc.meta;
+  g.innerHTML=PROC_META_FIELDS.map(f=>{
+    let ctrl;
+    if(f.t==='select')ctrl=`<select data-k="${f.k}" onchange="onProcMetaEdit(this)">`+['',...f.opt].map(o=>`<option ${o===(m[f.k]||'')?'selected':''}>${o}</option>`).join('')+`</select>`;
+    else if(f.t==='date')ctrl=`<input type="date" data-k="${f.k}" value="${esc(m[f.k]||'')}" onchange="onProcMetaEdit(this)">`;
+    else ctrl=`<input type="text" data-k="${f.k}" value="${esc(m[f.k]||'')}" oninput="onProcMetaEdit(this)">`;
+    return `<div class="field"><label>${f.l}</label>${ctrl}</div>`;
+  }).join('');
+}
+function onProcMetaEdit(el){DATA.procdoc.meta[el.dataset.k]=el.value;scheduleSave();renderProcHeader();}
+function renderRevEditor(){
+  const box=document.getElementById('revEditorBody');if(!box)return;
+  box.innerHTML=(DATA.procdoc.revs||[]).map((r,i)=>`<tr>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="ver" oninput="onRevEdit(this)">${esc(r.ver||'')}</textarea></td>
+    <td><input type="date" data-i="${i}" data-k="date" onchange="onRevEdit(this)" value="${esc(r.date||'')}"></td>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="summary" oninput="onRevEdit(this)">${esc(r.summary||'')}</textarea></td>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="editor" oninput="onRevEdit(this)">${esc(r.editor||'')}</textarea></td>
+    <td><textarea rows="1" class="cellt" data-i="${i}" data-k="approver" oninput="onRevEdit(this)">${esc(r.approver||'')}</textarea></td>
+    <td style="text-align:center"><button class="delx" title="刪除" onclick="delRev(${i})">✕</button></td></tr>`).join('');
+  document.querySelectorAll('#revEditorBody textarea').forEach(autosize);
+}
+function onRevEdit(el){const i=+el.dataset.i,k=el.dataset.k;DATA.procdoc.revs[i][k]=el.value;if(el.tagName==='TEXTAREA')autosize(el);scheduleSave();renderProcRev();}
+function addRev(){
+  const m=DATA.procdoc.meta;
+  DATA.procdoc.revs.push({ver:m.ver||'',date:m.verdate||'',summary:'',editor:m.author||'',approver:m.approver||''});
+  saveNow();renderRevEditor();renderProcRev();
+}
+function delRev(i){if(!confirm('確定刪除此筆版次修訂紀錄？'))return;DATA.procdoc.revs.splice(i,1);saveNow();renderRevEditor();renderProcRev();}
+
+// ---- 內文編輯模式 ----
+function toggleProcBodyEdit(){
+  const b=document.getElementById('procBody');if(!b)return;
+  procBodyEditing=!procBodyEditing;
+  b.contentEditable=procBodyEditing;
+  b.classList.toggle('editing',procBodyEditing);
+  document.body.classList.toggle('proc-bodyediting',procBodyEditing);
+  const btns=document.getElementById('procBodyEditBtns');if(btns)btns.style.display=procBodyEditing?'inline-flex':'none';
+  const t=document.getElementById('procBodyEditToggle');if(t)t.textContent=procBodyEditing?'✕ 取消內文編輯':'📝 內文編輯模式';
+  if(procBodyEditing){b.focus();toast('內文編輯模式：可直接點擊文字修改，完成後按「儲存內文」');}
+}
+function saveProcBody(){
+  const b=document.getElementById('procBody');if(!b)return;
+  DATA.procdoc.body=b.innerHTML;saveNow();
+  procBodyEditing=false;b.contentEditable=false;b.classList.remove('editing');document.body.classList.remove('proc-bodyediting');
+  const btns=document.getElementById('procBodyEditBtns');if(btns)btns.style.display='none';
+  const t=document.getElementById('procBodyEditToggle');if(t)t.textContent='📝 內文編輯模式';
+  toast('程序書內文已儲存');
+}
+function restoreProcBody(){
+  if(!confirm('確定將程序書內文還原為系統預設範本？您先前的內文修改將被清除（文件資訊與版次修訂歷程不受影響）。'))return;
+  DATA.procdoc.body=null;
+  const b=document.getElementById('procBody');
+  if(b&&PROC_BODY_DEFAULT!==null)b.innerHTML=PROC_BODY_DEFAULT;
+  if(typeof renderFlow==='function')renderFlow();saveNow();
+  procBodyEditing=false;if(b){b.contentEditable=false;b.classList.remove('editing');}
+  document.body.classList.remove('proc-bodyediting');
+  const btns=document.getElementById('procBodyEditBtns');if(btns)btns.style.display='none';
+  const t=document.getElementById('procBodyEditToggle');if(t)t.textContent='📝 內文編輯模式';
+  toast('已還原為預設範本');
+}
+function initProcDefault(){const b=document.getElementById('procBody');if(b&&PROC_BODY_DEFAULT===null)PROC_BODY_DEFAULT=b.innerHTML;}
+
 function renderAll(){
   TABLES.forEach(renderTable);
   renderForms();renderSignoff();renderArchives();renderRefStatus();renderDash();renderAnnual();renderDataMeta();
+  renderProcDoc();
 }
 bindForms();
 bindSignoff();
+initProcDefault();
 renderAll();
 </script>
 <script>
